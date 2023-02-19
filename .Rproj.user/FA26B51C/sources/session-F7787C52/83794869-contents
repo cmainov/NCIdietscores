@@ -16,7 +16,27 @@
 
 source( "R/utils.R" )
 
-mfs_scores <- function( df ) {
+mfs_scores <- function( df,
+                        default.names = TRUE,
+                        col.names = list( HQ1 = "HQ1", HQ2 = "HQ2",
+                                              HQ3 = "HQ3", HQ4 = "HQ4",
+                                              HQ5 = "HQ5", HQ6 = "HQ6",
+                                              HQ7 = "HQ7", HQ8 = "HQ8",
+                                              HQ9 = "HQ9", HQ10 = "HQ10",
+                                              HQ11 = "HQ11", HQ12 = "HQ12",
+                                              HQ13 = "HQ13", HQ14 = "HQ14",
+                                              HQ15 = "HQ15", HQ16 = "HQ16",
+                                              HQ2A = "HQ2A" ) ) {
+
+  ## checks
+
+  # diet column names checks
+  if ( !default.names & is.null( col.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
+  if ( ( !default.names ) & length( col.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
+  if ( ( !default.names ) & length( col.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
+  if ( sum( c( paste0( "HQ", 1:16 ), "HQ2A" ) %notin% names( col.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `col.names` in the documentation for an example." )
+
+  # age and sex column name checks
 
 
   ## Make a copy of the original dataset to append at the end
@@ -25,7 +45,9 @@ mfs_scores <- function( df ) {
   ## (2.1) Do unit conversions ##
 
   # dietary frequency column names
-  c.nms <- paste0( "HQ", 1:16 )
+  if( default.names ) c.nms <- paste0( "HQ", 1:16 )
+
+  if( !default.names ) c.nms <- unlist( col.names )[1:16] # not including milk type variable name
 
   # loop through columns and convert to servings
   for( i in 1:length( c.nms ) ){
@@ -48,20 +70,43 @@ mfs_scores <- function( df ) {
   ## (2.1) First change milk variable to four separate milk variables (skim, 1%,  2%, and whole) ##
 
   # check to see that all subjects who responded to milk question also responded to milk type
-  milk.miss <- sum( is.na( df$HQ2A ) & !is.na( df$HQ2 ) )
+  if( default.names ) milk.miss <- sum( is.na( df$HQ2A ) & !is.na( df$HQ2 ) )
+
+  if( !default.names ) milk.miss <- sum( is.na( df[[ col.names[["HQ2A"]] ]] ) & !is.na( df[[ col.names[["HQ2"]] ]] ) )
 
   if ( milk.miss > 0 ) warning( "Warning: observations with missing milk type detected. Will set milk type to '1%' for these observations. If this is not desired, manually change the entries and re-run." )
 
-  # expand the milk type columns
-  df <- df %>% # for those that have a milk entry that is not missing, they will get "0" for all other milk types not the ones that they consume
-    mutate( HQ2A = ifelse( is.na( HQ2A ) & !is.na( HQ2 ), 3, HQ2A ), # set those w/ missing milk type to 1%--see warning message above
 
-            # now create the milk-specific columns (4 columns total)
-            milk.skim = ifelse( HQ2A == 5, HQ2, 1 ), # if a subject respond in the affirmative for a given milk type, they get their value of `HQ2` in the milk type column, otherwise they get a "1" for "never"
-            milk.skim = ifelse( HQ2A == 4, HQ2, 1 ),
-            milk.one = ifelse( HQ2A == 3, HQ2, 1  ),
-            milk.two = ifelse( HQ2A == 2, HQ2, 1  ),
-            milk.whole = ifelse( HQ2A == 1, HQ2, 1  ) )
+  # expand the milk type columns
+
+  if( default.names ) { # if we use the default column names
+
+    df <- df %>% # for those that have a milk entry that is not missing, they will get "0" for all other milk types not the ones that they consume
+      mutate( HQ2A = ifelse( is.na( HQ2A ) & !is.na( HQ2 ), 3, HQ2A ), # set those w/ missing milk type to 1%--see warning message above
+
+              # now create the milk-specific columns (4 columns total)
+              milk.skim = ifelse( HQ2A == 5, HQ2, 1 ), # if a subject respond in the affirmative for a given milk type, they get their value of `HQ2` in the milk type column, otherwise they get a "1" for "never"
+              milk.skim = ifelse( HQ2A == 4, HQ2, 1 ),
+              milk.one = ifelse( HQ2A == 3, HQ2, 1  ),
+              milk.two = ifelse( HQ2A == 2, HQ2, 1  ),
+              milk.whole = ifelse( HQ2A == 1, HQ2, 1  ) )
+  }
+
+  if( !default.names ) { # if we don't use the default column names
+
+    milk.var <- col.names[["HQ2A"]]
+    milk.type.used <- col.names[["HQ2"]]
+
+    df <- df %>% # for those that have a milk entry that is not missing, they will get "0" for all other milk types not the ones that they consume
+      mutate( HQ2A = ifelse( is.na( HQ2A ) & !is.na( HQ2 ), 3, HQ2A ), # set those w/ missing milk type to 1%--see warning message above
+
+              # now create the milk-specific columns (4 columns total)
+              milk.skim = ifelse( milk.var == 5, milk.var, 1 ), # if a subject respond in the affirmative for a given milk type, they get their value of `HQ2` in the milk type column, otherwise they get a "1" for "never"
+              milk.skim = ifelse( milk.var == 4, milk.var, 1 ),
+              milk.one = ifelse( milk.var == 3, milk.var, 1  ),
+              milk.two = ifelse( milk.var == 2, milk.var, 1  ),
+              milk.whole = ifelse( milk.var == 1, milk.var, 1  ) )
+  }
 
   ## --------- End Subsection --------- ##
 
@@ -70,23 +115,47 @@ mfs_scores <- function( df ) {
 
   # these names also match the names on the sex/age conversion tables #
 
-  df <- df %>%
-    rename( cold.cereals = HQ1,
-            bacon.sausage = HQ3,
-            hot.dogs = HQ4,
-            bread = HQ5,
-            juice = HQ6,
-            fruit = HQ7,
-            regular.fat = HQ8,
-            salad = HQ9,
-            potatoes = HQ10,
-            white.potatoes = HQ11,
-            beans = HQ12,
-            vegetables = HQ13,
-            pasta = HQ14,
-            nuts = HQ15,
-            chips = HQ16 )
+  if( default.names ) {
 
+    df <- df %>%
+      rename( cold.cereals = HQ1,
+              bacon.sausage = HQ3,
+              hot.dogs = HQ4,
+              bread = HQ5,
+              juice = HQ6,
+              fruit = HQ7,
+              regular.fat = HQ8,
+              salad = HQ9,
+              potatoes = HQ10,
+              white.potatoes = HQ11,
+              beans = HQ12,
+              vegetables = HQ13,
+              pasta = HQ14,
+              nuts = HQ15,
+              chips = HQ16 )
+
+  }
+
+  if( !default.names ) {
+
+    df <- df %>%
+      rename( cold.cereals = col.names[["HQ1"]],
+              bacon.sausage = col.names[["HQ3"]],
+              hot.dogs = col.names[["HQ4"]],
+              bread = col.names[["HQ5"]],
+              juice = col.names[["HQ6"]],
+              fruit = col.names[["HQ7"]],
+              regular.fat = col.names[["HQ8"]],
+              salad = col.names[["HQ9"]],
+              potatoes = col.names[["HQ10"]],
+              white.potatoes = col.names[["HQ11"]],
+              beans = col.names[["HQ12"]],
+              vegetables = col.names[["HQ13"]],
+              pasta = col.names[["HQ14"]],
+              nuts = col.names[["HQ15"]],
+              chips = col.names[["HQ16"]] )
+
+  }
 
 
 
@@ -318,3 +387,4 @@ mfs_scores <- function( df ) {
 
 }
 
+mfs_scores(diet.data, default.names = F )
