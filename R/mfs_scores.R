@@ -36,13 +36,13 @@
 #'                    HQ2A = "HQ2A"
 #'                    ),
 #' age.col = "AGE",
-#' sex.col = "get( sex.col )" )
+#' sex.col = "SEX" )
 #'
 #' @param df A \code{data.frame} or \code{tibble} containing the columns (dietary items, sex, and age) for computing the scores.
 #' @param default.names A logical. Defaulted to \code{TRUE} and establishes whether default survey item names (see data dictionary above) are used. If user-specified names are used, set to \code{FALSE} and specify the column names in \code{item.names}.
-#' @param item.names A named list containing the user-specified column names (character vectors) for the survey items in the \code{df}. Ignored if \code{default.names} is \code{TRUE}. Must follow format used in \code{usage}.
+#' @param item.names A named \code{list} containing the user-specified column names (character vectors) for the survey items in the \code{df}. Ignored if \code{default.names} is \code{TRUE}. Must follow format used in \code{usage}.
 #' @param age.col A character vector specifying the name of the age column in the \code{df}. Defaulted to "AGE".
-#' @param sex.col A character vector specifying the name of the sex column in the \code{df}. Ensure levels of this variable are coded numerically ("1" = male, "2" = female) or as "male" "female" as computation of the scores is contingent on this variable. Defaulted to "get( sex.col )".
+#' @param sex.col A character vector specifying the name of the sex column in the \code{df}. Ensure levels of this variable are either coded numerically ("1" = male, "2" = female) or as "male" "female" as computation of the scores is contingent on this variable. Defaulted to "get( sex.col )".
 #'
 #' @return Object of class \code{data.frame} containing the original user-supplied data with the
 #' age & sex-adjusted dietary screener scores appended. Column names and descriptions are as follows:
@@ -62,7 +62,92 @@
 #' @import stringr
 #' @import magrittr
 #'
+#' @examples
+#' library( NCIdietscores )
 #'
+#' # using default diet item names
+#' mfs_scores( diet.data )
+#'
+#' # user-specified diet item names but using default names in `item.names`
+#' mfs_scores(diet.data, default.names = FALSE )
+#'
+#' # user specified names
+#' d.user <- setNames( diet.data,
+#'                     c( "cold.cereals", "milk", "bacon.sausage", "hot.dogs",
+#'                        "bread", "juice", "fruit", "regular.fat", "salad", "potatoes",
+#'                        "white.potatoes", "beans", "vegetables", "pasta", "nuts", "chips",
+#'                        "milk.type", "SEX", "AGE" ) )
+#'
+#' # run `mfs_scores` without specifying column names, throws error
+#' \dontrun{
+#'
+#'   mfs_scores( df = d.user, default.names = FALSE )
+#'
+#' }
+#'
+#'
+#' # run `mfs_scores`  specifying column names in incorrect format, error thrown
+#' \dontrun{
+#'   cls.list <- list( "cold.cereals", "milk",
+#'                     "bacon.sausage", "hot.dogs",
+#'                     "bread", "juice",
+#'                     "fruit", "regular.fat",
+#'                     "salad", "potatoes",
+#'                     "white.potatoes", "beans",
+#'                     "vegetables", "pasta",
+#'                     "nuts", "chips",
+#'                     "milk.type" )
+#'
+#'   mfs_scores( df = d.user,
+#'               default.names = FALSE,
+#'               item.names = cls.list )
+#' }
+#'
+#'
+#' # run `mfs_scores`  specifying column names, no error
+#' cls.list <- list( HQ1 = "cold.cereals", HQ2 = "milk",
+#'                   HQ3 = "bacon.sausage", HQ4 = "hot.dogs",
+#'                   HQ5 = "bread", HQ6 = "juice",
+#'                   HQ7 = "fruit", HQ8 = "regular.fat",
+#'                   HQ9 = "salad", HQ10 = "potatoes",
+#'                   HQ11 = "white.potatoes", HQ12 = "beans",
+#'                   HQ13 = "vegetables", HQ14 = "pasta",
+#'                   HQ15 = "nuts", HQ16 = "chips",
+#'                   HQ2A = "milk.type" )
+#'
+#' mfs_scores( df = d.user,
+#'             default.names = FALSE,
+#'             item.names = cls.list )
+#'
+#'
+#' # specify own names for sex and age columns
+#' d.user.age.sex <- diet.data
+#'
+#' colnames( d.user.age.sex )[ colnames( d.user.age.sex ) == "SEX" ] <- "subject.sex"
+#' colnames( d.user.age.sex )[ colnames( d.user.age.sex ) == "AGE" ] <- "subject.age"
+#' colnames( d.user )[ colnames( d.user ) == "SEX" ] <- "subject.sex"
+#' colnames( d.user )[ colnames( d.user ) == "AGE" ] <- "subject.age"
+#'
+#'
+#' mfs_scores( df = d.user.age.sex, sex.col = "subject.sex", age.col = "subject.age" )
+#'
+#' mfs_scores( df = d.user,
+#'             default.names = FALSE,
+#'             item.names = cls.list,
+#'             sex.col = "subject.sex",
+#'             age.col = "subject.age" )
+#'
+#'
+#' ## more errors: ##
+#'
+#' # incorrect data types
+#' \dontrun{
+#'
+#'   mfs_scores( df = list( diet.data ) )
+#'   mfs_scores( df = diet.data, age.col = 3 )
+#'   mfs_scores( df = diet.data, sex.col = 7 )
+#'
+#' }
 #' @export
 
 
@@ -84,7 +169,7 @@ mfs_scores <- function( df,
 
   ## class checks
   if ( class( item.names ) != "list" ) stop( "Error: `item.names` must be a list" )
-  if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) > 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
+  if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) >= 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
   if ( class( age.col ) != "character" | class( sex.col ) != "character" ) stop( "Error: `age.col` and `sex.col` must be objects of class `character`." )
 
   ## diet column names checks
