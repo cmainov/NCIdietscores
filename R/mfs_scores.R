@@ -392,10 +392,10 @@ mfs_scores <- function( df,
             sqfv7 = sqrt( fv7 ),
             sqfv6 = sqrt( fv6 ),
             ## create predicted outcomes ##
-            pred.fv7.ps = ifelse( get( sex.col ) == 1, 0.90679 + 0.75856*sqfv7,
-                                ifelse( get( sex.col ) == 2, 0.81956 + 0.73086*sqfv7, NA ) ),
-            pred.fv6.ps = ifelse( get( sex.col ) == 1, 0.94077 + 0.73906*sqfv6,
-                                ifelse( get( sex.col ) == 2, 0.81626 + 0.73022*sqfv6, NA ) ) )
+            pred.fv7.ps = ifelse( get( sex.col ) == 1, ( 0.90679 + 0.75856*sqfv7 )^2,  # back-transform (square it) back to normal units
+                                ifelse( get( sex.col ) == 2, ( 0.81956 + 0.73086*sqfv7 )^2, NA ) ),
+            pred.fv6.ps = ifelse( get( sex.col ) == 1, ( 0.94077 + 0.73906*sqfv6 )^2,
+                                ifelse( get( sex.col ) == 2, ( 0.81626 + 0.73022*sqfv6 )^2, NA ) ) )
 
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -535,7 +535,7 @@ mfs_scores <- function( df,
             # adjust using regression coefficients from CSFII 94-96
 
             pred.fv7.ce = ifelse( get( sex.col ) == 1,
-                                  ( 0.666228 + 0.770652*( sqrt( raw.pred.fv7.ce ) ) )^2,
+                                  ( 0.666228 + 0.770652*( sqrt( raw.pred.fv7.ce ) ) )^2, # back-transform (square it) back up to normal units
                                   ifelse( get( sex.col ) == 2,
                                           ( 0.611844 + 0.733890*( sqrt(raw.pred.fv7.ce) ) )^2, NA ) ),
             pred.fv6.ce = ifelse( get( sex.col ) == 1,
