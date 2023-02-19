@@ -165,14 +165,17 @@ mfs_scores <- function( df,
                         age.col = "AGE",
                         sex.col = "SEX" ) {
 
-  ### checks
+  ### (1.0) Function Checks ###
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  ## class checks
+  ## (1.1) Argument types and entries  ##
+
+  # class checks
   if ( class( item.names ) != "list" ) stop( "Error: `item.names` must be a list" )
   if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) >= 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
   if ( class( age.col ) != "character" | class( sex.col ) != "character" ) stop( "Error: `age.col` and `sex.col` must be objects of class `character`." )
 
-  ## diet column names checks
+  # diet column names checks
   if ( !default.names & is.null( item.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
@@ -181,20 +184,27 @@ mfs_scores <- function( df,
   if ( !default.names){
   if ( sum( colnames( df ) %notin% c( item.names, sex.col, age.col  ) ) > 0 ) stop( "Error: column names of `df` not detected in `item.names`, `age.col`, or `sex.col`. See default values for `item.names` in the documentation for an example and check entries for `age.col` and `sex.col`." )
 }
-    ## sex column name checks
+
+  # sex column name checks
   if ( is.null( df[[sex.col]]) ) stop( "Error: input to `sex.col` not detected in the provided dataset." )
   if ( is.null( df[[age.col]]) ) stop( "Error: input to `age.col` not detected in the provided dataset." )
 
-  # check level-coding for sex column
+  ## --------- End Subsection --------- ##
+
+
+  ## (1.2) Check levels of `SEX` column ##
+
+  # levels of sex column
   sex.levs <- levels( as.factor( df[[sex.col]] ) )
 
+  # condition: check if numeric
   levs.12 <- sum( sex.levs %notin% c( "1", "2" ) ) > 0
 
-  # check "male"/"female"
+  # condition: check if "male"/"female" character
   levs.mf <- sum(str_detect(  sex.levs, regex( "male", ignore_case = T ) ) ) +
     sum( str_detect( sex.levs, regex( "female", ignore_case = T ) ) )
 
-  # if there is "male" or "female" detected in the dataset, convert to numeric
+  # execute: if there is "male" or "female" detected in the dataset, convert to numeric
   if ( levs.mf > 0 ){
 
     df[[sex.col]] <- ifelse( str_detect(  df[[sex.col]], regex( "male", ignore_case = T ) ), 1, df[[sex.col]] )
@@ -202,41 +212,60 @@ mfs_scores <- function( df,
 
   }
 
-  # now, ensure it's 1's and 2's if not, give error
-  sex.levs.new <- levels( as.factor( df[[sex.col]] ) )
+  # execute: now, ensure it's 1's and 2's if not, give error
+  sex.levs.new <- levels( as.factor( df[[sex.col]] ) ) # reassign levels of new `SEX` variable
+
+  # condition: check if new variable is numeric with assigned levels ,if not throw error
   levs.12 <- sum( sex.levs.new %notin% c( "1", "2" ) ) > 0
 
   if( levs.12 ) stop( 'Error: ensure `sex.col` is a variable with levels coded as "male" or "female" or "1", "2".' )
 
+  ## --------- End Subsection --------- ##
 
-  ### numeric variable classes
 
-  ## ensure variable classes are numeric ##
+  ## (1.3) ensure variable classes are numeric  ##
 
-  # run coerce_numeric and loop through all variables required and that matched by the two input arguments
+  # condition: assign an object, `v`, with the column names depending on option for`default.names` argument
   if( default.names ) v <- c( paste0( "HQ", 1:16 ), "HQ2A", sex.col, age.col )
   if ( !default.names ) v <- c( unlist( item.names ), sex.col, age.col )
 
-  df <- coerce_numeric( d = df, vars = v ) # coerce to numeric
+  # execute: run coerce_numeric and loop through all variables required and that matched by the two input arguments
+  df <- coerce_numeric( d = df, vars = v )
+
+  ## --------- End Subsection --------- ##
+
+
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 
-  ## Make a copy of the original dataset to append at the end
+
+  ### (2.0) Make a Copy of the Input Data  ###
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
   d.copy <- df
 
-  ## (2.1) Do unit conversions ##
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  # dietary frequency column names
-  if( default.names ) c.nms <- paste0( "HQ", 1:16 )
 
+
+
+  ### (3.0) Do Unit Conversions to Daily Averages ##
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+  ## (3.1) Map responses to daily averages  ##
+
+  # condition: assign an object with the dietary column names for subsequent loop
+  if( default.names ) c.nms <- paste0( "HQ", 1:16 ) # not including milk type variable name
   if( !default.names ) c.nms <- unlist( item.names )[1:16] # not including milk type variable name
 
-  # loop through columns and convert to servings
+  # execute: loop through columns to convert
   for( i in 1:length( c.nms ) ){
 
-    cn <- c.nms[i] # column name
+    cn <- c.nms[i] # assign column name for each iteration
 
-    # mapping
+    # map subject response to daily average (from Table 2-1 in the screener documentation)
     df[[ cn ]] <- ifelse( df[[ cn ]] == 1, 0, df[[ cn ]] )
     df[[ cn ]] <- ifelse( df[[ cn ]] == 2, 0.67, df[[ cn ]] )
     df[[ cn ]] <- ifelse( df[[ cn ]] == 3, 0.214, df[[ cn ]] )
@@ -248,20 +277,21 @@ mfs_scores <- function( df,
 
   }
 
+  ## --------- End Subsection --------- ##
 
-  ## (2.1) First change milk variable to four separate milk variables (skim, 1%,  2%, and whole) ##
 
-  # check to see that all subjects who responded to milk question also responded to milk type
+  ## (3.2) Modify milk variables to four separate milk variables (skim, 1%,  2%, and whole) ##
+
+  # condition: check to see that all subjects who responded to milk question also responded to milk type
   if( default.names ) milk.miss <- sum( is.na( df$HQ2A ) & !is.na( df$HQ2 ) )
-
   if( !default.names ) milk.miss <- sum( is.na( df[[ item.names[["HQ2A"]] ]] ) & !is.na( df[[ item.names[["HQ2"]] ]] ) )
 
+  # execute: if condition is true, coerce to 1% milk and throw warning
   if ( milk.miss > 0 ) warning( "Warning: observations with missing milk type detected. Will set milk type to '1%' for these observations. If this is not desired, manually change the entries and re-run." )
 
 
   # expand the milk type columns
-
-  if( default.names ) { # if we use the default column names
+  if( default.names ) {
 
     df <- df %>% # for those that have a milk entry that is not missing, they will get "0" for all other milk types not the ones that they consume
       mutate( HQ2A = ifelse( is.na( HQ2A ) & !is.na( HQ2 ), 3, HQ2A ), # set those w/ missing milk type to 1%--see warning message above
@@ -274,7 +304,7 @@ mfs_scores <- function( df,
               milk.whole = ifelse( HQ2A == 1, HQ2, 1  ) )
   }
 
-  if( !default.names ) { # if we don't use the default column names
+  if( !default.names ) {
 
     milk.var <- item.names[["HQ2A"]]
     milk.type.used <- item.names[["HQ2"]]
@@ -293,10 +323,9 @@ mfs_scores <- function( df,
   ## --------- End Subsection --------- ##
 
 
-  ## (1.3) Rename diet variables to user-friendly names ##
+  ## (3.3) Rename diet variables to user-friendly names ##
 
   # these names also match the names on the sex/age conversion tables #
-
   if( default.names ) {
 
     df <- df %>%
@@ -339,15 +368,18 @@ mfs_scores <- function( df,
 
   }
 
+  ## --------- End Subsection --------- ##
 
 
 
-  ## (4.2) Adjust fruit/veg frequency of food intake by gender/age specific factors ##
 
-  # this generates results for 1/2 cup pyramid serving units (predfv7 predfv6) #
+  ### (4.0) Adjust Fruit/Veg Frequency Sex/Age-Specific Factors  ###
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+  ## (4.1) Sex/Age adjustment loop ##
 
   # we will use the 4th HTML table in `sysdata.rda` (i.e., tbl.4)
-
   for( i in 1:nrow( df ) ){  # loop on subject
 
     for( j in 2:length( age.lst) ){ # loop on age which determines which columns of reference table to use
@@ -379,12 +411,12 @@ mfs_scores <- function( df,
     }
   }
 
-  # end loop
+
 
   ## --------- End Subsection --------- ##
 
 
-  ## (4.3) Compute pyramid serving units variables ##
+  ## (4.2) Compute pyramid serving units variables ##
 
   df <- df %>%
     mutate( fv7 = fruit.m + vegetables.m + juice.m + potatoes.m + white.potatoes.m + salad.m + beans.m,
@@ -397,16 +429,20 @@ mfs_scores <- function( df,
             pred.fv6.ps = ifelse( get( sex.col ) == 1, 0.94077 + 0.73906*sqfv6,
                                 ifelse( get( sex.col ) == 2, 0.81626 + 0.73022*sqfv6, NA ) ) )
 
+  ## --------- End Subsection --------- ##
+
+
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 
   ### (5.0) Compute `pred.fiber` and `pred.pcf` (Age and Sex-Specific) ###
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  ## (5.1) Age-sex adjustment
+  ## (5.1) Age-sex adjustment loop ##
 
-  # it will use tables 2 (for males) and 3 (for females) to make the conversions from `df.list`
-
+  # it will use tables (tbl.2) 2 (for males) and 3 (tbl.3) (for females) to make the conversions from `sysdata.rda`
   for( i in 1:nrow( df ) ){  # loop on subject
 
     for( j in 2:length( age.lst) ){ # loop on age which determines which columns of reference table to use
@@ -450,13 +486,14 @@ mfs_scores <- function( df,
             pred.pcf = ifelse( get( sex.col ) == 1, as.numeric( tbl.6[2,2] ),
                                ifelse( get( sex.col ) == 2, as.numeric( tbl.6[2,4] ), NA ) ) )
 
+  # add regression coefficient*intake iteratively
   for( i in 1:nrow( df ) ){  # loop on subject
 
 
 
     for( g in 3:20){ # loop on all food items in inner loop
 
-      ## males
+      ## males ##
       if( df[ i, sex.col ] == 1 ){
 
         # predicted fiber
@@ -470,7 +507,7 @@ mfs_scores <- function( df,
           as.numeric( tbl.6[g,2] ) + df[ i, "pred.pcf" ]
       }
 
-      ## females
+      ## females ##
       if( df[ i, sex.col ] == 2 ){
 
         # predicted fiber
@@ -486,12 +523,20 @@ mfs_scores <- function( df,
     }
   }
 
+  ## --------- End Subsection --------- ##
 
-  ### (6.0) Adjustment of Food Items by Age/Gender Factors ###
-  ## Creates cup-equivalent pyramid serving units (`raw.pred.fv7.ce`, `raw.pred.fv6.ce`, `pred.fv7.ce`, `pred.fv6.ce`) ##
+
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  ## (6.1) Create age category variable
+
+
+
+
+  ### (6.0) Sex/Age-Adjusted Cup Equivalents of Fruit & Veg ###
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+  ## (6.1) Create age category variable ##
+
   for ( i in 1:nrow( df ) ){
 
     for ( j in 2:length( age.lst ) ){
@@ -521,19 +566,19 @@ mfs_scores <- function( df,
   sex.join.cols <- "gender"
   names( sex.join.cols ) <- sex.col # approach when using a named object inside the `by` argument of `left_join`
 
+  # subjects with anty missing values will get NA for this score
   df <- df %>%
     left_join( ., fvcupadj, by = c( sex.join.cols, "age.cat" = "AgeGrp" ) ) %>%
 
     mutate( raw.pred.fv7.ce = juice*FVCAFrtJ + fruit*FVCAFruit + potatoes*FVCAFrFry
             + white.potatoes*FVCAOthPot + beans*FVCADrBean + salad*FVCASalad
-            + vegetables*FVCAOthVeg,
+            + vegetables*FVCAOthVeg, # includes french fries
 
             raw.pred.fv6.ce = juice*FVCAFrtJ + fruit*FVCAFruit
             + white.potatoes*FVCAOthPot + beans*FVCADrBean + salad*FVCASalad
             + vegetables*FVCAOthVeg, # excludes french fries
 
-            # adjust using regression coefficients from CSFII 94-96
-
+            # adjust using sex-soecific regression coefficients from CSFII 94-96
             pred.fv7.ce = ifelse( get( sex.col ) == 1,
                                   ( 0.666228 + 0.770652*( sqrt( raw.pred.fv7.ce ) ) )^2,
                                   ifelse( get( sex.col ) == 2,
@@ -543,6 +588,7 @@ mfs_scores <- function( df,
                                   ifelse( get( sex.col ) == 2,
                                           ( 0.616033 + 0.727761*( sqrt(raw.pred.fv6.ce ) ) )^2, NA ) ) )
 
+  ## --------- End Subsection --------- ##
 
 
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -563,11 +609,14 @@ mfs_scores <- function( df,
   ## --------- End Subsection --------- ##
 
 
-  # print summary stats for the appended columns
+  ## (7.2) Print summary stats for the appended columns ##
   print( summary( df[ ,c( "pred.fiber", "pred.pcf",
                           "pred.fv7.ce", "pred.fv6.ce",
                           "raw.pred.fv7.ce", "raw.pred.fv6.ce",
                           "pred.fv7.ps", "pred.fv6.ps" ) ] ) )
+
+  ## --------- End Subsection --------- ##
+
   return( d.out )
 
 }
