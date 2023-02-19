@@ -10,7 +10,7 @@
 #' @details
 #' Implements the scoring procedures for data obtained from the National Cancer Institute (NCI)
 #' Multifactor Screener from the OPEN Study. Computes % energy from fat,
-#' fiber, and intake equivalents of fruits and vegetables. For detailed
+#' fiber, and intake equivalents of fruits and vegetables (F & V). For a detailed
 #' description of the screener, please refer to the NCI's documentation (see below).
 #' .
 #'
@@ -45,23 +45,26 @@
 #' @param sex.col A character vector specifying the name of the sex column in the \code{df}. Ensure levels of this variable are coded numerically ("1" = male, "2" = female) or as "male" "female" as computation of the scores is contingent on this variable. Defaulted to "SEX".
 #'
 #' @return Object of class \code{data.frame} containing the original user-supplied data with the
-#' age & sex-adjusted dietary screener scores appended. Column names and descripions are as follows:
+#' age & sex-adjusted dietary screener scores appended. Column names and descriptions are as follows:
 #'
 #' \tabular{c | c}{
-#' `pred.fiber` \tab Predicted predicted fiber intake (cube rooted; cube to get back estimated in g) \cr
+#' `pred.fiber` \tab Predicted predicted fiber intake (cube rooted; cube to get back estimate in g) \cr
 #' `pred.pcf` \tab Predicted percentage of calories from fat (%) \cr
-#' `predfv7ps` \tab Predicted F & V pyramid serving units, including french fries \cr
-#' `predfv6ps` \tab Predicted F & V pyramid serving units, excluding french fries \cr
+#' `pred.fv7.ps` \tab Predicted F & V pyramid serving units, including french fries \cr
+#' `pred.fv6.ps` \tab Predicted F & V pyramid serving units, excluding french fries \cr
 #' `raw.pred.fv7.ce` \tab Predicted F & V cup equivalents, including french fries, not adjusted for age and sex \cr
 #' `raw.pred.fv6.ce` \tab Predicted F & V cup equivalents, excluding french fries, not adjusted for age and sex \cr
 #' `pred.fv7.ce` \tab Predicted F & V cup equivalents, including french fries, adjusted for age and sex \cr
 #' `pred.fv6.ce` \tab Predicted F & V cup equivalents, excluding french fries, adjusted for age and sex \cr
 #' }
 #'
+#' @import dplyr
+#' @import stringr
+#' @import magrittr
+#'
+#'
 #' @export
 
-
-source( "R/utils.R" )
 
 mfs_scores <- function( df,
                         default.names = TRUE,
@@ -79,13 +82,19 @@ mfs_scores <- function( df,
 
   ### checks
 
+  ## class checks
+  if ( class( item.names ) != "list" ) stop( "Error: `item.names` must be a list" )
+  if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) > 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
+  if ( class( age.col ) != "character" | class( sex.col ) != "character" ) stop( "Error: `age.col` and `sex.col` must be objects of class `character`." )
+
   ## diet column names checks
   if ( !default.names & is.null( item.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( sum( c( paste0( "HQ", 1:16 ), "HQ2A" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
+  if ( sum( colnames( df ) %notin% c( item.names, sex.col, age.col  ) ) > 0 ) stop( "Error: column names of `df` not detected in `item.names`. See default values for `item.names` in the documentation for an example." )
 
-  ## sex column name checks
+    ## sex column name checks
   if ( is.null( df[[sex.col]]) ) stop( "Error: input to `sex.col` not detected in the provided dataset." )
   if ( is.null( df[[age.col]]) ) stop( "Error: input to `age.col` not detected in the provided dataset." )
 
@@ -106,7 +115,7 @@ mfs_scores <- function( df,
 
   }
 
-  # now, ensure it's 1's and 2'sl if not, give error
+  # now, ensure it's 1's and 2's if not, give error
   sex.levs.new <- levels( as.factor( df[[sex.col]] ) )
   levs.12 <- sum( sex.levs.new %notin% c( "1", "2" ) ) > 0
 
@@ -184,7 +193,7 @@ mfs_scores <- function( df,
     milk.type.used <- item.names[["HQ2"]]
 
     df <- df %>% # for those that have a milk entry that is not missing, they will get "0" for all other milk types not the ones that they consume
-      mutate( HQ2A = ifelse( is.na( HQ2A ) & !is.na( HQ2 ), 3, HQ2A ), # set those w/ missing milk type to 1%--see warning message above
+      mutate( !!milk.type.used := ifelse( is.na( milk.type.used ) & !is.na( milk.var ), 3, milk.type.used ), # set those w/ missing milk type to 1%--see warning message above
 
               # now create the milk-specific columns (4 columns total)
               milk.skim = ifelse( milk.var == 5, milk.var, 1 ), # if a subject respond in the affirmative for a given milk type, they get their value of `HQ2` in the milk type column, otherwise they get a "1" for "never"
@@ -296,9 +305,9 @@ mfs_scores <- function( df,
             sqfv7 = sqrt( fv7 ),
             sqfv6 = sqrt( fv6 ),
             ## create predicted outcomes ##
-            predfv7ps = ifelse( SEX == 1, 0.90679 + 0.75856*sqfv7,
+            pred.fv7.ps = ifelse( SEX == 1, 0.90679 + 0.75856*sqfv7,
                                 ifelse( SEX == 2, 0.81956 + 0.73086*sqfv7, NA ) ),
-            predfv6ps = ifelse( SEX == 1, 0.94077 + 0.73906*sqfv6,
+            pred.fv6.ps = ifelse( SEX == 1, 0.94077 + 0.73906*sqfv6,
                                 ifelse( SEX == 2, 0.81626 + 0.73022*sqfv6, NA ) ) )
 
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -462,7 +471,7 @@ mfs_scores <- function( df,
                       df[ ,c( "pred.fiber", "pred.pcf",
                               "pred.fv7.ce", "pred.fv6.ce",
                               "raw.pred.fv7.ce", "raw.pred.fv6.ce",
-                              "predfv7ps", "predfv6ps" ) ] ) %>% data.frame()
+                              "pred.fv7.ps", "pred.fv6.ps" ) ] ) %>% data.frame()
 
   ## --------- End Subsection --------- ##
 
@@ -471,7 +480,7 @@ mfs_scores <- function( df,
   print( summary( df[ ,c( "pred.fiber", "pred.pcf",
                           "pred.fv7.ce", "pred.fv6.ce",
                           "raw.pred.fv7.ce", "raw.pred.fv6.ce",
-                          "predfv7ps", "predfv6ps" ) ] ) )
+                          "pred.fv7.ps", "pred.fv6.ps" ) ] ) )
   return( d.out )
 
 }
