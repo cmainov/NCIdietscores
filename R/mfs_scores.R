@@ -165,6 +165,9 @@ mfs_scores <- function( df,
                         age.col = "AGE",
                         sex.col = "SEX" ) {
 
+
+
+
   ### (1.0) Function Checks ###
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -182,7 +185,7 @@ mfs_scores <- function( df,
   if ( sum( c( paste0( "HQ", 1:16 ), "HQ2A" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
 
   if ( !default.names){
-  if ( sum( colnames( df ) %notin% c( item.names, sex.col, age.col  ) ) > 0 ) stop( "Error: column names of `df` not detected in `item.names`, `age.col`, or `sex.col`. See default values for `item.names` in the documentation for an example and check entries for `age.col` and `sex.col`." )
+  if ( sum( c( item.names, sex.col, age.col  ) %notin% colnames( df )  ) > 0 ) stop( "Error: column names of `df` not detected in `item.names`, `age.col`, or `sex.col`. See default values for `item.names` in the documentation for an example and check entries for `age.col` and `sex.col`." )
 }
 
   # sex column name checks
@@ -240,7 +243,7 @@ mfs_scores <- function( df,
 
 
 
-  ### (2.0) Make a Copy of the Input Data  ###
+  ### (2.0) Make a Copy of the Input Data for Final Merge  ###
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
   d.copy <- df
