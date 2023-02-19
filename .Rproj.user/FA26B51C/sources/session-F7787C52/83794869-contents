@@ -30,15 +30,19 @@ mfs_scores <- function( df,
                         age.col = "AGE",
                         sex.col = "SEX" ) {
 
-  ## checks
+  ### checks
 
-  # diet column names checks
+  ## diet column names checks
   if ( !default.names & is.null( item.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( sum( c( paste0( "HQ", 1:16 ), "HQ2A" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
 
-  # age and sex column name checks
+  ## sex column name checks
+  if ( is.null( df[[sex.col]]) ) stop( "Error: input to `sex.col` not detected in the provided dataset." )
+  if ( is.null( df[[age.col]]) ) stop( "Error: input to `age.col` not detected in the provided dataset." )
+
+  # check level-coding for sex column
   sex.levs <- levels( as.factor( df[[sex.col]] ) )
 
   levs.12 <- sum( sex.levs %notin% c( "1", "2" ) ) > 0
@@ -56,9 +60,22 @@ mfs_scores <- function( df,
   }
 
   # now, ensure it's 1's and 2'sl if not, give error
-  levs.12 <- sum( sex.levs %notin% c( "1", "2" ) ) > 0
+  sex.levs.new <- levels( as.factor( df[[sex.col]] ) )
+  levs.12 <- sum( sex.levs.new %notin% c( "1", "2" ) ) > 0
 
   if( levs.12 ) stop( 'Error: ensure `sex.col` is a variable with levels coded as "male" or "female" or "1", "2".' )
+
+
+  ### numeric variable classes
+
+  ## ensure variable classes are numeric ##
+
+  # run coerce_numeric and loop through all variables required and that matched by the two input arguments
+  if( default.names ) v <- c( paste0( "HQ", 1:16 ), "HQ2A", sex.col, age.col )
+  if ( !default.names ) v <- c( unlist( item.names ), sex.col, age.col )
+
+  df <- coerce_numeric( d = df, vars = v ) # coerce to numeric
+
 
 
   ## Make a copy of the original dataset to append at the end
