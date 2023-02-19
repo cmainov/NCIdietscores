@@ -4,7 +4,7 @@
 
 #' @title Diet Quality Scores for the Multifactor Screener in OPEN
 #'
-#' @description Calculate % Energy from fat, fiber, and fruit and vegetable MyPyramid equivalents
+#' @description Calculate age & sex-adjusted % Energy from fat, fiber, and fruit and vegetable MyPyramid equivalents
 #' on data collected with the National Cancer Institute's Multifactor Screener from the OPEN Study.
 #'
 #' @details
@@ -15,13 +15,17 @@
 #' .
 #'
 #' @seealso
-#' \href{https://epi.grants.cancer.gov/diet/screeners/OPEN.pdf}{Screener Documentation}
-#' \href{https://epi.grants.cancer.gov/past-initiatives/open/multifactor/open_multifactor_datadic.pdf}{Data Dictionary}
-#' \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/multifactor-screener-in-open-self-report-version.pdf}{The Screener}
+#' \itemize{
+#' \item \href{https://epi.grants.cancer.gov/diet/screeners/OPEN.pdf}{Screener Documentation}
+#' \item \href{https://epi.grants.cancer.gov/past-initiatives/open/multifactor/open_multifactor_datadic.pdf}{Data Dictionary}
+#' \item \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/multifactor-screener-in-open-self-report-version.pdf}{The Screener}
+#' \item \href{https://epi.grants.cancer.gov/diet/screeners/files.html#open}{Original SAS Code from the NCI}
+#' }
 #'
 #' @usage mfs_scores( df,
 #' default.names = TRUE,
-#' item.names = list( HQ1 = "HQ1", HQ2 = "HQ2",
+#' item.names = list(
+#'                    HQ1 = "HQ1", HQ2 = "HQ2",
 #'                    HQ3 = "HQ3", HQ4 = "HQ4",
 #'                    HQ5 = "HQ5", HQ6 = "HQ6",
 #'                    HQ7 = "HQ7", HQ8 = "HQ8",
@@ -29,7 +33,8 @@
 #'                    HQ11 = "HQ11", HQ12 = "HQ12",
 #'                    HQ13 = "HQ13", HQ14 = "HQ14",
 #'                    HQ15 = "HQ15", HQ16 = "HQ16",
-#'                    HQ2A = "HQ2A" ),
+#'                    HQ2A = "HQ2A"
+#'                    ),
 #' age.col = "AGE",
 #' sex.col = "SEX" )
 #'
@@ -40,7 +45,18 @@
 #' @param sex.col A character vector specifying the name of the sex column in the \code{df}. Ensure levels of this variable are coded numerically ("1" = male, "2" = female) or as "male" "female" as computation of the scores is contingent on this variable. Defaulted to "SEX".
 #'
 #' @return Object of class \code{data.frame} containing the original user-supplied data with the
-#' dietary screener scores appended.
+#' age & sex-adjusted dietary screener scores appended. Column names and descripions are as follows:
+#'
+#' \tabular{c | c}{
+#' `pred.fiber` \tab Predicted predicted fiber intake (cube rooted; cube to get back estimated in g) \cr
+#' `pred.pcf` \tab Predicted percentage of calories from fat (%) \cr
+#' `predfv7ps` \tab Predicted F & V pyramid serving units, including french fries \cr
+#' `predfv6ps` \tab Predicted F & V pyramid serving units, excluding french fries \cr
+#' `raw.pred.fv7.ce` \tab Predicted F & V cup equivalents, including french fries, not adjusted for age and sex \cr
+#' `raw.pred.fv6.ce` \tab Predicted F & V cup equivalents, excluding french fries, not adjusted for age and sex \cr
+#' `pred.fv7.ce` \tab Predicted F & V cup equivalents, including french fries, adjusted for age and sex \cr
+#' `pred.fv6.ce` \tab Predicted F & V cup equivalents, excluding french fries, adjusted for age and sex \cr
+#' }
 #'
 #' @export
 
