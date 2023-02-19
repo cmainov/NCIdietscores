@@ -18,7 +18,7 @@ source( "R/utils.R" )
 
 mfs_scores <- function( df,
                         default.names = TRUE,
-                        col.names = list( HQ1 = "HQ1", HQ2 = "HQ2",
+                        item.names = list( HQ1 = "HQ1", HQ2 = "HQ2",
                                               HQ3 = "HQ3", HQ4 = "HQ4",
                                               HQ5 = "HQ5", HQ6 = "HQ6",
                                               HQ7 = "HQ7", HQ8 = "HQ8",
@@ -26,15 +26,17 @@ mfs_scores <- function( df,
                                               HQ11 = "HQ11", HQ12 = "HQ12",
                                               HQ13 = "HQ13", HQ14 = "HQ14",
                                               HQ15 = "HQ15", HQ16 = "HQ16",
-                                              HQ2A = "HQ2A" ) ) {
+                                              HQ2A = "HQ2A" ),
+                        age.col = "AGE",
+                        sex.col = "SEX" ) {
 
   ## checks
 
   # diet column names checks
-  if ( !default.names & is.null( col.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
-  if ( ( !default.names ) & length( col.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
-  if ( ( !default.names ) & length( col.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
-  if ( sum( c( paste0( "HQ", 1:16 ), "HQ2A" ) %notin% names( col.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `col.names` in the documentation for an example." )
+  if ( !default.names & is.null( item.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
+  if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
+  if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
+  if ( sum( c( paste0( "HQ", 1:16 ), "HQ2A" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
 
   # age and sex column name checks
 
@@ -47,7 +49,7 @@ mfs_scores <- function( df,
   # dietary frequency column names
   if( default.names ) c.nms <- paste0( "HQ", 1:16 )
 
-  if( !default.names ) c.nms <- unlist( col.names )[1:16] # not including milk type variable name
+  if( !default.names ) c.nms <- unlist( item.names )[1:16] # not including milk type variable name
 
   # loop through columns and convert to servings
   for( i in 1:length( c.nms ) ){
@@ -72,7 +74,7 @@ mfs_scores <- function( df,
   # check to see that all subjects who responded to milk question also responded to milk type
   if( default.names ) milk.miss <- sum( is.na( df$HQ2A ) & !is.na( df$HQ2 ) )
 
-  if( !default.names ) milk.miss <- sum( is.na( df[[ col.names[["HQ2A"]] ]] ) & !is.na( df[[ col.names[["HQ2"]] ]] ) )
+  if( !default.names ) milk.miss <- sum( is.na( df[[ item.names[["HQ2A"]] ]] ) & !is.na( df[[ item.names[["HQ2"]] ]] ) )
 
   if ( milk.miss > 0 ) warning( "Warning: observations with missing milk type detected. Will set milk type to '1%' for these observations. If this is not desired, manually change the entries and re-run." )
 
@@ -94,8 +96,8 @@ mfs_scores <- function( df,
 
   if( !default.names ) { # if we don't use the default column names
 
-    milk.var <- col.names[["HQ2A"]]
-    milk.type.used <- col.names[["HQ2"]]
+    milk.var <- item.names[["HQ2A"]]
+    milk.type.used <- item.names[["HQ2"]]
 
     df <- df %>% # for those that have a milk entry that is not missing, they will get "0" for all other milk types not the ones that they consume
       mutate( HQ2A = ifelse( is.na( HQ2A ) & !is.na( HQ2 ), 3, HQ2A ), # set those w/ missing milk type to 1%--see warning message above
@@ -139,21 +141,21 @@ mfs_scores <- function( df,
   if( !default.names ) {
 
     df <- df %>%
-      rename( cold.cereals = col.names[["HQ1"]],
-              bacon.sausage = col.names[["HQ3"]],
-              hot.dogs = col.names[["HQ4"]],
-              bread = col.names[["HQ5"]],
-              juice = col.names[["HQ6"]],
-              fruit = col.names[["HQ7"]],
-              regular.fat = col.names[["HQ8"]],
-              salad = col.names[["HQ9"]],
-              potatoes = col.names[["HQ10"]],
-              white.potatoes = col.names[["HQ11"]],
-              beans = col.names[["HQ12"]],
-              vegetables = col.names[["HQ13"]],
-              pasta = col.names[["HQ14"]],
-              nuts = col.names[["HQ15"]],
-              chips = col.names[["HQ16"]] )
+      rename( cold.cereals = item.names[["HQ1"]],
+              bacon.sausage = item.names[["HQ3"]],
+              hot.dogs = item.names[["HQ4"]],
+              bread = item.names[["HQ5"]],
+              juice = item.names[["HQ6"]],
+              fruit = item.names[["HQ7"]],
+              regular.fat = item.names[["HQ8"]],
+              salad = item.names[["HQ9"]],
+              potatoes = item.names[["HQ10"]],
+              white.potatoes = item.names[["HQ11"]],
+              beans = item.names[["HQ12"]],
+              vegetables = item.names[["HQ13"]],
+              pasta = item.names[["HQ14"]],
+              nuts = item.names[["HQ15"]],
+              chips = item.names[["HQ16"]] )
 
   }
 
@@ -173,7 +175,7 @@ mfs_scores <- function( df,
       ## inner loops will be determined based on which rows to use from the table
 
       # males inner loop
-      if( df[ i, "AGE" ] %in% age.lst[[j]] & df[ i, "SEX" ] == 1 ){
+      if( df[ i, age.col ] %in% age.lst[[j]] & df[ i, sex.col ] == 1 ){
 
         for( g in 3:9){
 
@@ -185,7 +187,7 @@ mfs_scores <- function( df,
       }
 
       # females inner loop
-      if( df[ i, "AGE" ] %in% age.lst[[j]] & df[ i, "SEX" ] == 2 ){
+      if( df[ i, age.col ] %in% age.lst[[j]] & df[ i, sex.col ] == 2 ){
 
         for( g in 11:17){
 
@@ -232,7 +234,7 @@ mfs_scores <- function( df,
       ## inner loops will be determined based on which rows to use from the table
 
       # males inner loop
-      if( df[ i, "AGE" ] %in% age.lst[[j]] & df[ i, "SEX" ] == 1 ){
+      if( df[ i, age.col ] %in% age.lst[[j]] & df[ i, sex.col ] == 1 ){
 
         for( g in 3:20){ # loop on all food items this time
           df[ i, paste0( tbl.2$`Food Group`[g],"_a" ) ] <-
@@ -243,7 +245,7 @@ mfs_scores <- function( df,
       }
 
       # females inner loop
-      if( df[ i, "AGE" ] %in% age.lst[[j]] & df[ i, "SEX" ] == 2 ){
+      if( df[ i, age.col ] %in% age.lst[[j]] & df[ i, sex.col ] == 2 ){
 
         for( g in 3:20){
 
@@ -275,7 +277,7 @@ mfs_scores <- function( df,
     for( g in 3:20){ # loop on all food items this time
 
       ## males
-      if( df[ i, "SEX" ] == 1 ){
+      if( df[ i, sex.col ] == 1 ){
 
         # predicted fiber
         df[ i, "pred.fiber" ] <-
@@ -289,7 +291,7 @@ mfs_scores <- function( df,
       }
 
       ## females
-      if( df[ i, "SEX" ] == 2 ){
+      if( df[ i, sex.col ] == 2 ){
 
         # predicted fiber
         df[ i, "pred.fiber" ] <-
@@ -314,9 +316,9 @@ mfs_scores <- function( df,
 
     for ( j in 2:length( age.lst ) ){
 
-      if( df[i, "AGE"] %in% age.lst[[j]] ){
+      if( df[i, age.col] %in% age.lst[[j]] ){
 
-        df[i, "age_cat"] <- j-1
+        df[i, "age.cat"] <- j-1
 
       }
 
@@ -335,9 +337,12 @@ mfs_scores <- function( df,
 
   # this adjustment uses table 8, `fvcupadj` (i.e., `tbl.8`)
 
+  # specify join columns for age and gender
+  sex.join.cols <- "gender"
+  names( sex.join.cols ) <- sex.col # approach when using a named object inside the `by` argument of `left_join`
 
   df <- df %>%
-    left_join( ., fvcupadj, by = c( "SEX" = "gender", "age_cat" = "AgeGrp" ) ) %>%
+    left_join( ., fvcupadj, by = c( sex.join.cols, "age.cat" = "AgeGrp" ) ) %>%
 
     mutate( raw.pred.fv7.ce = juice*FVCAFrtJ + fruit*FVCAFruit + potatoes*FVCAFrFry
             + white.potatoes*FVCAOthPot + beans*FVCADrBean + salad*FVCASalad
@@ -387,4 +392,4 @@ mfs_scores <- function( df,
 
 }
 
-mfs_scores(diet.data, default.names = F )
+mfs_scores(diet.data, default.names = T )
