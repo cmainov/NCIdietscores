@@ -1,2 +1,0 @@
-diet.data%>%
-  mutate( milk.skim = ifelse( "HQ2A" == 5, "HQ2", 1 ) )

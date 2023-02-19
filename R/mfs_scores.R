@@ -1,17 +1,48 @@
-#' # Hello, world!
-#
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
-#
-# You can learn more about package authoring with RStudio at:
-#
-#   http://r-pkgs.had.co.nz/
-#
-# Some useful keyboard shortcuts for package authoring:
-#
-#   Install Package:           'Cmd + Shift + B'
-#   Check Package:             'Cmd + Shift + E'
-#   Test Package:              'Cmd + Shift + T'
+###---------------------------------------------------------------
+###   DIET QUALITY SCORES FOR MULTIFACTOR SCREENER USED IN OPEN
+###---------------------------------------------------------------
+
+#' @title Diet Quality Scores for the Multifactor Screener in OPEN
+#'
+#' @description Calculate % Energy from fat, fiber, and fruit and vegetable MyPyramid equivalents
+#' on data collected with the National Cancer Institute's Multifactor Screener from the OPEN Study.
+#'
+#' @details
+#' Implements the scoring procedures for data obtained from the National Cancer Institute (NCI)
+#' Multifactor Screener from the OPEN Study. Computes % energy from fat,
+#' fiber, and intake equivalents of fruits and vegetables. For detailed
+#' description of the screener, please refer to the NCI's documentation (see below).
+#' .
+#'
+#' @seealso
+#' \href{https://epi.grants.cancer.gov/diet/screeners/OPEN.pdf}{Screener Documentation}
+#' \href{https://epi.grants.cancer.gov/past-initiatives/open/multifactor/open_multifactor_datadic.pdf}{Data Dictionary}
+#' \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/multifactor-screener-in-open-self-report-version.pdf}{The Screener}
+#'
+#' @usage mfs_scores( df,
+#' default.names = TRUE,
+#' item.names = list( HQ1 = "HQ1", HQ2 = "HQ2",
+#'                    HQ3 = "HQ3", HQ4 = "HQ4",
+#'                    HQ5 = "HQ5", HQ6 = "HQ6",
+#'                    HQ7 = "HQ7", HQ8 = "HQ8",
+#'                    HQ9 = "HQ9", HQ10 = "HQ10",
+#'                    HQ11 = "HQ11", HQ12 = "HQ12",
+#'                    HQ13 = "HQ13", HQ14 = "HQ14",
+#'                    HQ15 = "HQ15", HQ16 = "HQ16",
+#'                    HQ2A = "HQ2A" ),
+#' age.col = "AGE",
+#' sex.col = "SEX" )
+#'
+#' @param df A \code{data.frame} or \code{tibble} containing the columns (dietary items, sex, and age) for computing the scores.
+#' @param default.names A logical. Defaulted to \code{TRUE} and establishes whether default survey item names (see data dictionary above) are used. If user-specified names are used, set to \code{FALSE} and specify the column names in \code{item.names}.
+#' @param item.names A named list containing the user-specified column names (character vectors) for the survey items in the \code{df}. Ignored if \code{default.names} is \code{TRUE}. Must follow format used in \code{usage}.
+#' @param age.col A character vector specifying the name of the age column in the \code{df}. Defaulted to "AGE".
+#' @param sex.col A character vector specifying the name of the sex column in the \code{df}. Ensure levels of this variable are coded numerically ("1" = male, "2" = female) or as "male" "female" as computation of the scores is contingent on this variable. Defaulted to "SEX".
+#'
+#' @return Object of class \code{data.frame} containing the original user-supplied data with the
+#' dietary screener scores appended.
+#'
+#' @export
 
 
 source( "R/utils.R" )
