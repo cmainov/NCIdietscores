@@ -36,13 +36,13 @@
 #'                    HQ2A = "HQ2A"
 #'                    ),
 #' age.col = "AGE",
-#' sex.col = "SEX" )
+#' sex.col = "get( sex.col )" )
 #'
 #' @param df A \code{data.frame} or \code{tibble} containing the columns (dietary items, sex, and age) for computing the scores.
 #' @param default.names A logical. Defaulted to \code{TRUE} and establishes whether default survey item names (see data dictionary above) are used. If user-specified names are used, set to \code{FALSE} and specify the column names in \code{item.names}.
 #' @param item.names A named list containing the user-specified column names (character vectors) for the survey items in the \code{df}. Ignored if \code{default.names} is \code{TRUE}. Must follow format used in \code{usage}.
 #' @param age.col A character vector specifying the name of the age column in the \code{df}. Defaulted to "AGE".
-#' @param sex.col A character vector specifying the name of the sex column in the \code{df}. Ensure levels of this variable are coded numerically ("1" = male, "2" = female) or as "male" "female" as computation of the scores is contingent on this variable. Defaulted to "SEX".
+#' @param sex.col A character vector specifying the name of the sex column in the \code{df}. Ensure levels of this variable are coded numerically ("1" = male, "2" = female) or as "male" "female" as computation of the scores is contingent on this variable. Defaulted to "get( sex.col )".
 #'
 #' @return Object of class \code{data.frame} containing the original user-supplied data with the
 #' age & sex-adjusted dietary screener scores appended. Column names and descriptions are as follows:
@@ -92,8 +92,10 @@ mfs_scores <- function( df,
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( sum( c( paste0( "HQ", 1:16 ), "HQ2A" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
-  if ( sum( colnames( df ) %notin% c( item.names, sex.col, age.col  ) ) > 0 ) stop( "Error: column names of `df` not detected in `item.names`. See default values for `item.names` in the documentation for an example." )
 
+  if ( !default.names){
+  if ( sum( colnames( df ) %notin% c( item.names, sex.col, age.col  ) ) > 0 ) stop( "Error: column names of `df` not detected in `item.names`, `age.col`, or `sex.col`. See default values for `item.names` in the documentation for an example and check entries for `age.col` and `sex.col`." )
+}
     ## sex column name checks
   if ( is.null( df[[sex.col]]) ) stop( "Error: input to `sex.col` not detected in the provided dataset." )
   if ( is.null( df[[age.col]]) ) stop( "Error: input to `age.col` not detected in the provided dataset." )
@@ -297,7 +299,7 @@ mfs_scores <- function( df,
   ## --------- End Subsection --------- ##
 
 
-  ## (4.3) Compute 1/2 cup pyramid serving units variables ##
+  ## (4.3) Compute pyramid serving units variables ##
 
   df <- df %>%
     mutate( fv7 = fruit.m + vegetables.m + juice.m + potatoes.m + white.potatoes.m + salad.m + beans.m,
@@ -305,10 +307,10 @@ mfs_scores <- function( df,
             sqfv7 = sqrt( fv7 ),
             sqfv6 = sqrt( fv6 ),
             ## create predicted outcomes ##
-            pred.fv7.ps = ifelse( SEX == 1, 0.90679 + 0.75856*sqfv7,
-                                ifelse( SEX == 2, 0.81956 + 0.73086*sqfv7, NA ) ),
-            pred.fv6.ps = ifelse( SEX == 1, 0.94077 + 0.73906*sqfv6,
-                                ifelse( SEX == 2, 0.81626 + 0.73022*sqfv6, NA ) ) )
+            pred.fv7.ps = ifelse( get( sex.col ) == 1, 0.90679 + 0.75856*sqfv7,
+                                ifelse( get( sex.col ) == 2, 0.81956 + 0.73086*sqfv7, NA ) ),
+            pred.fv6.ps = ifelse( get( sex.col ) == 1, 0.94077 + 0.73906*sqfv6,
+                                ifelse( get( sex.col ) == 2, 0.81626 + 0.73022*sqfv6, NA ) ) )
 
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -329,7 +331,7 @@ mfs_scores <- function( df,
       # males inner loop
       if( df[ i, age.col ] %in% age.lst[[j]] & df[ i, sex.col ] == 1 ){
 
-        for( g in 3:20){ # loop on all food items this time
+        for( g in 3:20){ # loop on all food items in inner loop
           df[ i, paste0( tbl.2$`Food Group`[g],"_a" ) ] <-
             df[ i, which(colnames( df ) == tbl.2$`Food Group`[g]) ]*as.numeric( tbl.2[g,j] )
 
@@ -340,7 +342,7 @@ mfs_scores <- function( df,
       # females inner loop
       if( df[ i, age.col ] %in% age.lst[[j]] & df[ i, sex.col ] == 2 ){
 
-        for( g in 3:20){
+        for( g in 3:20){ # loop on all food items in inner loop
 
           df[ i, paste0( tbl.3$`Food Group`[g],"_a" ) ] <-
             df[ i, which(colnames( df ) == tbl.3$`Food Group`[g]) ]*as.numeric( tbl.3[g,j] )
@@ -358,16 +360,16 @@ mfs_scores <- function( df,
   df <- df %>% # copy data before looping and alternating
 
     # initialize variables with intercept values
-    mutate( pred.fiber = ifelse( SEX == 1, as.numeric( tbl.6[2,3] ),
-                                 ifelse( SEX == 2, as.numeric( tbl.6[2,5] ), NA ) ),
-            pred.pcf = ifelse( SEX == 1, as.numeric( tbl.6[2,2] ),
-                               ifelse( SEX == 2, as.numeric( tbl.6[2,4] ), NA ) ) )
+    mutate( pred.fiber = ifelse( get( sex.col ) == 1, as.numeric( tbl.6[2,3] ),
+                                 ifelse( get( sex.col ) == 2, as.numeric( tbl.6[2,5] ), NA ) ),
+            pred.pcf = ifelse( get( sex.col ) == 1, as.numeric( tbl.6[2,2] ),
+                               ifelse( get( sex.col ) == 2, as.numeric( tbl.6[2,4] ), NA ) ) )
 
   for( i in 1:nrow( df ) ){  # loop on subject
 
 
 
-    for( g in 3:20){ # loop on all food items this time
+    for( g in 3:20){ # loop on all food items in inner loop
 
       ## males
       if( df[ i, sex.col ] == 1 ){
@@ -409,9 +411,9 @@ mfs_scores <- function( df,
 
     for ( j in 2:length( age.lst ) ){
 
-      if( df[i, age.col] %in% age.lst[[j]] ){
+      if( df[ i, age.col ] %in% age.lst[[j]] ){
 
-        df[i, "age.cat"] <- j-1
+        df[ i, "age.cat" ] <- j - 1
 
       }
 
@@ -447,13 +449,13 @@ mfs_scores <- function( df,
 
             # adjust using regression coefficients from CSFII 94-96
 
-            pred.fv7.ce = ifelse( SEX == 1,
+            pred.fv7.ce = ifelse( get( sex.col ) == 1,
                                   ( 0.666228 + 0.770652*( sqrt( raw.pred.fv7.ce ) ) )^2,
-                                  ifelse( SEX == 2,
+                                  ifelse( get( sex.col ) == 2,
                                           ( 0.611844 + 0.733890*( sqrt(raw.pred.fv7.ce) ) )^2, NA ) ),
-            pred.fv6.ce = ifelse( SEX == 1,
+            pred.fv6.ce = ifelse( get( sex.col ) == 1,
                                   ( 0.706696 + 0.742255*( sqrt( raw.pred.fv6.ce ) ) )^2,
-                                  ifelse( SEX == 2,
+                                  ifelse( get( sex.col ) == 2,
                                           ( 0.616033 + 0.727761*( sqrt(raw.pred.fv6.ce ) ) )^2, NA ) ) )
 
 
@@ -485,4 +487,3 @@ mfs_scores <- function( df,
 
 }
 
-mfs_scores(diet.data, default.names = F )
