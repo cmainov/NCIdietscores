@@ -39,6 +39,26 @@ mfs_scores <- function( df,
   if ( sum( c( paste0( "HQ", 1:16 ), "HQ2A" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
 
   # age and sex column name checks
+  sex.levs <- levels( as.factor( df[[sex.col]] ) )
+
+  levs.12 <- sum( sex.levs %notin% c( "1", "2" ) ) > 0
+
+  # check "male"/"female"
+  levs.mf <- sum(str_detect(  sex.levs, regex( "male", ignore_case = T ) ) ) +
+    sum( str_detect( sex.levs, regex( "female", ignore_case = T ) ) )
+
+  # if there is "male" or "female" detected in the dataset, convert to numeric
+  if ( levs.mf > 0 ){
+
+    df[[sex.col]] <- ifelse( str_detect(  df[[sex.col]], regex( "male", ignore_case = T ) ), 1, df[[sex.col]] )
+    df[[sex.col]] <- ifelse( str_detect(  df[[sex.col]], regex( "female", ignore_case = T ) ), 1, df[[sex.col]] )
+
+  }
+
+  # now, ensure it's 1's and 2'sl if not, give error
+  levs.12 <- sum( sex.levs %notin% c( "1", "2" ) ) > 0
+
+  if( levs.12 ) stop( 'Error: ensure `sex.col` is a variable with levels coded as "male" or "female" or "1", "2".' )
 
 
   ## Make a copy of the original dataset to append at the end
@@ -392,4 +412,4 @@ mfs_scores <- function( df,
 
 }
 
-mfs_scores(diet.data, default.names = T )
+mfs_scores(diet.data, default.names = F )
