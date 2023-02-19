@@ -3,7 +3,7 @@
     "path": "~/Library/CloudStorage/Box-Box/Arthur-Lab/r-packages/NCIdietscores/R/mfs_scores.R",
     "project_path": "R/mfs_scores.R",
     "type": "r_source",
-    "hash": "0",
+    "hash": "2849581341",
     "contents": "",
     "dirty": false,
     "created": 1676759531239.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "316,0",
-        "scrollLine": "293"
+        "cursorPosition": "63,55",
+        "scrollLine": "49"
     },
     "folds": "",
-    "lastKnownWriteTime": 1676769956,
+    "lastKnownWriteTime": 1676780899,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1676769956393,
+    "last_content_update": 1676780899188,
     "read_only": false,
     "read_only_alternatives": []
 }

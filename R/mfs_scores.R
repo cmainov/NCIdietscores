@@ -61,8 +61,7 @@ mfs_scores <- function( df ) {
             milk.skim = ifelse( HQ2A == 4, HQ2, 1 ),
             milk.one = ifelse( HQ2A == 3, HQ2, 1  ),
             milk.two = ifelse( HQ2A == 2, HQ2, 1  ),
-            milk.whole = ifelse( HQ2A == 1, HQ2, 1  ) ) %>%
-    select( -HQ2A, -HQ2 ) # original milk columns no longer necessary
+            milk.whole = ifelse( HQ2A == 1, HQ2, 1  ) )
 
   ## --------- End Subsection --------- ##
 
@@ -297,7 +296,7 @@ mfs_scores <- function( df ) {
 
 
 
-  ### (7.0) Return Final Dataset and Save ###
+  ### (7.0) Return Final Dataset  ###
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
   ## (7.1) Columns to return in final dataset ##
@@ -310,8 +309,12 @@ mfs_scores <- function( df ) {
   ## --------- End Subsection --------- ##
 
 
+  # print summary stats for the appended columns
+  print( summary( df[ ,c( "pred.fiber", "pred.pcf",
+                          "pred.fv7.ce", "pred.fv6.ce",
+                          "raw.pred.fv7.ce", "raw.pred.fv6.ce",
+                          "predfv7ps", "predfv6ps" ) ] ) )
   return( d.out )
 
 }
 
-mfs_scores( df = diet.data)
