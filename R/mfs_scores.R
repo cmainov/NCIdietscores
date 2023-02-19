@@ -200,18 +200,15 @@ mfs_scores <- function( df,
   # levels of sex column
   sex.levs <- levels( as.factor( df[[sex.col]] ) )
 
-  # condition: check if numeric
-  levs.12 <- sum( sex.levs %notin% c( "1", "2" ) ) > 0
-
-  # condition: check if "male"/"female" character
+  # condition: check if "male"/"female" character/not numeric
   levs.mf <- sum(str_detect(  sex.levs, regex( "male", ignore_case = T ) ) ) +
     sum( str_detect( sex.levs, regex( "female", ignore_case = T ) ) )
 
   # execute: if there is "male" or "female" detected in the dataset, convert to numeric
   if ( levs.mf > 0 ){
 
+    df[[sex.col]] <- ifelse( str_detect(  df[[sex.col]], regex( "female", ignore_case = T ) ), 2, df[[sex.col]] )
     df[[sex.col]] <- ifelse( str_detect(  df[[sex.col]], regex( "male", ignore_case = T ) ), 1, df[[sex.col]] )
-    df[[sex.col]] <- ifelse( str_detect(  df[[sex.col]], regex( "female", ignore_case = T ) ), 1, df[[sex.col]] )
 
   }
 
@@ -222,6 +219,22 @@ mfs_scores <- function( df,
   levs.12 <- sum( sex.levs.new %notin% c( "1", "2" ) ) > 0
 
   if( levs.12 ) stop( 'Error: ensure `sex.col` is a variable with levels coded as "male" or "female" or "1", "2".' )
+
+  ## --------- End Subsection --------- ##
+
+
+  ## (1.3) Check levels of diet frequency column ##
+
+  # levels of the diet columns
+  if ( !default.names) these.diet <- unlist( item.names )
+  if ( default.names) these.diet <- c( paste0( "HQ", 1:16 ), "HQ2A" )
+
+  # check data types of diet frequency columns
+  if (sum( sapply( df[these.diet], function(x) sum( stringr::str_detect( x, "^([A-Za-z\\s]*)$" ),
+                                                    na.rm = T ) ), na.rm = T ) != 0 ){
+
+    stop( "Error: non-digit levels of the diet frequency column. Levels for these columns should be numeric. See data dictionary.")
+  }
 
   ## --------- End Subsection --------- ##
 
