@@ -314,8 +314,8 @@ mfs_scores <- function( df,
   ## (3.1) Map responses to daily averages  ##
 
   # condition: assign an object with the dietary column names for subsequent loop
-  if( default.names )  c.nms <- c( paste0( "HQ", c(1,3:16) ), "milk.one", "milk.two", "milk.one", "milk.skim" )
-  if( !default.names ) c.nms <- c( unlist( item.names )[c(1,3:16)], "milk.one", "milk.two", "milk.one", "milk.skim" )
+  if( default.names )  c.nms <- c( paste0( "HQ", c(1,3:16) ), "milk.whole", "milk.two", "milk.one", "milk.skim" )
+  if( !default.names ) c.nms <- c( unlist( item.names )[c(1,3:16)], "milk.whole", "milk.two", "milk.one", "milk.skim" )
 
   # execute: loop through columns to convert
   for( i in 1:length( c.nms ) ){
@@ -330,6 +330,7 @@ mfs_scores <- function( df,
     df[[ cn ]] <- ifelse( df[[ cn ]] == 5, 0.786, df[[ cn ]] )
     df[[ cn ]] <- ifelse( df[[ cn ]] == 6, 1, df[[ cn ]] )
     df[[ cn ]] <- ifelse( df[[ cn ]] == 7, 2, df[[ cn ]] )
+    df[[ cn ]] <- ifelse( df[[ cn ]] == 8, 3, df[[ cn ]] )
     df[[ cn ]] <- ifelse( df[[ cn ]] == 9, 4.5, df[[ cn ]] )
 
   }
