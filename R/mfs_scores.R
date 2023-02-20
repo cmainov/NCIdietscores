@@ -269,12 +269,54 @@ mfs_scores <- function( df,
   ### (3.0) Do Unit Conversions to Daily Averages ##
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
+  ## (3.2) Modify milk variables to four separate milk variables (skim, 1%,  2%, and whole) ##
+
+  # condition: check to see that all subjects who responded to milk question also responded to milk type
+  if( default.names ) milk.miss <- sum( is.na( df$HQ2A ) & !is.na( df$HQ2 ) )
+  if( !default.names ) milk.miss <- sum( is.na( df[[ item.names[["HQ2A"]] ]] ) & !is.na( df[[ item.names[["HQ2"]] ]] ) )
+
+  # execute: if condition is true, coerce to 1% milk and throw warning
+  if ( milk.miss > 0 ) warning( "Warning: observations with missing milk type detected. Will set milk type to '1%' for these observations. If this is not desired, manually change the entries and re-run." )
+
+
+  # expand the milk type columns
+  if( default.names ) {
+
+    df <- df %>% # for those that have a milk entry that is not missing, they will get "0" for all other milk types not the ones that they consume
+      mutate( HQ2A = ifelse( is.na( HQ2A ) & !is.na( HQ2 ), 3, HQ2A ), # set those w/ missing milk type to 1%--see warning message above
+
+              # now create the milk-specific columns (4 columns total)
+              milk.skim = ifelse( HQ2A == 5, HQ2, 0 ), # if a subject respond in the affirmative for a given milk type, they get their value of `HQ2` in the milk type column, otherwise they get a "1" for "never"
+              milk.skim = ifelse( HQ2A == 4, HQ2, 0 ),
+              milk.one = ifelse( HQ2A == 3, HQ2, 0  ),
+              milk.two = ifelse( HQ2A == 2, HQ2, 0  ),
+              milk.whole = ifelse( HQ2A == 1, HQ2, 0  ) )
+  }
+
+  if( !default.names ) {
+
+    milk.var <- item.names[["HQ2"]]
+    milk.type.used <- item.names[["HQ2A"]]
+
+    df <- df %>% # for those that have a milk entry that is not missing, they will get "0" for all other milk types not the ones that they consume
+      mutate( !!milk.type.used := ifelse( is.na( get( milk.type.used ) ) & !is.na( get( milk.var ) ), 3, get( milk.type.used ) ), # set those w/ missing milk type to 1%--see warning message above
+
+              # now create the milk-specific columns (4 columns total)
+              milk.skim = ifelse( get( milk.var ) == 5, get( milk.var ), 0 ), # if a subject respond in the affirmative for a given milk type, they get their value of `HQ2` in the milk type column, otherwise they get a "1" for "never"
+              milk.skim = ifelse( get( milk.var ) == 4, get( milk.var ), 0 ),
+              milk.one = ifelse( get( milk.var ) == 3, get( milk.var ), 0  ),
+              milk.two = ifelse( get( milk.var ) == 2, get( milk.var ), 0  ),
+              milk.whole = ifelse( get( milk.var ) == 1, get( milk.var ), 0  ) )
+  }
+
+  ## --------- End Subsection --------- ##
+
 
   ## (3.1) Map responses to daily averages  ##
 
   # condition: assign an object with the dietary column names for subsequent loop
-  if( default.names ) c.nms <- paste0( "HQ", 1:16 ) # not including milk type variable name
-  if( !default.names ) c.nms <- unlist( item.names )[1:16] # not including milk type variable name
+  if( default.names ) c.nms <- c( paste0( "HQ", c(1,3:16) ), "milk.one", "milk.two", "milk.one", "milk.skim" )
+  if( !default.names ) c.nms <- c( unlist( item.names )[c(1,3:16)], "milk.one", "milk.two", "milk.one", "milk.skim" )
 
   # execute: loop through columns to convert
   for( i in 1:length( c.nms ) ){
@@ -296,47 +338,6 @@ mfs_scores <- function( df,
   ## --------- End Subsection --------- ##
 
 
-  ## (3.2) Modify milk variables to four separate milk variables (skim, 1%,  2%, and whole) ##
-
-  # condition: check to see that all subjects who responded to milk question also responded to milk type
-  if( default.names ) milk.miss <- sum( is.na( df$HQ2A ) & !is.na( df$HQ2 ) )
-  if( !default.names ) milk.miss <- sum( is.na( df[[ item.names[["HQ2A"]] ]] ) & !is.na( df[[ item.names[["HQ2"]] ]] ) )
-
-  # execute: if condition is true, coerce to 1% milk and throw warning
-  if ( milk.miss > 0 ) warning( "Warning: observations with missing milk type detected. Will set milk type to '1%' for these observations. If this is not desired, manually change the entries and re-run." )
-
-
-  # expand the milk type columns
-  if( default.names ) {
-
-    df <- df %>% # for those that have a milk entry that is not missing, they will get "0" for all other milk types not the ones that they consume
-      mutate( HQ2A = ifelse( is.na( HQ2A ) & !is.na( HQ2 ), 3, HQ2A ), # set those w/ missing milk type to 1%--see warning message above
-
-              # now create the milk-specific columns (4 columns total)
-              milk.skim = ifelse( HQ2A == 5, HQ2, 1 ), # if a subject respond in the affirmative for a given milk type, they get their value of `HQ2` in the milk type column, otherwise they get a "1" for "never"
-              milk.skim = ifelse( HQ2A == 4, HQ2, 1 ),
-              milk.one = ifelse( HQ2A == 3, HQ2, 1  ),
-              milk.two = ifelse( HQ2A == 2, HQ2, 1  ),
-              milk.whole = ifelse( HQ2A == 1, HQ2, 1  ) )
-  }
-
-  if( !default.names ) {
-
-    milk.var <- item.names[["HQ2A"]]
-    milk.type.used <- item.names[["HQ2"]]
-
-    df <- df %>% # for those that have a milk entry that is not missing, they will get "0" for all other milk types not the ones that they consume
-      mutate( !!milk.type.used := ifelse( is.na( milk.type.used ) & !is.na( milk.var ), 3, milk.type.used ), # set those w/ missing milk type to 1%--see warning message above
-
-              # now create the milk-specific columns (4 columns total)
-              milk.skim = ifelse( milk.var == 5, milk.var, 1 ), # if a subject respond in the affirmative for a given milk type, they get their value of `HQ2` in the milk type column, otherwise they get a "1" for "never"
-              milk.skim = ifelse( milk.var == 4, milk.var, 1 ),
-              milk.one = ifelse( milk.var == 3, milk.var, 1  ),
-              milk.two = ifelse( milk.var == 2, milk.var, 1  ),
-              milk.whole = ifelse( milk.var == 1, milk.var, 1  ) )
-  }
-
-  ## --------- End Subsection --------- ##
 
 
   ## (3.3) Rename diet variables to user-friendly names ##
@@ -494,7 +495,7 @@ mfs_scores <- function( df,
 
   ## (5.2) Use table  6 from `df.list` to create predicted fiber intake and % from fat ##
 
-  df <- df %>% # copy data before looping and alternating
+  df <- df %>%
 
     # initialize variables with intercept values
     mutate( pred.fiber = ifelse( get( sex.col ) == 1, as.numeric( tbl.6[2,3] ),
