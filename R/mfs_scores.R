@@ -66,12 +66,15 @@
 #' library( NCIdietscores )
 #'
 #' # using default diet item names
+#'
 #' mfs_scores( diet.data )
 #'
 #' # user-specified diet item names but using default names in `item.names`
+#'
 #' mfs_scores(diet.data, default.names = FALSE )
 #'
 #' # user specified names
+#'
 #' d.user <- setNames( diet.data,
 #'                     c( "cold.cereals", "milk", "bacon.sausage", "hot.dogs",
 #'                        "bread", "juice", "fruit", "regular.fat", "salad", "potatoes",
@@ -87,6 +90,7 @@
 #'
 #'
 #' # run `mfs_scores`  specifying column names in incorrect format, error thrown
+#'
 #' \dontrun{
 #'   cls.list <- list( "cold.cereals", "milk",
 #'                     "bacon.sausage", "hot.dogs",
@@ -105,6 +109,7 @@
 #'
 #'
 #' # run `mfs_scores`  specifying column names, no error
+#'
 #' cls.list <- list( HQ1 = "cold.cereals", HQ2 = "milk",
 #'                   HQ3 = "bacon.sausage", HQ4 = "hot.dogs",
 #'                   HQ5 = "bread", HQ6 = "juice",
@@ -121,6 +126,7 @@
 #'
 #'
 #' # specify own names for sex and age columns
+#'
 #' d.user.age.sex <- diet.data
 #'
 #' colnames( d.user.age.sex )[ colnames( d.user.age.sex ) == "SEX" ] <- "subject.sex"
@@ -148,8 +154,25 @@
 #'   mfs_scores( df = diet.data, sex.col = 7 )
 #'
 #' }
+#'
+#' # incorrect formatting of data frequencies
+#' \dontrun{
+#' diet.data.format <- diet.data
+#'
+#' diet.data.format[1:16][ diet.data.format[1:16] == 1 ] <- "Never"
+#' diet.data.format[1:16][ diet.data.format[1:16] == 3 ] <- "1-2 times per week"
+#' diet.data.format[1:16][ diet.data.format[1:16] == 2 ] <- "1-3 times last month"
+#' diet.data.format[1:16][ diet.data.format[1:16] == 4 ] <- "3-4 times per week"
+#' diet.data.format[1:16][ diet.data.format[1:16] == 5 ] <- "5-6 times per week"
+#' diet.data.format[1:16][ diet.data.format[1:16] == 6 ] <- "1 time per day"
+#' diet.data.format[1:16][ diet.data.format[1:16] == 7 ] <- "2 times per day"
+#' diet.data.format[1:16][ diet.data.format[1:16] == 8 ] <- "3 times per day"
+#' diet.data.format[1:16][ diet.data.format[1:16] == 9 ] <- "4 or more times per day"
+#'
+#' mfs_scores( df = diet.data.format )
+#' }
+#'
 #' @export
-
 
 mfs_scores <- function( df,
                         default.names = TRUE,
