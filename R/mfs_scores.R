@@ -283,7 +283,7 @@ mfs_scores <- function( df,
 
     # map subject response to daily average (from Table 2-1 in the screener documentation)
     df[[ cn ]] <- ifelse( df[[ cn ]] == 1, 0, df[[ cn ]] )
-    df[[ cn ]] <- ifelse( df[[ cn ]] == 2, 0.67, df[[ cn ]] )
+    df[[ cn ]] <- ifelse( df[[ cn ]] == 2, 0.067, df[[ cn ]] )
     df[[ cn ]] <- ifelse( df[[ cn ]] == 3, 0.214, df[[ cn ]] )
     df[[ cn ]] <- ifelse( df[[ cn ]] == 4, 0.5, df[[ cn ]] )
     df[[ cn ]] <- ifelse( df[[ cn ]] == 5, 0.786, df[[ cn ]] )
