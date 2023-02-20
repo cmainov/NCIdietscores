@@ -302,11 +302,10 @@ mfs_scores <- function( df,
       mutate( !!milk.type.used := ifelse( is.na( get( milk.type.used ) ) & !is.na( get( milk.var ) ), 3, get( milk.type.used ) ), # set those w/ missing milk type to 1%--see warning message above
 
               # now create the milk-specific columns (4 columns total)
-              milk.skim = ifelse( get( milk.var ) == 5, get( milk.var ), 0 ), # if a subject respond in the affirmative for a given milk type, they get their value of `HQ2` in the milk type column, otherwise they get a "1" for "never"
-              milk.skim = ifelse( get( milk.var ) == 4, get( milk.var ), 0 ),
-              milk.one = ifelse( get( milk.var ) == 3, get( milk.var ), 0  ),
-              milk.two = ifelse( get( milk.var ) == 2, get( milk.var ), 0  ),
-              milk.whole = ifelse( get( milk.var ) == 1, get( milk.var ), 0  ) )
+              milk.skim = ifelse( get( milk.type.used ) %in% c(4,5), get( milk.var ), 0 ), # if a subject respond in the affirmative for a given milk type, they get their value of `HQ2` in the milk type column, otherwise they get a "1" for "never"
+              milk.one = ifelse( get( milk.type.used ) == 3, get( milk.var ), 0  ),
+              milk.two = ifelse( get( milk.type.used ) == 2, get( milk.var ), 0  ),
+              milk.whole = ifelse( get( milk.type.used ) == 1, get( milk.var ), 0  ) )
   }
 
   ## --------- End Subsection --------- ##
@@ -315,7 +314,7 @@ mfs_scores <- function( df,
   ## (3.1) Map responses to daily averages  ##
 
   # condition: assign an object with the dietary column names for subsequent loop
-  if( default.names ) c.nms <- c( paste0( "HQ", c(1,3:16) ), "milk.one", "milk.two", "milk.one", "milk.skim" )
+  if( default.names )  c.nms <- c( paste0( "HQ", c(1,3:16) ), "milk.one", "milk.two", "milk.one", "milk.skim" )
   if( !default.names ) c.nms <- c( unlist( item.names )[c(1,3:16)], "milk.one", "milk.two", "milk.one", "milk.skim" )
 
   # execute: loop through columns to convert
