@@ -12,7 +12,12 @@
 #' Multifactor Screener from the OPEN Study. Computes % energy from fat,
 #' fiber, and intake equivalents of fruits and vegetables (F & V). For a detailed
 #' description of the screener, please refer to the NCI's documentation (see below).
-#' .
+#'
+#' Citation:
+#' The Multifactor screener in the
+#' Observing Protein & Energy Nutrition (OPEN) Study. Epidemiology and Genomics Research
+#' Program. National Cancer Institute. https://epi.grants.cancer.gov/diet/screeners/files.
+#' Updated November 20, 2019.
 #'
 #' @seealso
 #' \itemize{
