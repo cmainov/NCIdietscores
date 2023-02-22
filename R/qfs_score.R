@@ -151,54 +151,73 @@ qfs_scores <- function( df,
   if( default.names ) {
 
     df <- df %>%
-      rename( cold.cereals = HQ1,
-              bacon.sausage = HQ3,
-              hot.dogs = HQ4,
-              bread = HQ5,
-              juice = HQ6,
-              fruit = HQ7,
-              regular.fat = HQ8,
-              salad = HQ9,
-              potatoes = HQ10,
-              white.potatoes = HQ11,
-              beans = HQ12,
-              vegetables = HQ13,
-              pasta = HQ14,
-              nuts = HQ15,
-              chips = HQ16 )
+      rename( f2 = CEREAL,
+              f3 = SKIMMILK,
+              f4 = EGGS,
+              f5 = SAUSAGE,
+              f6 = MARGBR,
+              f7 = CITJUICE,
+              f8 = FRUIT,
+              f9 = HOTDOG,
+              f10 = CHEESE,
+              f11 = FRIEDPOT,
+              f12 = MARGVEG,
+              f13 = MAYO,
+              f14 = SALDRS,
+              f15 = RICE,
+              f16 = MARGRICE,
+              lo.fat.mrg = LOFATMRG
+
+      )
 
   }
 
   if( !default.names ) {
 
     df <- df %>%
-      rename( cereal = item.names[["CEREAL"]],
-              milk.skim = item.names[["SKIMMILK"]],
-              eggs = item.names[["EGGS"]],
-              sausage = item.names[["SAUSAGE"]],
-              marg.butter = item.names[["MARGBR"]],
-              citrus.juice = item.names[["CITJUICE"]],
-              fruit = item.names[["FRUIT"]],
-              hot.dog = item.names[["HOTDOG"]],
-              cheese = item.names[["CHEESE"]],
-              fried.potatoes = item.names[["FRIEDPOT"]],
-              mayo.butter.on.veg = item.names[["MARGVEG"]],
-              mayo = item.names[["MAYO"]],
-              dressings = item.names[["SALDRS"]],
-              rice = item.names[["RICE"]],
-              marg.butter.on.rice = item.names[["MARGRICE"]]
+      rename( f2 = item.names[["CEREAL"]],
+              f3 = item.names[["SKIMMILK"]],
+              f4 = item.names[["EGGS"]],
+              f5 = item.names[["SAUSAGE"]],
+              f6 = item.names[["MARGBR"]],
+              f7 = item.names[["CITJUICE"]],
+              f8 = item.names[["FRUIT"]],
+              f9 = item.names[["HOTDOG"]],
+              f10 = item.names[["CHEESE"]],
+              f11 = item.names[["FRIEDPOT"]],
+              f12 = item.names[["MARGVEG"]],
+              f13 = item.names[["MAYO"]],
+              f14 = item.names[["SALDRS"]],
+              f15 = item.names[["RICE"]],
+              f16 = item.names[["MARGRICE"]],
+              lo.fat.mrg = f16 = item.names[["LOFATMRG"]]
 
               )
+  }
+
+  ## Fat amounts ##
+  df <- df %>%
+    mutate( tot.fat = f6 + f12 + f16,
+            fat.real = ifelse( lo.fat.mrg %in% c( 1, 2), 1,
+                               ifelse( lo.fat.mrg == 3, 0.75,
+                                       ifelse( lo.fat.mrg == 4, 0.5,
+                                               ifelse( lo.fat.mrg == 5, 0.25,
+                                                       ifelse( lo.fat.mrg == 6, 0, NA ))))),
+            diet.fat = ifelse( lo.fat.mrg %in% c( 1, 2), 1,
+                               ifelse( lo.fat.mrg == 3, 0.25,
+                                       ifelse( lo.fat.mrg == 4, 0.5,
+                                               ifelse( lo.fat.mrg == 5, 0.75,
+                                                       ifelse( lo.fat.mrg == 6, 1, NA ))))),
+            reg.fat = fat.real*tot.fat
+    )
 
 
-    CEREAL = "CEREAL", MILK.SKIM = "SKIMMILK",
-    EGGS = "EGGS", SAUSAGE = "SAUSAGE",
-    MARG.BUTTER = "MARGBR", CITRUS.JUICE = "CITJUICE",
-    FRUIT = "FRUIT", HOTDOG = "HOTDOG",
-    CHEESE = "CHEESE", FRIED.POTATOES = "FRIEDPOT",
-    MARG.BUTTER.ON.VEG = "MARGVEG", MAYO = "MAYO",
-    DRESSING = "SALDRS", RICE = "RICE",
-    MARG.BUTTER.ON.RICE = "MARGRICE", RED.FAT.MARG = "LOFATMRG",
-    FAT.SUBJECTIVE = "ALLFAT" ),
-age.col = "AGE",
+  ### Estimate % Energy from Fat ###
+
+
+
+
+
+
+
 
