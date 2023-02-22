@@ -126,8 +126,8 @@ qfs_scores <- function( df,
   ## (3.1) Map responses to daily averages  ##
 
   # condition: assign an object with the dietary column names for subsequent loop
-  if( default.names )  c.nms <- c( def.names )
-  if( !default.names ) c.nms <- c( unlist( item.names ) )
+  if( default.names )  c.nms <- c( def.names )[ !def.names %in% c( "LOFATMRG", "ALLFAT" ) ]
+  if( !default.names ) c.nms <- c( unlist( item.names ) )[ !c( unlist( item.names ) ) %in% c( "LOFATMRG", "ALLFAT" ) ]
 
   # execute: loop through columns to convert
   for( i in 1:length( c.nms ) ){
@@ -274,7 +274,7 @@ qfs_scores <- function( df,
 
     # we use the 13th HTML table for this final set of computations (i.e., `tbl.13`
 
-    df2 <- df %>%
+    df <- df %>%
 
       # initialize variables with intercept values
         mutate(
@@ -283,28 +283,28 @@ qfs_scores <- function( df,
             )
 
   # add regression coefficient*intake iteratively
-  for( i in 1:nrow( df2 ) ){  # loop on subject
+  for( i in 1:nrow( df ) ){  # loop on subject
 
 
     for( g in c( 2:14 ) ){ # loop on all food items in inner loop
 
       ## males ##
-      if( df2[ i, sex.col ] == 1 ){
+      if( df[ i, sex.col ] == 1 ){
 
         # predicted % from fat
-        df2[ i, "pred.pcf" ] <-
-          df2[ i, which(colnames( df2 ) == paste0( tbl.13$`Parameter`[g] ) ) ]*
-          as.numeric( tbl.13[g,2] ) + df2[ i, "pred.pcf" ]
+        df[ i, "pred.pcf" ] <-
+          df[ i, which(colnames( df ) == paste0( tbl.13$`Parameter`[g] ) ) ]*
+          as.numeric( tbl.13[g,2] ) + df[ i, "pred.pcf" ]
 
       }
 
       ## females ##
-      if( df2[ i, sex.col ] == 2 ){
+      if( df[ i, sex.col ] == 2 ){
 
         # predicted % from fat
-        df2[ i, "pred.pcf" ] <-
-          df2[ i, which(colnames( df2 ) == paste0( tbl.13$`Parameter`[g] ) ) ]*
-          as.numeric( tbl.13[g,3] ) + df2[ i, "pred.pcf" ]
+        df[ i, "pred.pcf" ] <-
+          df[ i, which(colnames( df ) == paste0( tbl.13$`Parameter`[g] ) ) ]*
+          as.numeric( tbl.13[g,3] ) + df[ i, "pred.pcf" ]
 
       }
     }
@@ -338,4 +338,4 @@ qfs_scores <- function( df,
 }
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-qfs_scores(short.data)
+
