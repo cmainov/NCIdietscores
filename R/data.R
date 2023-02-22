@@ -112,7 +112,9 @@ tbl.10.11 <- rbind( setNames( tbl.10.11[c( 17, 1:8 )],
                                                                 c( "fd", "sex", c.nm[10:16] ) ) )
 
 
-
+# rename rows of table 13
+tbl.13[ , 1 ] <- paste0( c( "intercept", "f2", "f3", "f4", "f5", "f7",
+                    "f8", "f9", "f10", "f11", "f13", "f14", "f15", "reg.fat" ), ".a" )
 
 ## --------- End Subsection --------- ##
 
@@ -154,7 +156,7 @@ fvcupadj <- tibble::tribble(
 ## --------- End Subsection --------- ##
 
 
-## (1.6) Generate test data ##
+## (1.6) Generate test data for mfs_scores ##
 
 # set seed for reproducibility
 set.seed = 23
@@ -184,6 +186,42 @@ diet.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
 ## --------- End Subsection --------- ##
 
 
+## (1.7) Generate test data for qfs_scores ##
+
+# set seed for reproducibility
+set.seed = 23
+
+# initialize matrix of NAs to store data
+short.data <- matrix( NA, nrow = 45, ncol = 17 )
+
+# loop through the number of columns and generate a discrete random variable of length 45 bounded below at 1 and above at 9
+for( i in 1:17 ){
+
+  short.data[ , i ] <- sample( 1:8, size = 45, replace = TRUE )
+
+}
+
+# coerce to dataframe and set column names according to survey item
+short.data <- setNames( data.frame( short.data ),
+                        c( "CEREAL", "SKIMMILK",
+                        "EGGS", "SAUSAGE",
+                        "MARGBR", "CITJUICE",
+                        "FRUIT", "HOTDOG",
+                        "CHEESE", "FRIEDPOT",
+                        "MARGVEG", "MAYO",
+                        "SALDRS", "RICE",
+                        "MARGRICE", "LOFATMRG",
+                        "ALLFAT" ) )
+
+# sex variable
+short.data$SEX <- sample( 1:2, size = 45, replace = TRUE )
+
+# age variable
+short.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
+
+## --------- End Subsection --------- ##
+
+
 ## (1.5) Save as internal data using `use_data` ##
 usethis::use_data( tbl.1, tbl.2,
                    tbl.3, tbl.4,
@@ -194,6 +232,7 @@ usethis::use_data( tbl.1, tbl.2,
                    tbl.11, tbl.12,
                    tbl.13, age.lst,
                    fvcupadj, diet.data,
+                   short.data,
                    internal = TRUE,
                    overwrite = TRUE ) # save each table as internal data to the package
 

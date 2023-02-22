@@ -118,6 +118,10 @@ qfs_scores <- function( df,
 
 
 
+  ### (3.0) Do Unit Conversions to Daily Averages ##
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
   ## (3.1) Map responses to daily averages  ##
 
   # condition: assign an object with the dietary column names for subsequent loop
@@ -195,7 +199,10 @@ qfs_scores <- function( df,
               )
   }
 
-  ## Fat amounts ##
+  ## --------- End Subsection --------- ##
+
+
+  ## (3.4) Margarine/butter fat computations ##
   df <- df %>%
     mutate( tot.fat = f6 + f12 + f16,
             fat.real = ifelse( lo.fat.mrg %in% c( 1, 2), 1,
@@ -211,8 +218,15 @@ qfs_scores <- function( df,
             reg.fat = fat.real*tot.fat
     )
 
+  ## --------- End Subsection --------- ##
 
-  ### Estimate % Energy from Fat ###
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+  ### (4.0) Estimate % Energy from Fat ###
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
   ## (4.1) Sex/Age adjustment loop ##
 
@@ -248,10 +262,75 @@ qfs_scores <- function( df,
     }
   }
 
+  ## --------- End Subsection --------- ##
 
+
+
+  ## (4.1) Multiply adjusted estimates by regression coefficients
+
+
+    # we use the 13th HTML table for this final set of computations (i.e., `tbl.13`
+
+    df <- df %>%
+
+      # initialize variables with intercept values
+        mutate(
+            pred.pcf = ifelse( get( sex.col ) == 1, as.numeric( tbl.13[1,2] ),
+                               ifelse( get( sex.col ) == 2, as.numeric( tbl.13[1,3] ), NA ) )
+            )
+
+  # add regression coefficient*intake iteratively
+  for( i in 1:nrow( df ) ){  # loop on subject
+
+
+    for( g in c( 2:14 ) ){ # loop on all food items in inner loop
+
+      ## males ##
+      if( df[ i, sex.col ] == 1 ){
+
+        # predicted % from fat
+        df[ i, "pred.pcf" ] <-
+          df[ i, which(colnames( df ) == paste0( tbl.13$`Parameter`[g], ".m" ) ) ]*
+          as.numeric( tbl.13[g,2] ) + df[ i, "pred.pcf" ]
+
+      }
+
+      ## females ##
+      if( df[ i, sex.col ] == 2 ){
+
+        # predicted % from fat
+        df[ i, "pred.pcf" ] <-
+          df[ i, which(colnames( df ) == paste0( tbl.13$`Parameter`[g], ".m" ) ) ]*
+          as.numeric( tbl.13[g,3] ) + df[ i, "pred.pcf" ]
+
+      }
+    }
+  }
+
+  ## --------- End Subsection --------- ##
+
+
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+  ### (7.0) Return Final Dataset  ###
+  # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+  ## (7.1) Columns to return in final dataset ##
+  d.out <- cbind( d.copy,
+                  df[ ,c( "pred.pcf" ) ] ) %>% data.frame()
+
+  ## --------- End Subsection --------- ##
+
+
+  ## (7.2) Print summary stats for the appended columns ##
+  print( summary( df[ ,c( "pred.pcf" ) ] ) )
+
+  ## --------- End Subsection --------- ##
+
+  return( d.out )
 
 }
-
-
-
-
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------
