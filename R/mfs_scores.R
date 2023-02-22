@@ -427,7 +427,7 @@ mfs_scores <- function( df,
   # we will use the 4th HTML table in `sysdata.rda` (i.e., tbl.4)
   for( i in 1:nrow( df ) ){  # loop on subject
 
-    for( j in 2:length( age.lst) ){ # loop on age which determines which columns of reference table to use
+    for( j in 2:length( age.lst ) ){ # loop on age which determines which columns of reference table to use
 
       ## inner loops will be determined based on which rows to use from the table
 

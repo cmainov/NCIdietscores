@@ -1,4 +1,3 @@
-
 require( rvest )
 require( tidyverse )
 
@@ -7,7 +6,7 @@ require( tidyverse )
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-## (1.1) Web scrape the link above for the HTML tables that have all the conversion factors ##
+## (1.1) OPEN Multifactor Screener: Web scrape the link below for the HTML tables that have all the conversion factors ##
 
 url <-  "https://epi.grants.cancer.gov/past-initiatives/open/multifactor/scoring.html#scoring"
 
@@ -71,18 +70,55 @@ for( i in 2:length(df.list)){
 ## --------- End Subsection --------- ##
 
 
-## (1.3) Assign each element of the list as an object ##
+## (1.3) Fat Screener: Web scrape the link above for the HTML tables that have all the conversion factors ##
 
-for( i in 1:length( df.list ) ){
+url.2 <-  "https://epi.grants.cancer.gov/diet/screeners/fat/scoring.html"
 
-  assign( paste0( "tbl.", i ), df.list[[i]] ) # extract all conversion tables from list
-
-}
+# webscrape the URL for HTML tables
+df.list.2 <- url.2 %>%
+  read_html() %>%
+  html_nodes( "table" ) %>%
+  html_table( fill = T )
 
 ## --------- End Subsection --------- ##
 
 
-## (1.4) Age list
+## (1.4) Assign each element of the list as a separate object to then add to the .rda file ##
+
+# first, combine the two lists of HTML tables
+table.list <- c( df.list, df.list.2 )
+
+# extract all conversion tables from list
+for( i in 1:length( table.list ) ){
+
+  assign( paste0( "tbl.", i ), table.list[[i]] )
+
+}
+
+# we will also column bind tables 10 and 11 since they are part of the same table, just split up
+tbl.10.11 <- setNames( cbind( tbl.10, tbl.11 ),
+                       c( "age", "f3",
+                       "f5", "f2", "f8", "f13",
+                       "f14", "age.2", "f4", "f7",
+                       "f9", "f10", "f11", "reg.fat", "f15" ) ) %>%
+  t(.) %>%
+  data.frame() %>%
+  mutate( fd = rownames( . ))
+
+c.nm <- tbl.10.11[1,]
+
+tbl.10.11 <- rbind( setNames( tbl.10.11[c( 17, 1:8 )],
+                                  c( "fd", "sex", c.nm[2:8] ) ), setNames( tbl.10.11[c( 17, 9:16 )],
+                                                                c( "fd", "sex", c.nm[10:16] ) ) )
+
+
+
+
+## --------- End Subsection --------- ##
+
+
+## (1.4) Age list ##
+
 age.lst <- list( c( 0:17 ),
                  c( 18:27 ),
                  c( 28:37 ),
@@ -152,7 +188,11 @@ diet.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
 usethis::use_data( tbl.1, tbl.2,
                    tbl.3, tbl.4,
                    tbl.5, tbl.6,
-                   tbl.7, tbl.8, age.lst,
+                   tbl.7, tbl.8,
+                   tbl.9, tbl.10,
+                   tbl.10.11,
+                   tbl.11, tbl.12,
+                   tbl.13, age.lst,
                    fvcupadj, diet.data,
                    internal = TRUE,
                    overwrite = TRUE ) # save each table as internal data to the package

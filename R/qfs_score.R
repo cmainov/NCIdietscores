@@ -214,9 +214,43 @@ qfs_scores <- function( df,
 
   ### Estimate % Energy from Fat ###
 
+  ## (4.1) Sex/Age adjustment loop ##
+
+  # we will use the 10th and 11th HTML table in `sysdata.rda` (i.e., tbl.10.11)
+  for( i in 1:nrow( df ) ){  # loop on subject
+
+    for( j in 2:length( age.lst ) ){ # loop on age which determines which columns of reference table to use
+
+      ## inner loops will be determined based on which rows to use from the table
+
+      # males inner loop
+      if( df[ i, age.col ] %in% age.lst[[j]] & df[ i, sex.col ] == 1 ){
+
+        for( g in c( 2:7, 9:15 ) ){
+
+          df[ i, paste0( tbl.10.11$fd[g],".a" ) ] <-
+            df[ i, which(colnames( df ) == tbl.10.11$fd[g]) ]*as.numeric( tbl.10.11[g,(j+1)] ) # j+1 given the additional sex column
+
+        }
+
+      }
+
+      # females inner loop
+      if( df[ i, age.col ] %in% age.lst[[j]] & df[ i, sex.col ] == 2 ){
+
+        for( g in c( 17:22, 24:30 ) ){
+
+          df[ i, paste0( tbl.10.11$fd[g],".a" ) ] <-
+            df[ i, which(colnames( df ) == tbl.10.11$fd[g]) ]*as.numeric( tbl.10.11[g,(j+1)] ) # j+1 given the additional sex column
+
+        }
+      }
+    }
+  }
 
 
 
+}
 
 
 
