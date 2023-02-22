@@ -10,7 +10,7 @@ qfs_scores <- function( df,
                                            CHEESE = "CHEESE", FRIED.POTATOES = "FRIEDPOT",
                                            MARG.BUTTER.ON.VEG = "MARGVEG", MAYO = "MAYO",
                                            DRESSING = "SALDRS", RICE = "RICE",
-                                           MARG.BUTTER.ON.RICE = "MARGRICE", RED.FAT.MARG = "LOFATMRG",
+                                           MARGRICE = "MARGRICE", RED.FAT.MARG = "LOFATMRG",
                                            FAT.SUBJECTIVE = "ALLFAT" ),
                         age.col = "AGE",
                         sex.col = "SEX" ) {
@@ -21,6 +21,11 @@ qfs_scores <- function( df,
 
   ## (1.1) Argument types and entries  ##
 
+  # levels of the diet columns
+  def.names <- c( "CEREAL", "SKIMMILK", "EGGS", "SAUSAGE", "MARGBR", "CITJUICE", "FRUIT", "HOTDOG",
+                  "CHEESE", "FRIEDPOT", "MARGVEG", "MAYO", "SALDRS", "RICE", "MARGRICE", "LOFATMRG",
+                  "ALLFAT" ) # default names
+
   # class checks
   if ( class( item.names ) != "list" ) stop( "Error: `item.names` must be a list" )
   if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) >= 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
@@ -30,7 +35,7 @@ qfs_scores <- function( df,
   if ( !default.names & is.null( item.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
-  if ( sum( c( paste0( "HQ", 1:16 ), "HQ2A" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
+  if ( sum( def.names %notin%  item.names )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
 
   if ( !default.names){
     if ( sum( c( item.names, sex.col, age.col  ) %notin% colnames( df )  ) > 0 ) stop( "Error: column names of `df` not detected in `item.names`, `age.col`, or `sex.col`. See default values for `item.names` in the documentation for an example and check entries for `age.col` and `sex.col`." )
@@ -73,12 +78,8 @@ qfs_scores <- function( df,
 
   ## (1.3) Check levels of diet frequency column ##
 
-  # levels of the diet columns
-  def.names <- c( "CEREAL", "SKIMMILK", "EGGS", "SAUSAGE", "MARGBR", "CITJUICE", "FRUIT", "HOTDOG",
-                  "CHEESE", "FRIEDPOT", "MARGVEG", "MAYO", "SALDRS", "RICE", "MARGRICE", "LOFATMRG",
-                  "ALLFAT " ) # default names
 
-  if ( default.names ) v <- c( def.names, sex.col, age.col )
+  if ( default.names ) these.diet <- c( def.names, sex.col, age.col )
   if ( !default.names) these.diet <- unlist( item.names )
 
   # check data types of diet frequency columns
@@ -194,7 +195,7 @@ qfs_scores <- function( df,
               f14 = item.names[["SALDRS"]],
               f15 = item.names[["RICE"]],
               f16 = item.names[["MARGRICE"]],
-              lo.fat.mrg = f16 = item.names[["LOFATMRG"]]
+              lo.fat.mrg = item.names[["LOFATMRG"]]
 
               )
   }
@@ -209,12 +210,14 @@ qfs_scores <- function( df,
                                ifelse( lo.fat.mrg == 3, 0.75,
                                        ifelse( lo.fat.mrg == 4, 0.5,
                                                ifelse( lo.fat.mrg == 5, 0.25,
-                                                       ifelse( lo.fat.mrg == 6, 0, NA ))))),
+                                                       ifelse( lo.fat.mrg == 6, 0,
+                                                               ifelse( is.na( lo.fat.mrg), NA, 0 )))))),
             diet.fat = ifelse( lo.fat.mrg %in% c( 1, 2), 1,
                                ifelse( lo.fat.mrg == 3, 0.25,
                                        ifelse( lo.fat.mrg == 4, 0.5,
                                                ifelse( lo.fat.mrg == 5, 0.75,
-                                                       ifelse( lo.fat.mrg == 6, 1, NA ))))),
+                                                       ifelse( lo.fat.mrg == 6, 1,
+                                                               ifelse( is.na( lo.fat.mrg), NA, 0 )))))),
             reg.fat = fat.real*tot.fat
     )
 
@@ -271,7 +274,7 @@ qfs_scores <- function( df,
 
     # we use the 13th HTML table for this final set of computations (i.e., `tbl.13`
 
-    df <- df %>%
+    df2 <- df %>%
 
       # initialize variables with intercept values
         mutate(
@@ -280,28 +283,28 @@ qfs_scores <- function( df,
             )
 
   # add regression coefficient*intake iteratively
-  for( i in 1:nrow( df ) ){  # loop on subject
+  for( i in 1:nrow( df2 ) ){  # loop on subject
 
 
     for( g in c( 2:14 ) ){ # loop on all food items in inner loop
 
       ## males ##
-      if( df[ i, sex.col ] == 1 ){
+      if( df2[ i, sex.col ] == 1 ){
 
         # predicted % from fat
-        df[ i, "pred.pcf" ] <-
-          df[ i, which(colnames( df ) == paste0( tbl.13$`Parameter`[g], ".m" ) ) ]*
-          as.numeric( tbl.13[g,2] ) + df[ i, "pred.pcf" ]
+        df2[ i, "pred.pcf" ] <-
+          df2[ i, which(colnames( df2 ) == paste0( tbl.13$`Parameter`[g] ) ) ]*
+          as.numeric( tbl.13[g,2] ) + df2[ i, "pred.pcf" ]
 
       }
 
       ## females ##
-      if( df[ i, sex.col ] == 2 ){
+      if( df2[ i, sex.col ] == 2 ){
 
         # predicted % from fat
-        df[ i, "pred.pcf" ] <-
-          df[ i, which(colnames( df ) == paste0( tbl.13$`Parameter`[g], ".m" ) ) ]*
-          as.numeric( tbl.13[g,3] ) + df[ i, "pred.pcf" ]
+        df2[ i, "pred.pcf" ] <-
+          df2[ i, which(colnames( df2 ) == paste0( tbl.13$`Parameter`[g] ) ) ]*
+          as.numeric( tbl.13[g,3] ) + df2[ i, "pred.pcf" ]
 
       }
     }
@@ -334,3 +337,5 @@ qfs_scores <- function( df,
 
 }
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+qfs_scores(short.data)

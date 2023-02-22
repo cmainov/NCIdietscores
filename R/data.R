@@ -192,10 +192,10 @@ diet.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
 set.seed = 23
 
 # initialize matrix of NAs to store data
-short.data <- matrix( NA, nrow = 45, ncol = 17 )
+short.data <- matrix( NA, nrow = 45, ncol = 15 )
 
 # loop through the number of columns and generate a discrete random variable of length 45 bounded below at 1 and above at 9
-for( i in 1:17 ){
+for( i in 1:15 ){
 
   short.data[ , i ] <- sample( 1:8, size = 45, replace = TRUE )
 
@@ -210,8 +210,11 @@ short.data <- setNames( data.frame( short.data ),
                         "CHEESE", "FRIEDPOT",
                         "MARGVEG", "MAYO",
                         "SALDRS", "RICE",
-                        "MARGRICE", "LOFATMRG",
-                        "ALLFAT" ) )
+                        "MARGRICE" ) )
+
+# Fat intake questions
+short.data$LOFATMRG <- sample( 1:6, size = 45, replace = TRUE )
+short.data$ALLFAT <- sample( 1:3, size = 45, replace = TRUE )
 
 # sex variable
 short.data$SEX <- sample( 1:2, size = 45, replace = TRUE )
