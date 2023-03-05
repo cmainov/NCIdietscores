@@ -70,7 +70,7 @@ for( i in 2:length(df.list)){
 ## --------- End Subsection --------- ##
 
 
-## (1.3) Fat Screener: Web scrape the link above for the HTML tables that have all the conversion factors ##
+## (1.3) Fat Screener: Web scrape the link below for the HTML tables that have all the conversion factors ##
 
 url.2 <-  "https://epi.grants.cancer.gov/diet/screeners/fat/scoring.html"
 
@@ -105,8 +105,10 @@ tbl.10.11 <- setNames( cbind( tbl.10, tbl.11 ),
   data.frame() %>%
   mutate( fd = rownames( . ))
 
+# column names
 c.nm <- tbl.10.11[1,]
 
+# rearrange table into desired format
 tbl.10.11 <- rbind( setNames( tbl.10.11[c( 17, 1:8 )],
                                   c( "fd", "sex", c.nm[2:8] ) ), setNames( tbl.10.11[c( 17, 9:16 )],
                                                                 c( "fd", "sex", c.nm[10:16] ) ) )
