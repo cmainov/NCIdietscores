@@ -26,6 +26,11 @@ qfs_scores <- function( df,
                   "CHEESE", "FRIEDPOT", "MARGVEG", "MAYO", "SALDRS", "RICE", "MARGRICE", "LOFATMRG",
                   "ALLFAT" ) # default names
 
+  list.item.nms <- c( "CEREAL", "MILK.SKIM", "EGGS", "SAUSAGE", "MARG.BUTTER", "CITRUS.JUICE", "FRUIT", "HOTDOG",
+                     "CHEESE", "FRIED.POTATOES", "MARG.BUTTER.ON.VEG", "MAYO",
+                     "DRESSING", "RICE", "MARGRICE", "RED.FAT.MARG",
+                     "FAT.SUBJECTIVE" )
+
   # class checks
   if ( class( item.names ) != "list" ) stop( "Error: `item.names` must be a list" )
   if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) >= 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
@@ -35,7 +40,7 @@ qfs_scores <- function( df,
   if ( !default.names & is.null( item.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( ( !default.names ) & length( item.names ) < 17 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
-  if ( sum( def.names %notin%  item.names )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
+  if ( sum( list.item.nms %notin%  names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
 
   if ( !default.names){
     if ( sum( c( item.names, sex.col, age.col  ) %notin% colnames( df )  ) > 0 ) stop( "Error: column names of `df` not detected in `item.names`, `age.col`, or `sex.col`. See default values for `item.names` in the documentation for an example and check entries for `age.col` and `sex.col`." )
@@ -181,21 +186,21 @@ qfs_scores <- function( df,
 
     df <- df %>%
       rename( f2 = item.names[["CEREAL"]],
-              f3 = item.names[["SKIMMILK"]],
+              f3 = item.names[["MILK.SKIM"]],
               f4 = item.names[["EGGS"]],
               f5 = item.names[["SAUSAGE"]],
-              f6 = item.names[["MARGBR"]],
-              f7 = item.names[["CITJUICE"]],
+              f6 = item.names[["MARG.BUTTER"]],
+              f7 = item.names[["CITRUS.JUICE"]],
               f8 = item.names[["FRUIT"]],
               f9 = item.names[["HOTDOG"]],
               f10 = item.names[["CHEESE"]],
-              f11 = item.names[["FRIEDPOT"]],
-              f12 = item.names[["MARGVEG"]],
+              f11 = item.names[["FRIED.POTATOES"]],
+              f12 = item.names[["MARG.BUTTER.ON.VEG"]],
               f13 = item.names[["MAYO"]],
-              f14 = item.names[["SALDRS"]],
+              f14 = item.names[["DRESSING"]],
               f15 = item.names[["RICE"]],
               f16 = item.names[["MARGRICE"]],
-              lo.fat.mrg = item.names[["LOFATMRG"]]
+              lo.fat.mrg = item.names[["RED.FAT.MARG"]]
 
               )
   }
