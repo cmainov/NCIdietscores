@@ -1,4 +1,174 @@
+###---------------------------------------------------------------
+###  % IN ENERGY FROM FAT FROM THE QUICK FOOD SCAN
+###---------------------------------------------------------------
 
+#' @title % Energy from fat from the NCI's Quick Food Scan
+#'
+#' @description Calculate age & sex-adjusted % Energy from fat,
+#' on data collected with the National Cancer Institute's Quick Food Scan screener.
+#'
+#' @details
+#' Implements scoring procedures for data obtained from the National Cancer Institute (NCI)
+#' Quick Food Scan screener. Computes % energy from fat.
+#'
+#' Citation:
+#' The Quick Food Scan. Epidemiology and Genomics Research
+#' Program. National Cancer Institute. https://epi.grants.cancer.gov/diet/screeners/files.
+#'
+#' @seealso
+#' \itemize{
+#' \item \href{https://epi.grants.cancer.gov/diet/screeners/fat/}{Screener Documentation}
+#' \item \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/percent-energy-from-fat-screener.pdf}{The Screener}
+#' \item \href{https://epi.grants.cancer.gov/diet/screeners/sas-program-for-percent-energy-from-fat%20Screener.zip}{Original SAS Code from the NCI}
+#' }
+#'
+#' @usage qfs_scores( df, default.names = TRUE,
+#' item.names = list( CEREAL = "CEREAL", MILK.SKIM = "SKIMMILK",
+#'                    EGGS = "EGGS", SAUSAGE = "SAUSAGE",
+#'                    MARG.BUTTER = "MARGBR", CITRUS.JUICE = "CITJUICE",
+#'                    FRUIT = "FRUIT", HOTDOG = "HOTDOG",
+#'                    CHEESE = "CHEESE", FRIED.POTATOES = "FRIEDPOT",
+#'                    MARG.BUTTER.ON.VEG = "MARGVEG", MAYO = "MAYO",
+#'                    DRESSING = "SALDRS", RICE = "RICE",
+#'                    MARGRICE = "MARGRICE", RED.FAT.MARG = "LOFATMRG",
+#'                    FAT.SUBJECTIVE = "ALLFAT" ),
+#' age.col = "AGE",
+#' sex.col = "SEX" )
+#'
+#'
+#' @param df A \code{data.frame} or \code{tibble} containing the columns (dietary items, sex, and age) for computing the scores.
+#' @param default.names A logical. Defaulted to \code{TRUE} and establishes whether default survey item names (see data dictionary above) are used. If user-specified names are used, set to \code{FALSE} and specify the column names in \code{item.names}.
+#' @param item.names A named \code{list} containing the user-specified column names (character vectors) for the survey items in the \code{df}. Ignored if \code{default.names} is \code{TRUE}. Must follow format used in \code{usage}.
+#' @param age.col A character vector specifying the name of the age column in the \code{df}. Defaulted to "AGE".
+#' @param sex.col A character vector specifying the name of the sex column in the \code{df}. Ensure levels of this variable are either coded numerically ("1" = male, "2" = female) or as "male" "female" as computation of the scores is contingent on this variable. Defaulted to "get( sex.col )".
+#'
+#' @return Object of class \code{data.frame} containing the original user-supplied data with the
+#' age & sex-adjusted % energy from fat appended. Column names and descriptions are as follows:
+#'
+#' \tabular{c | c}{
+#' `pred.pcf` \tab Predicted percentage of calories from fat (%) \cr
+#' }
+#'
+#' @import dplyr
+#' @import stringr
+#' @import magrittr
+#'
+#' @examples
+#' library( NCIdietscores )
+#'
+#' # using default diet item names
+#'
+#' qfs_scores( short.data )
+#'
+#' # user-specified diet item names but using default names in `item.names`
+#'
+#' qfs_scores( short.data, default.names = FALSE )
+#'
+#' # user specified names
+#'
+#' d.user <- setNames( short.data,
+#'                     c( "cold.cereals", "milk",
+#'                        "eggs", "bacon",
+#'                        "butter", "cit.juice",
+#'                        "fruit", "hot.dog",
+#'                        "cheese", "potatoes",
+#'                        "marg.veg", "mayonnaise",
+#'                        "dressing", "rice",
+#'                        "marg.on.rice", "red.marg",
+#'                        "fat.subj", "SEX", "AGE" ) )
+#'
+#' # run `qfs_scores` without specifying column names, throws error
+#' \dontrun{
+#'
+#'   qfs_scores( df = d.user, default.names = FALSE )
+#'
+#' }
+#'
+#'
+#' # run `qfs_scores`  specifying column names in incorrect format, error thrown
+#'
+#' \dontrun{
+#'   cls.list <- list( "cold.cereals", "milk",
+#'                     "eggs", "bacon",
+#'                     "butter", "cit.juice",
+#'                     "fruit", "hot.dog",
+#'                     "cheese", "potatoes",
+#'                     "marg.veg", "mayonnaise",
+#'                     "dressing", "rice",
+#'                     "marg.on.rice", "red.marg",
+#'                     "fat.subj" )
+#'
+#'   qfs_scores( df = d.user,
+#'               default.names = FALSE,
+#'               item.names = cls.list )
+#' }
+#'
+#'
+#' # run `qfs_scores`  specifying column names, no error
+#'
+#' cls.list <- list( CEREAL = "cold.cereals", MILK.SKIM = "milk",
+#'                   EGGS = "eggs", SAUSAGE = "bacon",
+#'                   MARG.BUTTER = "butter", CITRUS.JUICE = "cit.juice",
+#'                   FRUIT = "fruit", HOTDOG = "hot.dog",
+#'                   CHEESE = "cheese", FRIED.POTATOES = "potatoes",
+#'                   MARG.BUTTER.ON.VEG = "marg.veg", MAYO = "mayonnaise",
+#'                   DRESSING = "dressing", RICE = "rice",
+#'                   MARGRICE = "marg.on.rice", RED.FAT.MARG = "red.marg",
+#'                   FAT.SUBJECTIVE = "fat.subj" )
+#'
+#' qfs_scores( df = d.user,
+#'             default.names = FALSE,
+#'             item.names = cls.list )
+#'
+#'
+#' # specify own names for sex and age columns
+#'
+#' d.user.age.sex <- short.data
+#'
+#' colnames( d.user.age.sex )[ colnames( d.user.age.sex ) == "SEX" ] <- "subject.sex"
+#' colnames( d.user.age.sex )[ colnames( d.user.age.sex ) == "AGE" ] <- "subject.age"
+#' colnames( d.user )[ colnames( d.user ) == "SEX" ] <- "subject.sex"
+#' colnames( d.user )[ colnames( d.user ) == "AGE" ] <- "subject.age"
+#'
+#'
+#' qfs_scores( df = d.user.age.sex, sex.col = "subject.sex", age.col = "subject.age" )
+#'
+#' qfs_scores( df = d.user,
+#'             default.names = FALSE,
+#'             item.names = cls.list,
+#'             sex.col = "subject.sex",
+#'             age.col = "subject.age" )
+#'
+#'
+#' ## more errors: ##
+#'
+#' # incorrect data types
+#' \dontrun{
+#'
+#'   qfs_scores( df = list( short.data ) )
+#'   qfs_scores( df = short.data, age.col = 3 )
+#'   qfs_scores( df = short.data, sex.col = 7 )
+#'
+#' }
+#'
+#' # incorrect formatting of data frequencies
+#' \dontrun{
+#'   short.data.format <- short.data
+#'
+#'   short.data.format[1:16][ short.data.format[1:16] == 1 ] <- "Never"
+#'   short.data.format[1:16][ short.data.format[1:16] == 2 ] <- "Less than once per month"
+#'   short.data.format[1:16][ short.data.format[1:16] == 3 ] <- "1-3 times per month"
+#'   short.data.format[1:16][ short.data.format[1:16] == 4 ] <- "1-2 times per week"
+#'   short.data.format[1:16][ short.data.format[1:16] == 5 ] <- "3-4 times per week"
+#'   short.data.format[1:16][ short.data.format[1:16] == 6 ] <- "5-6 times per week"
+#'   short.data.format[1:16][ short.data.format[1:16] == 7 ] <- "1 times per day"
+#'   short.data.format[1:16][ short.data.format[1:16] == 8 ] <- "2 or more times per day"
+#'   short.data.format[1:16][ short.data.format[1:16] == 9 ] <- "4 or more times per day"
+#'
+#'   qfs_scores( df = short.data.format )
+#' }
+#'
+#' @export
 
 
 qfs_scores <- function( df,
