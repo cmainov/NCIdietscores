@@ -15,6 +15,10 @@
 #' The Quick Food Scan. Epidemiology and Genomics Research
 #' Program. National Cancer Institute. https://epi.grants.cancer.gov/diet/screeners/files.
 #'
+#' @import dplyr
+#' @import stringr
+#' @import magrittr
+#'
 #' @seealso
 #' \itemize{
 #' \item \href{https://epi.grants.cancer.gov/diet/screeners/fat/}{Screener Documentation}
@@ -49,9 +53,6 @@
 #' `pred.pcf` \tab Predicted percentage of calories from fat (%) \cr
 #' }
 #'
-#' @import dplyr
-#' @import stringr
-#' @import magrittr
 #'
 #' @examples
 #' library( NCIdietscores )

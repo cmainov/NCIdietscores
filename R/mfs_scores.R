@@ -19,6 +19,10 @@
 #' Program. National Cancer Institute. https://epi.grants.cancer.gov/diet/screeners/files.
 #' Updated November 20, 2019.
 #'
+#' @import dplyr
+#' @import stringr
+#' @import magrittr
+#'
 #' @seealso
 #' \itemize{
 #' \item \href{https://epi.grants.cancer.gov/diet/screeners/OPEN.pdf}{Screener Documentation}
@@ -63,9 +67,6 @@
 #' `pred.fv6.ce` \tab Predicted F & V cup equivalents, excluding french fries, adjusted for age and sex \cr
 #' }
 #'
-#' @import dplyr
-#' @import stringr
-#' @import magrittr
 #'
 #' @examples
 #' library( NCIdietscores )
