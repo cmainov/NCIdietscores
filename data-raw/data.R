@@ -1,6 +1,8 @@
 require( rvest )
 require( tidyverse )
 
+# below creates /data-raw package and lists it in the .Rbuildignore (run before creating this script)
+# usethis::use_data_raw( "data" )
 
 ### (1.0) Web Scrape for HTML Tables Containing Adjustment factors ###
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -98,9 +100,9 @@ for( i in 1:length( table.list ) ){
 # we will also column bind tables 10 and 11 since they are part of the same table, just split up
 tbl.10.11 <- setNames( cbind( tbl.10, tbl.11 ),
                        c( "age", "f3",
-                       "f5", "f2", "f8", "f13",
-                       "f14", "age.2", "f4", "f7",
-                       "f9", "f10", "f11", "reg.fat", "f15" ) ) %>%
+                          "f5", "f2", "f8", "f13",
+                          "f14", "age.2", "f4", "f7",
+                          "f9", "f10", "f11", "reg.fat", "f15" ) ) %>%
   t(.) %>%
   data.frame() %>%
   mutate( fd = rownames( . ))
@@ -110,13 +112,13 @@ c.nm <- tbl.10.11[1,]
 
 # rearrange table into desired format
 tbl.10.11 <- rbind( setNames( tbl.10.11[c( 17, 1:8 )],
-                                  c( "fd", "sex", c.nm[2:8] ) ), setNames( tbl.10.11[c( 17, 9:16 )],
-                                                                c( "fd", "sex", c.nm[10:16] ) ) )
+                              c( "fd", "sex", c.nm[2:8] ) ), setNames( tbl.10.11[c( 17, 9:16 )],
+                                                                       c( "fd", "sex", c.nm[10:16] ) ) )
 
 
 # rename rows of table 13
 tbl.13[ , 1 ] <- paste0( c( "intercept", "f2", "f3", "f4", "f5", "f7",
-                    "f8", "f9", "f10", "f11", "f13", "f14", "f15", "reg.fat" ), ".a" )
+                            "f8", "f9", "f10", "f11", "f13", "f14", "f15", "reg.fat" ), ".a" )
 
 ## --------- End Subsection --------- ##
 
@@ -206,13 +208,13 @@ for( i in 1:15 ){
 # coerce to dataframe and set column names according to survey item
 short.data <- setNames( data.frame( short.data ),
                         c( "CEREAL", "SKIMMILK",
-                        "EGGS", "SAUSAGE",
-                        "MARGBR", "CITJUICE",
-                        "FRUIT", "HOTDOG",
-                        "CHEESE", "FRIEDPOT",
-                        "MARGVEG", "MAYO",
-                        "SALDRS", "RICE",
-                        "MARGRICE" ) )
+                           "EGGS", "SAUSAGE",
+                           "MARGBR", "CITJUICE",
+                           "FRUIT", "HOTDOG",
+                           "CHEESE", "FRIEDPOT",
+                           "MARGVEG", "MAYO",
+                           "SALDRS", "RICE",
+                           "MARGRICE" ) )
 
 # Fat intake questions
 short.data$LOFATMRG <- sample( 1:6, size = 45, replace = TRUE )
@@ -227,7 +229,8 @@ short.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
 ## --------- End Subsection --------- ##
 
 
-## (1.5) Save as internal data using `use_data` ##
+## (1.5) Save developer data as internal data using `use_data` ##
+
 usethis::use_data( tbl.1, tbl.2,
                    tbl.3, tbl.4,
                    tbl.5, tbl.6,
@@ -236,10 +239,20 @@ usethis::use_data( tbl.1, tbl.2,
                    tbl.10.11,
                    tbl.11, tbl.12,
                    tbl.13, age.lst,
-                   fvcupadj, diet.data,
-                   short.data,
+                   fvcupadj,
                    internal = TRUE,
                    overwrite = TRUE ) # save each table as internal data to the package
 
-##
+## --------- End Subsection --------- ##
+
+
+## (1.6) Save example data for export ##
+
+usethis::use_data( diet.data, short.data,
+                   overwrite = TRUE ) # this creates the `/data` folder and stores the individual datasets in that directory
+
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
