@@ -77,7 +77,7 @@
 #'
 #' # user-specified diet item names but using default names in `item.names`
 #'
-#' mfs_scores(diet.data, default.names = FALSE )
+#' mfs_scores( diet.data, default.names = FALSE )
 #'
 #' # user specified names
 #'
