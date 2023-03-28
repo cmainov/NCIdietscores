@@ -56,16 +56,14 @@
 #' @return Object of class \code{data.frame} containing the original user-supplied data with the
 #' age & sex-adjusted dietary screener scores appended. Column names and descriptions are as follows:
 #'
-#' \tabular{c | c}{
-#' `pred.fiber` \tab Predicted predicted fiber intake (cube rooted; cube to get back estimate in g) \cr
-#' `pred.pcf` \tab Predicted percentage of calories from fat (\%) \cr
-#' `pred.fv7.ps` \tab Predicted F & V pyramid serving units, including french fries, adjusted for age and sex  \cr
-#' `pred.fv6.ps` \tab Predicted F & V pyramid serving units, excluding french fries, adjusted for age and sex  \cr
-#' `raw.pred.fv7.ce` \tab Predicted F & V cup equivalents, including french fries, not adjusted for age and sex \cr
-#' `raw.pred.fv6.ce` \tab Predicted F & V cup equivalents, excluding french fries, not adjusted for age and sex \cr
-#' `pred.fv7.ce` \tab Predicted F & V cup equivalents, including french fries, adjusted for age and sex \cr
-#' `pred.fv6.ce` \tab Predicted F & V cup equivalents, excluding french fries, adjusted for age and sex \cr
-#' }
+#' `pred.fiber`: Predicted predicted fiber intake (cube rooted; cube to get back estimate in g)
+#' `pred.pcf`: Predicted percentage of calories from fat (\%)
+#' `pred.fv7.ps`: Predicted F & V pyramid serving units, including french fries, adjusted for age and sex
+#' `pred.fv6.ps`: Predicted F & V pyramid serving units, excluding french fries, adjusted for age and sex
+#' `raw.pred.fv7.ce`: Predicted F & V cup equivalents, including french fries, not adjusted for age and sex
+#' `raw.pred.fv6.ce`: Predicted F & V cup equivalents, excluding french fries, not adjusted for age and sex
+#' `pred.fv7.ce`: Predicted F & V cup equivalents, including french fries, adjusted for age and sex
+#' `pred.fv6.ce`: Predicted F & V cup equivalents, excluding french fries, adjusted for age and sex
 #'
 #'
 #' @examples

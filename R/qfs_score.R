@@ -23,7 +23,7 @@
 #' \itemize{
 #' \item \href{https://epi.grants.cancer.gov/diet/screeners/fat/}{Screener Documentation}
 #' \item \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/percent-energy-from-fat-screener.pdf}{The Screener}
-#' \item \href{https://epi.grants.cancer.gov/diet/screeners/sas-program-for-percent-energy-from-fat%20Screener.zip}{Original SAS Code from the NCI}
+#' \item \href{https://epi.grants.cancer.gov/diet/screeners/files.html#fat}{Original SAS Code from the NCI}
 #' }
 #'
 #' @usage qfs_scores( df, default.names = TRUE,
@@ -49,7 +49,7 @@
 #' @return Object of class \code{data.frame} containing the original user-supplied data with the
 #' age & sex-adjusted % energy from fat appended. Column names and descriptions are as follows:
 #'
-#'
+#' `pred.pcf`: Predicted percentage of calories from fat (\%)
 #'
 #' @examples
 #' library( NCIdietscores )

@@ -31,6 +31,8 @@ sex.col = "SEX" )
 \value{
 Object of class \code{data.frame} containing the original user-supplied data with the
 age & sex-adjusted % energy from fat appended. Column names and descriptions are as follows:
+
+`pred.pcf`: Predicted percentage of calories from fat (\%)
 }
 \description{
 Calculate age & sex-adjusted % Energy from fat,
@@ -161,5 +163,9 @@ qfs_scores( df = d.user,
 
 }
 \seealso{
-
+\itemize{
+\item \href{https://epi.grants.cancer.gov/diet/screeners/fat/}{Screener Documentation}
+\item \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/percent-energy-from-fat-screener.pdf}{The Screener}
+\item \href{https://epi.grants.cancer.gov/diet/screeners/files.html#fat}{Original SAS Code from the NCI}
+}
 }
