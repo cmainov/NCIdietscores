@@ -37,7 +37,7 @@ age & sex-adjusted dietary screener scores appended. Column names and descriptio
 
 \tabular{c | c}{
 `pred.fiber` \tab Predicted predicted fiber intake (cube rooted; cube to get back estimate in g) \cr
-`pred.pcf` \tab Predicted percentage of calories from fat (%) \cr
+`pred.pcf` \tab Predicted percentage of calories from fat (\%) \cr
 `pred.fv7.ps` \tab Predicted F & V pyramid serving units, including french fries, adjusted for age and sex  \cr
 `pred.fv6.ps` \tab Predicted F & V pyramid serving units, excluding french fries, adjusted for age and sex  \cr
 `raw.pred.fv7.ce` \tab Predicted F & V cup equivalents, including french fries, not adjusted for age and sex \cr

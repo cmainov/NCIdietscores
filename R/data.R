@@ -11,7 +11,7 @@
 #'   \item{HQ3}{Bacon or sausage frequency of consumption}
 #'   \item{HQ4}{Beef or pork hot dogs frequency of consumption}
 #'   \item{HQ5}{Whole grain bread frequency of consumption}
-#'   \item{HQ6}{100% fruit juice frequency of consumption}
+#'   \item{HQ6}{Fruit juice frequency of consumption}
 #'   \item{HQ7}{Fruit frequency of consumption}
 #'   \item{HQ8}{Salad dressing or mayo frequency of consumption}
 #'   \item{HQ9}{Lettuce or green-leafy salad frequency of consumption}

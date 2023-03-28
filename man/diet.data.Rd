@@ -5,7 +5,29 @@
 \alias{diet.data}
 \title{Test Data for qfs_scores}
 \format{
-
+## `diet.data`
+A data frame with 45 rows and 19 columns:
+\describe{
+  \item{HQ1}{Cold cereals frequency of consumption}
+  \item{HQ2}{Milk frequency of consumption}
+  \item{HQ2A}{Milk type}
+  \item{HQ3}{Bacon or sausage frequency of consumption}
+  \item{HQ4}{Beef or pork hot dogs frequency of consumption}
+  \item{HQ5}{Whole grain bread frequency of consumption}
+  \item{HQ6}{Fruit juice frequency of consumption}
+  \item{HQ7}{Fruit frequency of consumption}
+  \item{HQ8}{Salad dressing or mayo frequency of consumption}
+  \item{HQ9}{Lettuce or green-leafy salad frequency of consumption}
+  \item{HQ10}{French fries frequency of consumption}
+  \item{HQ11}{White potato frequency of consumption}
+  \item{HQ12}{Beans frequency of consumption}
+  \item{HQ13}{Other vegetables frequency of consumption}
+  \item{HQ14}{Pasta frequency of consumption}
+  \item{HQ15}{Nuts frequency of consumption}
+  \item{HQ16}{Regular fat potato chips frequency of consumption}
+  \item{SEX}{Participant sex}
+  \item{AGE}{Participant age}
+}
 }
 \source{
 <https://epi.grants.cancer.gov/past-initiatives/open/multifactor/scoring.html>

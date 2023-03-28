@@ -1,8 +1,8 @@
 ###---------------------------------------------------------------
-###  % IN ENERGY FROM FAT FROM THE QUICK FOOD SCAN
+###  PERCENT ENERGY FROM FAT FROM THE QUICK FOOD SCAN
 ###---------------------------------------------------------------
 
-#' @title % Energy from fat from the NCI's Quick Food Scan
+#' @title Percent Energy from fat from the NCI's Quick Food Scan
 #'
 #' @description Calculate age & sex-adjusted % Energy from fat,
 #' on data collected with the National Cancer Institute's Quick Food Scan screener.
@@ -23,7 +23,7 @@
 #' \itemize{
 #' \item \href{https://epi.grants.cancer.gov/diet/screeners/fat/}{Screener Documentation}
 #' \item \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/percent-energy-from-fat-screener.pdf}{The Screener}
-#' \item \href{https://epi.grants.cancer.gov/diet/screeners/sas-program-for-percent-energy-from-fat%20Screener.zip}{Original SAS Code from the NCI}
+#' \item \href{https://epi.grants.cancer.gov/diet/screeners/sas-program-for-percent-energy-from-fat\%20Screener.zip}{Original SAS Code from the NCI}
 #' }
 #'
 #' @usage qfs_scores( df, default.names = TRUE,
@@ -49,9 +49,6 @@
 #' @return Object of class \code{data.frame} containing the original user-supplied data with the
 #' age & sex-adjusted % energy from fat appended. Column names and descriptions are as follows:
 #'
-#' \tabular{c | c}{
-#' `pred.pcf` \tab Predicted percentage of calories from fat (%) \cr
-#' }
 #'
 #'
 #' @examples
