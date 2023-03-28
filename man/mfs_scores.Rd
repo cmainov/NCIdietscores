@@ -178,6 +178,6 @@ mfs_scores( df = diet.data.format )
 \item \href{https://epi.grants.cancer.gov/diet/screeners/OPEN.pdf}{Screener Documentation}
 \item \href{https://epi.grants.cancer.gov/past-initiatives/open/multifactor/open_multifactor_datadic.pdf}{Data Dictionary}
 \item \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/multifactor-screener-in-open-self-report-version.pdf}{The Screener}
-\item \href{https://epi.grants.cancer.gov/diet/screeners/files.html#open}{Original SAS Code from the NCI}
+\item \href{https://epi.grants.cancer.gov/diet/screeners/sas-program-open.zip}{Original SAS Code from the NCI}
 }
 }

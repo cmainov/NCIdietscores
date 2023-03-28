@@ -1,10 +1,10 @@
-#' Test Data for qfs_scores
+#' Test Data for mfs_scores
 #'
-#' Test data for examples in the qfs_scores function.
+#' Test data for examples in the mfs_scores function.
 #'
-#' @format ## `diet.data`
-#' A data frame with 45 rows and 19 columns:
+#' @format `diet.data`
 #' \describe{
+#' A data frame with 45 rows and 19 columns:
 #'   \item{HQ1}{Cold cereals frequency of consumption}
 #'   \item{HQ2}{Milk frequency of consumption}
 #'   \item{HQ2A}{Milk type}
@@ -23,8 +23,7 @@
 #'   \item{HQ15}{Nuts frequency of consumption}
 #'   \item{HQ16}{Regular fat potato chips frequency of consumption}
 #'   \item{SEX}{Participant sex}
-#'   \item{AGE}{Participant age}
+#'   \item{AGE}{Participant age (years)}
 #' }
-#'
 #' @source <https://epi.grants.cancer.gov/past-initiatives/open/multifactor/scoring.html>
 "diet.data"

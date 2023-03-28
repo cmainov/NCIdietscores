@@ -161,9 +161,5 @@ qfs_scores( df = d.user,
 
 }
 \seealso{
-\itemize{
-\item \href{https://epi.grants.cancer.gov/diet/screeners/fat/}{Screener Documentation}
-\item \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/percent-energy-from-fat-screener.pdf}{The Screener}
-\item \href{https://epi.grants.cancer.gov/diet/screeners/sas-program-for-percent-energy-from-fat\%20Screener.zip}{Original SAS Code from the NCI}
-}
+
 }
