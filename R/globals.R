@@ -1,0 +1,10 @@
+utils::globalVariables( c("CEREAL", "SKIMMILK", "EGGS",
+                          "SAUSAGE", "MARGBR", "CITJUICE", "FRUIT", "HOTDOG",
+                          "CHEESE", "FRIEDPOT", "MARGVEG", "MAYO", "SALDRS",
+                          "RICE", "MARGRICE", "LOFATMRG", paste0( "HQ", 1:16 ), "HQ2A",
+                          "fruit.m", "vegetables.m", "juice.m", "potatoes.m", "white.potatoes.m",
+                          "salad.m", "beans.m", "fv7", "fv6", "sqfv7", "sqfv6", "juice", "FVCAFrtJ",
+                          "fruit", "FVCAFruit", "potatoes", "FVCAFrFry", "white.potatoes",
+                          "FVCAOthPot", "beans", "FVCADrBean", "salad", "FVCASalad", "vegetables",
+                          "FVCAOthVeg", "raw.pred.fv7.ce", "raw.pred.fv6.ce", "f6",
+                          "f12", "f16", "lo.fat.mrg", "fat.real", "tot.fat", "." ))
