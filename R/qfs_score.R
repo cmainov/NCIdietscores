@@ -17,7 +17,7 @@
 #'
 #' @import dplyr
 #' @import stringr
-#' @import magrittr
+#' @import rlang
 #'
 #' @seealso
 #' \itemize{
@@ -182,7 +182,6 @@ qfs_scores <- function( df,
                                            FAT.SUBJECTIVE = "ALLFAT" ),
                         age.col = "AGE",
                         sex.col = "SEX" ) {
-
 
   ### (1.0) Function Checks ###
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------

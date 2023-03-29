@@ -21,7 +21,7 @@
 #'
 #' @import dplyr
 #' @import stringr
-#' @import magrittr
+#' @import rlang
 #'
 #' @seealso
 #' \itemize{

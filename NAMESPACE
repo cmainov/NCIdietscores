@@ -3,5 +3,6 @@
 export(mfs_scores)
 export(qfs_scores)
 import(dplyr)
-import(magrittr)
+import(rlang)
 import(stringr)
+importFrom(magrittr,"%>%")
