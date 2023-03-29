@@ -201,9 +201,9 @@ mfs_scores <- function( df,
   ## (1.1) Argument types and entries  ##
 
   # class checks
-  if ( class( item.names ) != "list" ) stop( "Error: `item.names` must be a list" )
+  if ( !inherits( item.names, "list" ) ) stop( "Error: `item.names` must be a list" )
   if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) >= 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
-  if ( class( age.col ) != "character" | class( sex.col ) != "character" ) stop( "Error: `age.col` and `sex.col` must be objects of class `character`." )
+  if ( !inherits( age.col, "character" ) | !inherits( sex.col, "character" ) ) stop( "Error: `age.col` and `sex.col` must be objects of class `character`." )
 
   # diet column names checks
   if ( !default.names & is.null( item.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
