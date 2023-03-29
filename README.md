@@ -30,6 +30,8 @@ ___
 * `qfs_scores` and `mfs_scores` require specifically-formatted datasets as inputs. Data examples can be accessed using:
 
 ```
+library( NCIdietscores )
+
 data( diet.data ) # toy data example for `mfs_scores`
 data( test.data ) # toy data examplefor `qfs_scores`
 ```
