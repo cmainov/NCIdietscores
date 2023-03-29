@@ -49,8 +49,8 @@ ___
 ```
 library( NCIdietscores )
 
-data( diet.data ) # toy data example for `mfs_scores`
-data( test.data ) # toy data example for `qfs_scores`
+NCIdietscores::diet.data # toy data example for `mfs_scores`
+NCIdietscores::test.data # toy data example for `qfs_scores`
 ```
 
 * Alternatively, users may also specify their own column names though these functions already assume a default set of column names. See function documentation (`?qfs_scores` or `?mfs_scores`) for a guide on specifying column names and the function calls.
