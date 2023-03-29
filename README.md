@@ -16,7 +16,7 @@ The functions in this package can be used to compute diet quality scores from Na
 * *Multifactor Screener in Observing Protein and Energy Nutrition (OPEN) Study* (use function: `mfs_scores`)
 * *Percentage Energy from Fat Screener* (i.e., *The Quick Food Scan*) (use function: `qfs_scores`)
 
-Each function takes a `data.frame` as an input and returns the same `data.frame` with the diet scores appended. See the function documentations (`?qfs_scores` or `?mfs_scores`) for the names and descriptions of the variables each function outputs.
+Each function takes a `data.frame` as an input and returns the same `data.frame` with the diet scores appended and some summary statistics for the new variables. See the function documentations (`?qfs_scores` or `?mfs_scores`) for the names and descriptions of the variables each function outputs.
 
 
 #### Links to the Screeners and Documentation Files
