@@ -5,7 +5,6 @@
   
   [![Build Status](https://app.travis-ci.com/cmainov/NCIdietscores.svg?branch=master)](https://app.travis-ci.com/cmainov/NCIdietscores)
   
-  [![Coverage Badge](https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/cmainov/561effea43e5e22aa06db790e18db4fd/raw/NCIdietscores__heads_master.json)]
 
   <!-- badges: end -->
   
