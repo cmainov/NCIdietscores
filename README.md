@@ -3,6 +3,7 @@
  <!-- badges: start -->
   [![R-CMD-check](https://github.com/cmainov/NCIdietscores/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/cmainov/NCIdietscores/actions/workflows/R-CMD-check.yaml)
   
+  [![Build Status](https://app.travis-ci.com/cmainov/NCIdietscores.svg?branch=master)](https://app.travis-ci.com/cmainov/NCIdietscores)
   
   <!-- badges: end -->
   
