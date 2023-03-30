@@ -1,18 +1,18 @@
 ###---------------------------------------------------------------
-###  PERCENT ENERGY FROM FAT FROM THE QUICK FOOD SCAN
+###  PERCENTAGE ENERGY FROM FAT SCREENER
 ###---------------------------------------------------------------
 
-#' @title Percent Energy from fat from the NCI's Quick Food Scan
+#' @title Percent Energy from fat from the NCI's Percentage Energy From Fat Screener
 #'
 #' @description Calculate age & sex-adjusted % Energy from fat,
-#' on data collected with the National Cancer Institute's Quick Food Scan screener.
+#' on data collected with the National Cancer Institute's Percentage Energy From Fat Screener.
 #'
 #' @details
 #' Implements scoring procedures for data obtained from the National Cancer Institute (NCI)
-#' Quick Food Scan screener. Computes % energy from fat.
+#' Percentage Energy From Fat Screener. Computes % energy (kcal) from fat.
 #'
 #' Citation:
-#' The Quick Food Scan. Epidemiology and Genomics Research
+#' Percentage Energy From Fat Screener. Epidemiology and Genomics Research
 #' Program. National Cancer Institute. https://epi.grants.cancer.gov/diet/screeners/files.
 #'
 #' @import dplyr

@@ -16,9 +16,9 @@ The functions in this package can be used to compute diet quality scores from Na
 
 
 * *Multifactor Screener in Observing Protein and Energy Nutrition (OPEN) Study* (use function: `mfs_scores`)
-* *Percentage Energy from Fat Screener* (i.e., *The Quick Food Scan*) (use function: `qfs_scores`)
+* *Percentage Energy from Fat Screener* (use function: `pef_scores`)
 
-Each function takes a `data.frame` as an input and returns the same `data.frame` with the diet scores appended and some summary statistics for the new variables. See the function documentations (`?qfs_scores` or `?mfs_scores`) for the names and descriptions of the variables each function outputs.
+Each function takes a `data.frame` as an input and returns the same `data.frame` with the diet scores appended and some summary statistics for the new variables. See the function documentations (`?pef_scores` or `?mfs_scores`) for the names and descriptions of the variables each function outputs.
 
 
 #### Links to the Screeners and Documentation Files
@@ -26,7 +26,7 @@ Each function takes a `data.frame` as an input and returns the same `data.frame`
 [Documentation](https://epi.grants.cancer.gov/diet/screeners/OPEN.pdf),
 [Codebook/Data Dictionary](https://epi.grants.cancer.gov/past-initiatives/open/multifactor/open_multifactor_datadic.pdf)
 
-[Quick Food Scan](https://epi.grants.cancer.gov/diet/shortreg/instruments/percent-energy-from-fat-screener.pdf),
+[Fat Screener](https://epi.grants.cancer.gov/diet/shortreg/instruments/percent-energy-from-fat-screener.pdf),
 [Documentation](https://epi.grants.cancer.gov/diet/screeners/fat/scoring.html)
 
 ___
@@ -46,16 +46,16 @@ ___
 ### Notes
 ___
 
-* `qfs_scores` and `mfs_scores` require specifically-formatted datasets as inputs. Data examples can be accessed using:
+* `pef_scores` and `mfs_scores` require specifically-formatted datasets as inputs. Data examples can be accessed using:
 
 ```
 library( NCIdietscores )
 
 NCIdietscores::diet.data # toy data example for `mfs_scores`
-NCIdietscores::test.data # toy data example for `qfs_scores`
+NCIdietscores::test.data # toy data example for `pef_scores`
 ```
 
-* Alternatively, users may also specify their own column names though these functions already assume a default set of column names. See function documentation (`?qfs_scores` or `?mfs_scores`) for a guide on specifying column names and the function calls.
+* Alternatively, users may also specify their own column names though these functions already assume a default set of column names. See function documentation (`?pef_scores` or `?mfs_scores`) for a guide on specifying column names and the function calls.
 
 ___
 
@@ -129,6 +129,8 @@ ___
 ### References
 ___
 * The Multifactor screener in the Observing Protein & Energy Nutrition (OPEN) Study. Epidemiology and Genomics Research Program. National Cancer Institute. https://epi.grants.cancer.gov/diet/screeners/files.Updated November 20, 2019.
+
+* Percentage Energy From Fat Screener. Epidemiology and Genomics Research Program. National Cancer Institute. https://epi.grants.cancer.gov/diet/screeners/files.
 
 * Thompson FE, Midthune D, Subar AF, Kipnis V, Kahle LL, Schatzkin A. Development and evaluation of a short instrument to estimate usual dietary intake of percentage energy from fat. J Am Diet Assoc 2007 May;107(5):760-7.
 
