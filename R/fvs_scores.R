@@ -78,70 +78,71 @@ fvs_scores <- function( df,
   ## --------- End Subsection --------- ##
 
 
-  ## (3.2) Portion size response conversions ##
+  ## (3.2) Portion size response conversions (pyramid cup equivalents) ##
 
+  df.ce <- df.copy
 
   # Q1A
-  df.copy[, paste0( "Q1A", "N" ) ] <- ifelse( df.copy[, "Q1A" ] == 0, 0.5,
-                                              ifelse( df.copy[, "Q1A" ] == 1, 1,
-                                                      ifelse( df.copy[, "Q1A" ] == 2, 1.625,
-                                                              ifelse( df.copy[, "Q1A" ] == 3, 2.5,
-                                                                      ifelse( df.copy[, "Q1" ] == 0, 0, df.copy[, "Q1A" ] ) ) ) ) )
+  df.ce[, paste0( "Q1A", "N" ) ] <- ifelse( df.ce[, "Q1A" ] == 0, 0.5,
+                                            ifelse( df.ce[, "Q1A" ] == 1, 1,
+                                                    ifelse( df.ce[, "Q1A" ] == 2, 1.625,
+                                                            ifelse( df.ce[, "Q1A" ] == 3, 2.5,
+                                                                    ifelse( df.ce[, "Q1" ] == 0, 0, df.ce[, "Q1A" ] ) ) ) ) )
 
   # Q2A1, Q2A2, Q3A, Q8A
   these.1 <- c( "Q2A1", "Q2A2", "Q3A", "Q8A" )
 
   for( i in seq_along( these.1 ) ){
 
-    df.copy[, paste0( these.1[i], "N" ) ] <- ifelse( df.copy[, these.1[i] ] == 0, 0.25,
-                                 ifelse( df.copy[, these.1[i] ] == 1, 0.5,
-                                         ifelse( df.copy[, these.1[i] ] == 2, 1,
-                                                 ifelse( df.copy[, these.1[i] ] == 3, 1.5,
-                                                         ifelse( df.copy[, str_extract( these.1[i], "Q\\d" ) ] == 0, 0, df.copy[, these.1[i] ] ) ) ) ) )
+    df.ce[, paste0( these.1[i], "N" ) ] <- ifelse( df.ce[, these.1[i] ] == 0, 0.25,
+                                                   ifelse( df.ce[, these.1[i] ] == 1, 0.5,
+                                                           ifelse( df.ce[, these.1[i] ] == 2, 1,
+                                                                   ifelse( df.ce[, these.1[i] ] == 3, 1.5,
+                                                                           ifelse( df.ce[, str_extract( these.1[i], "Q\\d" ) ] == 0, 0, df.ce[, these.1[i] ] ) ) ) ) )
   }
 
 
   # Q4A
-  df.copy[, paste0( "Q4A", "N" ) ] <- ifelse( df.copy[, "Q4A" ] == 0, 0.2,
-                                         ifelse( df.copy[, "Q4A" ] == 1, 0.5,
-                                                 ifelse( df.copy[, "Q4A" ] == 2, 0.75,
-                                                         ifelse( df.copy[, "Q4A" ] == 3, 1.3,
-                                                                 ifelse( df.copy[, "Q4" ] == 0, 0, df.copy[, "Q4A" ] ) ) ) ) )
+  df.ce[, paste0( "Q4A", "N" ) ] <- ifelse( df.ce[, "Q4A" ] == 0, 0.2,
+                                            ifelse( df.ce[, "Q4A" ] == 1, 0.5,
+                                                    ifelse( df.ce[, "Q4A" ] == 2, 0.75,
+                                                            ifelse( df.ce[, "Q4A" ] == 3, 1.3,
+                                                                    ifelse( df.ce[, "Q4" ] == 0, 0, df.ce[, "Q4A" ] ) ) ) ) )
 
   # Q5A
-  df.copy[, paste0( "Q5A", "N" ) ] <- ifelse( df.copy[, "Q5A" ] == 0, 0.25,
-                                         ifelse( df.copy[, "Q5A" ] == 1, 0.75,
-                                                 ifelse( df.copy[, "Q5A" ] == 2, 1.2,
-                                                         ifelse( df.copy[, "Q5A" ] == 3, 2.0,
-                                                                 ifelse( df.copy[, "Q5" ] == 0, 0, df.copy[, "Q5A" ] ) ) ) ) )
+  df.ce[, paste0( "Q5A", "N" ) ] <- ifelse( df.ce[, "Q5A" ] == 0, 0.25,
+                                            ifelse( df.ce[, "Q5A" ] == 1, 0.75,
+                                                    ifelse( df.ce[, "Q5A" ] == 2, 1.2,
+                                                            ifelse( df.ce[, "Q5A" ] == 3, 2.0,
+                                                                    ifelse( df.ce[, "Q5" ] == 0, 0, df.ce[, "Q5A" ] ) ) ) ) )
 
   # Q6A
-  df.copy[, paste0( "Q6A", "N" ) ] <- ifelse( df.copy[, "Q6A" ] == 0, 0.25,
-                                         ifelse( df.copy[, "Q6A" ] == 1, 0.75,
-                                                 ifelse( df.copy[, "Q6A" ] == 2, 1.25,
-                                                         ifelse( df.copy[, "Q6A" ] == 3, 2.0,
-                                                                 ifelse( df.copy[, "Q6" ] == 0, 0, df.copy[, "Q6A" ] ) ) ) ) )
+  df.ce[, paste0( "Q6A", "N" ) ] <- ifelse( df.ce[, "Q6A" ] == 0, 0.25,
+                                            ifelse( df.ce[, "Q6A" ] == 1, 0.75,
+                                                    ifelse( df.ce[, "Q6A" ] == 2, 1.25,
+                                                            ifelse( df.ce[, "Q6A" ] == 3, 2.0,
+                                                                    ifelse( df.ce[, "Q6" ] == 0, 0, df.ce[, "Q6A" ] ) ) ) ) )
 
   # Q7A
-  df.copy[, paste0( "Q7A", "N" ) ] <- ifelse( df.copy[, "Q7A" ] == 0, 0.25,
-                                         ifelse( df.copy[, "Q7A" ] == 1, 0.75,
-                                                 ifelse( df.copy[, "Q7A" ] == 2, 1.5,
-                                                         ifelse( df.copy[, "Q7A" ] == 3, 2.25,
-                                                                 ifelse( df.copy[, "Q7" ] == 0, 0, df.copy[, "Q7A" ] ) ) ) ) )
+  df.ce[, paste0( "Q7A", "N" ) ] <- ifelse( df.ce[, "Q7A" ] == 0, 0.25,
+                                            ifelse( df.ce[, "Q7A" ] == 1, 0.75,
+                                                    ifelse( df.ce[, "Q7A" ] == 2, 1.5,
+                                                            ifelse( df.ce[, "Q7A" ] == 3, 2.25,
+                                                                    ifelse( df.ce[, "Q7" ] == 0, 0, df.ce[, "Q7A" ] ) ) ) ) )
 
   # Q9A
-  df.copy[, paste0( "Q9A", "N" ) ] <- ifelse( df.copy[, "Q9A" ] == 0, 0.3,
-                                         ifelse( df.copy[, "Q9A" ] == 1, 1.0,
-                                                 ifelse( df.copy[, "Q9A" ] == 2, 1.6,
-                                                         ifelse( df.copy[, "Q9A" ] == 3, 2.25,
-                                                                 ifelse( df.copy[, "Q9" ] == 0, 0, df.copy[, "Q9A" ] ) ) ) ) )
+  df.ce[, paste0( "Q9A", "N" ) ] <- ifelse( df.ce[, "Q9A" ] == 0, 0.3,
+                                            ifelse( df.ce[, "Q9A" ] == 1, 1.0,
+                                                    ifelse( df.ce[, "Q9A" ] == 2, 1.6,
+                                                            ifelse( df.ce[, "Q9A" ] == 3, 2.25,
+                                                                    ifelse( df.ce[, "Q9" ] == 0, 0, df.ce[, "Q9A" ] ) ) ) ) )
 
   ## --------- End Subsection --------- ##
 
 
   ## (3.3) Pyramid cup equivalents of fruit & veg calculation ##
 
-  df.copy <- df.copy %>%
+  df.ce <- df.ce %>%
     mutate( JUICE = Q1 * Q1AN,
             FRUITA = Q2 * Q2A1N,
             FRUITB = Q2 * Q2A2N,
@@ -155,7 +156,103 @@ fvs_scores <- function( df,
             VEGSOUP = Q9 * Q9AN,
 
             # final sum
-            frt.veg = rowSums( cbind( JUICE, FRUIT, LSALAD, FRFRY, WHPOT, DRBEAN, OTHVEG, TOMSAUCE, VEGSOUP ),
+            frt.veg.ce = rowSums( cbind( JUICE, FRUIT, LSALAD, FRFRY, WHPOT, DRBEAN, OTHVEG, TOMSAUCE, VEGSOUP ),
+                               na.rm = T ) ) # note that any NAs in any of the columns are being set to ZERO before summing
+
+
+
+  ## (3.3) Portion size response conversions (pyramid servings) ##
+
+  df.ps <- df.copy
+
+  # Q1A
+  df.ps[, paste0( "Q1A", "N" ) ] <- ifelse( df.ps[, "Q1A" ] == 0, 0.75,
+                                              ifelse( df.ps[, "Q1A" ] == 1, 1.33,
+                                                      ifelse( df.ps[, "Q1A" ] == 2, 2.17,
+                                                              ifelse( df.ps[, "Q1A" ] == 3, 3.33,
+                                                                      ifelse( df.ps[, "Q1" ] == 0, 0, df.ps[, "Q1A" ] ) ) ) ) )
+
+  # Q2A1, Q2A2, Q3A, Q8A
+  these.2 <- c( "Q2A1", "Q2A2" )
+
+  for( i in seq_along( these.2 ) ){
+
+    df.ps[, paste0( these.2[i], "N" ) ] <- ifelse( df.ps[, these.2[i] ] == 0, 0.75,
+                                 ifelse( df.ps[, these.2[i] ] == 1, 1,
+                                         ifelse( df.ps[, these.2[i] ] == 2, 2,
+                                                 ifelse( df.ps[, these.2[i] ] == 3, 2.5,
+                                                         ifelse( df.ps[, str_extract( these.2[i], "Q\\d" ) ] == 0, 0, df.ps[, these.2[i] ] ) ) ) ) )
+  }
+
+  # Q3A
+  df.ps[, paste0( "Q3A", "N" ) ] <- ifelse( df.ps[, "Q3A" ] == 0, 0.5,
+                                            ifelse( df.ps[, "Q3A" ] == 1, 1,
+                                                    ifelse( df.ps[, "Q3A" ] == 2, 2,
+                                                            ifelse( df.ps[, "Q3A" ] == 3, 3,
+                                                                    ifelse( df.ps[, "Q3" ] == 0, 0, df.ps[, "Q3A" ] ) ) ) ) )
+
+  # Q4A
+  df.ps[, paste0( "Q4A", "N" ) ] <- ifelse( df.ps[, "Q4A" ] == 0, 1.25,
+                                         ifelse( df.ps[, "Q4A" ] == 1, 2.3,
+                                                 ifelse( df.ps[, "Q4A" ] == 2, 3.1,
+                                                         ifelse( df.ps[, "Q4A" ] == 3, 4.8,
+                                                                 ifelse( df.ps[, "Q4" ] == 0, 0, df.ps[, "Q4A" ] ) ) ) ) )
+
+  # Q5A
+  df.ps[, paste0( "Q5A", "N" ) ] <- ifelse( df.ps[, "Q5A" ] == 0, 0.8,
+                                         ifelse( df.ps[, "Q5A" ] == 1, 1.5,
+                                                 ifelse( df.ps[, "Q5A" ] == 2, 2.4,
+                                                         ifelse( df.ps[, "Q5A" ] == 3, 3.5,
+                                                                 ifelse( df.ps[, "Q5" ] == 0, 0, df.ps[, "Q5A" ] ) ) ) ) )
+
+  # Q6A
+  df.ps[, paste0( "Q6A", "N" ) ] <- ifelse( df.ps[, "Q6A" ] == 0, 0.75,
+                                         ifelse( df.ps[, "Q6A" ] == 1, 1.5,
+                                                 ifelse( df.ps[, "Q6A" ] == 2, 2.5,
+                                                         ifelse( df.ps[, "Q6A" ] == 3, 3.5,
+                                                                 ifelse( df.ps[, "Q6" ] == 0, 0, df.ps[, "Q6A" ] ) ) ) ) )
+
+  # Q7A
+  df.ps[, paste0( "Q7A", "N" ) ] <- ifelse( df.ps[, "Q7A" ] == 0, 0.75,
+                                         ifelse( df.ps[, "Q7A" ] == 1, 1.5,
+                                                 ifelse( df.ps[, "Q7A" ] == 2, 3,
+                                                         ifelse( df.ps[, "Q7A" ] == 3, 4.5,
+                                                                 ifelse( df.ps[, "Q7" ] == 0, 0, df.ps[, "Q7A" ] ) ) ) ) )
+
+  # Q8A
+  df.ps[, paste0( "Q8A", "N" ) ] <- ifelse( df.ps[, "Q8A" ] == 0, 0.36,
+                                            ifelse( df.ps[, "Q8A" ] == 1, 0.72,
+                                                    ifelse( df.ps[, "Q8A" ] == 2, 1.45,
+                                                            ifelse( df.ps[, "Q8A" ] == 3, 1.7,
+                                                                    ifelse( df.ps[, "Q8" ] == 0, 0, df.ps[, "Q8A" ] ) ) ) ) )
+
+  # Q9A
+  df.ps[, paste0( "Q9A", "N" ) ] <- ifelse( df.ps[, "Q9A" ] == 0, 0.75,
+                                         ifelse( df.ps[, "Q9A" ] == 1, 1.36,
+                                                 ifelse( df.ps[, "Q9A" ] == 2, 2.27,
+                                                         ifelse( df.ps[, "Q9A" ] == 3, 3.2,
+                                                                 ifelse( df.ps[, "Q9" ] == 0, 0, df.ps[, "Q9A" ] ) ) ) ) )
+
+  ## --------- End Subsection --------- ##
+
+
+  ## (3.3) Pyramid servings of fruit & veg calculation ##
+
+  df.ps <- df.ps %>%
+    mutate( JUICE = Q1 * Q1AN,
+            FRUITA = Q2 * Q2A1N,
+            FRUITB = Q2 * Q2A2N,
+            FRUIT = ( FRUITA + FRUITB ) / 2,
+            LSALAD = Q3 * Q3AN,
+            FRFRY = Q4 * Q4AN,
+            WHPOT = Q5 * Q5AN,
+            DRBEAN = Q6 * Q6AN,
+            OTHVEG = Q7 * Q7AN,
+            TOMSAUCE = Q8 * Q8AN,
+            VEGSOUP = Q9 * Q9AN,
+
+            # final sum
+            frt.veg.ps = rowSums( cbind( JUICE, FRUIT, LSALAD, FRFRY, WHPOT, DRBEAN, OTHVEG, TOMSAUCE, VEGSOUP ),
                                na.rm = T ) ) # note that any NAs in any of the columns are being set to ZERO before summing
 
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -165,15 +262,16 @@ fvs_scores <- function( df,
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
   ## (7.1) Columns to return in final dataset ##
-  d.out <- setNames( cbind( data.frame( df ),
-                  data.frame( df.copy[ , c( "frt.veg" ) ] ) ) %>% data.frame(),
-                  c( colnames( df ), "frt.veg" ) )
+  d.out <- setNames( bind_cols( data.frame( df ),
+                  data.frame( df.ce[ , c( "frt.veg.ce" ) ] ),
+                  data.frame( df.ps[ , c( "frt.veg.ps" ) ] ) ) %>% data.frame(),
+                  c( colnames( df ), "frt.veg.ce", "frt.veg.ps" ) )
 
   ## --------- End Subsection --------- ##
 
 
   ## (7.2) Print summary stats for the appended columns ##
-  print( summary( d.out[ ,c( "frt.veg" )] ) )
+  print( summary( d.out[ ,c( "frt.veg.ce", "frt.veg.ps" )] ) )
 
   ## --------- End Subsection --------- ##
 
