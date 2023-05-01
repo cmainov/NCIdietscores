@@ -235,16 +235,45 @@ short.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
 # set seed for reproducibility
 set.seed = 87
 
-# initialize matrix of NAs to store data
-fv.data <- matrix( NA, nrow = 45, ncol = 10 )
+# initialize matrix of NAs to store data (first dataset will be for primary questions on the survey (i.e. Q1:10))
+fv.data.q <- matrix( NA, nrow = 45, ncol = 10 )
 
-# loop through the number of columns and generate a discrete random variable of length 45 bounded below at 1 and above at 9
-for( i in 1:15 ){
+# loop through the number of columns and generate a discrete random variable of length 45 bounded below at 0 and above at 9
+for( i in 1:10 ){
 
-  fv.data[ , i ] <- sample( 1:10, size = 45, replace = TRUE )
+  fv.data.q[ , i ] <- sample( c(0:9, "M", "E"), size = 45, replace = TRUE ) # "M" and "E" are for missing and error, respectively (see NCI SAS code for this screener)
 
 }
 
+# set seed for reproducibility
+set.seed = 87
+
+# initialize matrix of NAs to store data (second dataset will be for sub questions on the survey (i.e. Q1A, Q2A...))
+fv.data.a <- matrix( NA, nrow = 45, ncol = 10 )
+
+# loop through the number of columns and generate a discrete random variable of length 45 bounded below at 0 and above at 3
+for( i in 1:10 ){
+
+  fv.data.a[ , i ] <- sample( c(0:3, "M", "E"), size = 45, replace = TRUE ) # "M" and "E" are for missing and error, respectively (see NCI SAS code for this screener)
+
+}
+
+# column bind the two matrices into a single dataset
+fv.data <- cbind(
+  setNames( data.frame( fv.data.q ),
+                 c( paste0( "Q", c(1:10) ) ) ),
+       setNames( data.frame( fv.data.a ),
+          c( paste0( "Q", c(1,3:9), "A" ), "Q2A1", "Q2A2" ) )
+) %>%
+  select( order( colnames( . ) ) ) # arrange columns alphabetically by column name
+
+# sex variable
+fv.data$SEX <- sample( 1:2, size = 45, replace = TRUE )
+
+# age variable
+fv.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
+
+## --------- End Subsection --------- ##
 
 
 ## (1.6) Save developer data as internal data using `use_data` ##
@@ -264,10 +293,10 @@ usethis::use_data( tbl.1, tbl.2,
 ## --------- End Subsection --------- ##
 
 
-## (1.6) Save example data for export ##
+## (1.7) Save example data for export ##
 
-usethis::use_data( diet.data, short.data,
-                   overwrite = TRUE ) # this creates the `/data` folder and stores the individual datasets in that directory
+usethis::use_data( diet.data, short.data, fv.data,
+                   overwrite = TRUE ) # this creates the `/data` folder and stores the individual published datasets in that directory
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 

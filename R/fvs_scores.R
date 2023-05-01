@@ -30,12 +30,30 @@ fvs_scores <- function( df,
                       "DRESSING", "RICE", "MARGRICE", "RED.FAT.MARG",
                       "FAT.SUBJECTIVE" )
 
+  ## (1.2) Set "M" and "E" entries to missing ##
+  df[ def.names ][ df[ def.names ] == "M" ] <- NA
+  df[ def.names ][ df[ def.names ] == "E" ] <- NA
+
+  ## --------- End Subsection --------- ##
+
+
+  ## (1.3) ensure variable classes are numeric  ##
+
+  # condition: assign an object, `v`, with the column names depending on option for`default.names` argument
+  if( default.names ) v <- c( def.names, sex.col, age.col )
+  if ( !default.names ) v <- c( unlist( item.names ), sex.col, age.col )
+
+  # execute: run coerce_numeric and loop through all variables required and that matched by the two input arguments
+  df <- coerce_numeric( d = df, vars = v )
+
+  ## --------- End Subsection --------- ##
+
 
   ### (3.0) Do Unit Conversions to Daily Averages ##
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-  ## (3.1) Map responses to daily averages  ##
+  ## (3.1) Frequency response conversions ##
 
   # condition: assign an object with the dietary column names for subsequent loop
   if( default.names )  c.nms <- c( def.names )[ !def.names %in% c( paste0( "Q", c(1,3:9), "A" ), "Q2A1", "Q2A2" ) ]
@@ -46,7 +64,7 @@ fvs_scores <- function( df,
 
     cn <- c.nms[i] # assign column name for each iteration
 
-    # map subject response to daily average (from Table 2-1 in the screener documentation)
+    # map subject response (from SAS code provided by NCI)
     df[[ cn ]] <- ifelse( df[[ cn ]] == 0, 0, df[[ cn ]] )
     df[[ cn ]] <- ifelse( df[[ cn ]] == 1, 0.067, df[[ cn ]] )
     df[[ cn ]] <- ifelse( df[[ cn ]] == 2, 0.214, df[[ cn ]] )
@@ -61,3 +79,29 @@ fvs_scores <- function( df,
   }
 
   ## --------- End Subsection --------- ##
+
+
+  ## (3.2) Portion size response conversions ##
+
+
+  # Q1A
+  df[, paste0( "Q1A", "N" ) ] <- ifelse( df[, "Q1A" ] == 0, 0.5,
+                                              ifelse( df[, "Q1A" ] == 1, 1,
+                                                      ifelse( df[, "Q1A" ] == 2, 1.625,
+                                                              ifelse( df[, "Q1A" ] == 3, 2.5,
+                                                                      ifelse( df[, "Q1" ] == 0, 0, df[, "Q1A" ] ) ) ) ) )
+
+  # Q2A1, Q2A2, Q3A, Q8A
+  these.1 <- c( "Q2A1", "Q2A2", "Q3A", "Q8A" )
+
+  for( i in seq_along( these.1 ) ){
+
+    df[, paste0( these.1[i], "N" ) ] <- ifelse( df[, these.1[i] ] == 0, 0.25,
+                                 ifelse( df[, these.1[i] ] == 1, 0.5,
+                                         ifelse( df[, these.1[i] ] == 2, 1,
+                                                 ifelse( df[, these.1[i] ] == 3, 1.5,
+                                                         ifelse( df[, str_extract( these.1[i], "Q\\d" ) ] == 0, 0, df[, these.1[i] ] ) ) ) ) )
+  }
+
+
+}
