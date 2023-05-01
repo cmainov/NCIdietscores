@@ -229,7 +229,25 @@ short.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
 ## --------- End Subsection --------- ##
 
 
-## (1.5) Save developer data as internal data using `use_data` ##
+## (1.5) Fruit & Vegetable Screener Data ##
+
+
+# set seed for reproducibility
+set.seed = 87
+
+# initialize matrix of NAs to store data
+fv.data <- matrix( NA, nrow = 45, ncol = 10 )
+
+# loop through the number of columns and generate a discrete random variable of length 45 bounded below at 1 and above at 9
+for( i in 1:15 ){
+
+  fv.data[ , i ] <- sample( 1:10, size = 45, replace = TRUE )
+
+}
+
+
+
+## (1.6) Save developer data as internal data using `use_data` ##
 
 usethis::use_data( tbl.1, tbl.2,
                    tbl.3, tbl.4,
