@@ -1,7 +1,7 @@
 
 
 
-fvs_scores <- function( df,
+fvs_scores_day <- function( df,
                         default.names = TRUE,
                         item.names = list( Q1 = "Q1", Q1A = "Q1A",
                                            Q2 = "Q2", Q2A1 = "Q2A1",
@@ -12,12 +12,11 @@ fvs_scores <- function( df,
                                            Q6A = "Q6A", Q7 = "Q7",
                                            Q7A = "Q7A", Q8 = "Q8",
                                            Q8A = "Q8A", Q9 = "Q9",
-                                           Q9A = "Q9A", Q10 = "Q10" ),
-                        age.col = "AGE",
-                        sex.col = "SEX" ) {
+                                           Q9A = "Q9A", Q10 = "Q10" ) ) {
 
   # copy dataset
   df.copy <- df
+
 
   ### (1.0) Function Checks ###
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -26,6 +25,7 @@ fvs_scores <- function( df,
 
   # levels of the diet columns
   def.names <- c( paste0( "Q", 1:10 ), paste0( "Q", c(1,3:9), "A" ), "Q2A1", "Q2A2" ) # default names
+
 
   ## (1.2) Set "M" and "E" entries to missing ##
   df.copy[ def.names ][ df.copy[ def.names ] == "M" ] <- NA
@@ -46,11 +46,11 @@ fvs_scores <- function( df,
   ## --------- End Subsection --------- ##
 
 
-  ### (3.0) Do Unit Conversions to Daily Averages ##
+  ### (2.0) Do Unit Conversions to Daily Averages ##
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-  ## (3.1) Frequency response conversions ##
+  ## (2.1) Frequency response conversions ##
 
   # condition: assign an object with the dietary column names for subsequent loop
   if( default.names )  c.nms <- c( def.names )[ !def.names %in% c( paste0( "Q", c(1,3:9), "A" ), "Q2A1", "Q2A2" ) ]
@@ -78,7 +78,7 @@ fvs_scores <- function( df,
   ## --------- End Subsection --------- ##
 
 
-  ## (3.2) Portion size response conversions (pyramid cup equivalents) ##
+  ## (2.2) Portion size response conversions (pyramid cup equivalents) ##
 
   df.ce <- df.copy
 
@@ -140,7 +140,7 @@ fvs_scores <- function( df,
   ## --------- End Subsection --------- ##
 
 
-  ## (3.3) Pyramid cup equivalents of fruit & veg calculation ##
+  ## (2.3) Pyramid cup equivalents of fruit & veg calculation ##
 
   df.ce <- df.ce %>%
     mutate( JUICE = Q1 * Q1AN,
@@ -159,9 +159,10 @@ fvs_scores <- function( df,
             frt.veg.ce = rowSums( cbind( JUICE, FRUIT, LSALAD, FRFRY, WHPOT, DRBEAN, OTHVEG, TOMSAUCE, VEGSOUP ),
                                na.rm = T ) ) # note that any NAs in any of the columns are being set to ZERO before summing
 
+  ## --------- End Subsection --------- ##
 
 
-  ## (3.3) Portion size response conversions (pyramid servings) ##
+  ## (2.4) Portion size response conversions (pyramid servings) ##
 
   df.ps <- df.copy
 
@@ -236,7 +237,7 @@ fvs_scores <- function( df,
   ## --------- End Subsection --------- ##
 
 
-  ## (3.3) Pyramid servings of fruit & veg calculation ##
+  ## (2.5) Pyramid servings of fruit & veg calculation ##
 
   df.ps <- df.ps %>%
     mutate( JUICE = Q1 * Q1AN,
@@ -258,10 +259,11 @@ fvs_scores <- function( df,
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-  ### (7.0) Return Final Dataset  ###
+  ### (3.0) Return Final Dataset  ###
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  ## (7.1) Columns to return in final dataset ##
+  ## (3.1) Columns to return in final dataset ##
+
   d.out <- setNames( bind_cols( data.frame( df ),
                   data.frame( df.ce[ , c( "frt.veg.ce" ) ] ),
                   data.frame( df.ps[ , c( "frt.veg.ps" ) ] ) ) %>% data.frame(),
@@ -270,7 +272,8 @@ fvs_scores <- function( df,
   ## --------- End Subsection --------- ##
 
 
-  ## (7.2) Print summary stats for the appended columns ##
+  ## (3.2) Print summary stats for the appended columns ##
+
   print( summary( d.out[ ,c( "frt.veg.ce", "frt.veg.ps" )] ) )
 
   ## --------- End Subsection --------- ##
