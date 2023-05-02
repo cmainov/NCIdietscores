@@ -1,4 +1,59 @@
+###------------------------------------------------------------------------
+###   SCORING FOR FRUIT & VEGETABLE SCREENER USED IN EATS (DAY SCREENER)
+###------------------------------------------------------------------------
 
+#' @title Scores for the Fruit & Vegetable Intake Screeners in the Eating at America's Table Study (EATS)
+#'
+#' @description Calculate MyPyramid cup equivalents and MyPyramid servings of fruit & vegetable intake
+#' on data collected with the National Cancer Institute's Fruit & Vegetable Intake Screeners in the
+#' EATS.
+#'
+#' @details
+#' Implements the scoring procedures for data obtained from the National Cancer Institute (NCI)
+#' Fruit & Vegetable Intake Screeners from the EATS. MyPyramid cup equivalents and MyPyramid
+#' servings of fruit & vegetable intake. For a detailed description of the screener, please refer
+#' to the NCI's documentation (see below).
+#'
+#' Citation:
+#' Thompson FE, Subar AF, Smith AF, et al. Fruit and vegetable assessment: performance of 2 new
+#' short instruments and a food frequency questionnaire. J Am Diet Assoc. 2002;102(12):1764-1772.
+#' doi:10.1016/s0002-8223(02)90379-2
+#'
+#' @import dplyr
+#' @import stringr
+#' @import rlang
+#'
+#' @seealso
+#' \itemize{
+#' \item \href{https://epi.grants.cancer.gov/diet/screeners/fruitveg/}{Screener Documentation}
+#' \item \href{https://epi.grants.cancer.gov/diet/screeners/fruitveg/scoring/}{Scoring Procedures}
+#' \item \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/eats_all-day.pdf}{The Screener}
+#' \item \href{https://epi.grants.cancer.gov/diet/screeners/sas-program-eats-allday.zip}{Original SAS Code from the NCI}
+#' }
+#'
+#' @usage fvs_scores_day( df,
+#' default.names = TRUE,
+#' item.names = list( Q1 = "Q1", Q1A = "Q1A",
+#'                    Q2 = "Q2", Q2A1 = "Q2A1",
+#'                    Q2A2 = "Q2A2", Q3 = "Q3",
+#'                    Q3A = "Q3A", Q4 = "Q4",
+#'                    Q4A = "Q4A", Q5 = "Q5",
+#'                    Q5A = "Q5A", Q6 = "Q6",
+#'                    Q6A = "Q6A", Q7 = "Q7",
+#'                    Q7A = "Q7A", Q8 = "Q8",
+#'                    Q8A = "Q8A", Q9 = "Q9",
+#'                    Q9A = "Q9A", Q10 = "Q10" ) )
+#'
+#' @param df A \code{data.frame} or \code{tibble} containing the columns (dietary items) for computing the scores.
+#' @param default.names A logical. Defaulted to \code{TRUE} and establishes whether default survey item names (see NCI SAS code linked above) are used. If user-specified names are used, set to \code{FALSE} and specify the column names in \code{item.names}.
+#' @param item.names A named \code{list} containing the user-specified column names (character vectors) for the survey items in the \code{df}. Ignored if \code{default.names} is \code{TRUE}. Must follow format used in \code{usage}.
+#'
+#' @return Object of class \code{data.frame} containing the original user-supplied data with the
+#' MyPyramid cup equivalents and MyPyramid servings of fruit & vegetable intake. Column names and descriptions
+#' are as follows:
+#'
+#' `frt.veg.ce`: Estimated MyPyramid cup equivalents of fruit & vegetable intake
+#' `frt.veg.ps`: Estimated MyPyramid servings of fruit & vegetable intake
 
 
 fvs_scores_day <- function( df,
