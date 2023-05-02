@@ -54,7 +54,98 @@
 #'
 #' `frt.veg.ce`: Estimated MyPyramid cup equivalents of fruit & vegetable intake
 #' `frt.veg.ps`: Estimated MyPyramid servings of fruit & vegetable intake
-
+#'
+#' @examples
+#' library( NCIdietscores )
+#'
+#' # using default diet item names
+#'
+#' fvs_scores_day( fv.data )
+#'
+#' # user-specified diet item names but using default names in `item.names`
+#'
+#' fvs_scores_day( fv.data, default.names = FALSE )
+#'
+#' # user specified names
+#'
+#' d.user <- setNames( fv.data,
+#'                     c( "juice", "veg.mix", "juice.size", "fruit",
+#'                        "fruit.size.a", "fruit.size.b", "salad", "salad.size", "frfy", "frfy.size",
+#'                        "oth.pot", "oth.pot.size", "beans", "beans.size", "oth.veg", "oth.veg.size",
+#'                        "tom", "tom.size", "veg.soup", "veg.soup.size" ) )
+#'
+#' # run `fvs_scores_day` without specifying column names, throws error
+#' \dontrun{
+#'
+#'   fvs_scores_day( df = d.user, default.names = FALSE )
+#'
+#' }
+#'
+#'
+#' # run `fvs_scores_day`  specifying column names in incorrect format, error thrown
+#'
+#' \dontrun{
+#'   cls.list <- list( "juice", "veg.mix", "juice.size", "fruit",
+#'                     "fruit.size.a", "fruit.size.b", "salad", "salad.size", "frfy", "frfy.size",
+#'                     "oth.pot", "oth.pot.size", "beans", "beans.size", "oth.veg", "oth.veg.size",
+#'                     "tom", "tom.size", "veg.soup", "veg.soup.size" )
+#'
+#'   fvs_scores_day( df = d.user,
+#'                   default.names = FALSE,
+#'                   item.names = cls.list )
+#' }
+#'
+#'
+#' # run `fvs_scores_day`  specifying column names, no error
+#'
+#' cls.list <- list( Q1 = "juice", Q1A = "juice.size",
+#'                   Q2 = "fruit", Q2A1 = "fruit.size.a",
+#'                   Q2A2 = "fruit.size.b", Q3 = "salad",
+#'                   Q3A = "salad.size", Q4 = "frfy",
+#'                   Q4A = "frfy.size", Q5 = "oth.pot",
+#'                   Q5A = "oth.pot.size", Q6 = "beans",
+#'                   Q6A = "beans.size", Q7 = "oth.veg",
+#'                   Q7A = "oth.veg.size", Q8 = "tom",
+#'                   Q8A = "tom.size", Q9 = "veg.soup",
+#'                   Q9A = "veg.soup.size", Q10 = "veg.mix" )
+#'
+#' fvs_scores_day( df = d.user,
+#'                 default.names = FALSE,
+#'                 item.names = cls.list )
+#'
+#'
+#'
+#'
+#' ## more errors: ##
+#'
+#' # incorrect data types
+#' \dontrun{
+#'
+#'   fvs_scores_day( df = list( fv.data ) )
+#'
+#' }
+#'
+#' # incorrect formatting of data frequencies
+#' \dontrun{
+#'   fv.data.format <- fv.data
+#'
+#'   nms <- paste0( "Q", 1:10 )
+#'
+#'   fv.data.format[nms][ fv.data.format[nms] == 0 ] <- "Never"
+#'   fv.data.format[nms][ fv.data.format[nms] == 1 ] <- "1-3 times last month"
+#'   fv.data.format[nms][ fv.data.format[nms] == 3 ] <- "1-2 times per week"
+#'   fv.data.format[nms][ fv.data.format[nms] == 2 ] <- "3-4 times per week"
+#'   fv.data.format[nms][ fv.data.format[nms] == 4 ] <- "5-6 times per week"
+#'   fv.data.format[nms][ fv.data.format[nms] == 5 ] <- "1 time per day"
+#'   fv.data.format[nms][ fv.data.format[nms] == 6 ] <- "2 times per day"
+#'   fv.data.format[nms][ fv.data.format[nms] == 7 ] <- "3 times per day"
+#'   fv.data.format[nms][ fv.data.format[nms] == 8 ] <- "4 times per day"
+#'   fv.data.format[nms][ fv.data.format[nms] == 9 ] <- "5 or more times per day"
+#'
+#'   fvs_scores_day( df = fv.data.format )
+#' }
+#'
+#' @export
 
 fvs_scores_day <- function( df,
                         default.names = TRUE,
@@ -76,7 +167,18 @@ fvs_scores_day <- function( df,
   ### (1.0) Function Checks ###
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
 
+
   ## (1.1) Argument types and entries  ##
+
+  # class checks
+  if ( !inherits( item.names, "list" ) ) stop( "Error: `item.names` must be a list" )
+  if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) >= 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
+
+  # diet column names checks
+  if ( !default.names & is.null( item.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
+  if ( ( !default.names ) & length( item.names ) < 20 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
+  if ( ( !default.names ) & length( item.names ) < 20 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
+  if ( sum( c( paste0( "Q", 1:10 ), "Q2A1", "Q2A2" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
 
   # levels of the diet columns
   def.names <- c( paste0( "Q", 1:10 ), paste0( "Q", c(1,3:9), "A" ), "Q2A1", "Q2A2" ) # default names
