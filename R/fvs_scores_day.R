@@ -81,19 +81,17 @@ fvs_scores_day <- function( df,
   # levels of the diet columns
   def.names <- c( paste0( "Q", 1:10 ), paste0( "Q", c(1,3:9), "A" ), "Q2A1", "Q2A2" ) # default names
 
+  if( default.names ) v <- c( def.names )
+  if ( !default.names ) v <- c( unlist( item.names ) )
 
   ## (1.2) Set "M" and "E" entries to missing ##
-  df.copy[ def.names ][ df.copy[ def.names ] == "M" ] <- NA
-  df.copy[ def.names ][ df.copy[ def.names ] == "E" ] <- NA
+  df.copy[ v ][ df.copy[ v ] == "M" ] <- NA
+  df.copy[ v ][ df.copy[ v ] == "E" ] <- NA
 
   ## --------- End Subsection --------- ##
 
 
   ## (1.3) ensure variable classes are numeric  ##
-
-  # condition: assign an object, `v`, with the column names depending on option for`default.names` argument
-  if( default.names ) v <- c( def.names, sex.col, age.col )
-  if ( !default.names ) v <- c( unlist( item.names ), sex.col, age.col )
 
   # execute: run coerce_numeric and loop through all variables required and that matched by the two input arguments
   df.copy <- coerce_numeric( d = df.copy, vars = v )
@@ -108,8 +106,15 @@ fvs_scores_day <- function( df,
   ## (2.1) Frequency response conversions ##
 
   # condition: assign an object with the dietary column names for subsequent loop
-  if( default.names )  c.nms <- c( def.names )[ !def.names %in% c( paste0( "Q", c(1,3:9), "A" ), "Q2A1", "Q2A2" ) ]
-  if( !default.names ) c.nms <- c( unlist( item.names ) )[ !c( unlist( item.names ) ) %in% c( "Q2A1", "Q2A2" ) ]
+  if( default.names )  c.nms <- c( paste0( "Q", c(1:10) ) )
+  if( !default.names ) {
+
+    for( i in seq_along( paste0( "Q", 1:10 ))){
+
+      c.nms[i] <- unlist( item.names[[ paste0( "Q", i ) ]] )
+
+    }
+  }
 
   # execute: loop through columns to convert
   for( i in 1:length( c.nms ) ){
@@ -138,59 +143,81 @@ fvs_scores_day <- function( df,
   df.ce <- df.copy
 
   # Q1A
-  df.ce[, paste0( "Q1A", "N" ) ] <- ifelse( df.ce[, "Q1A" ] == 0, 0.5,
-                                            ifelse( df.ce[, "Q1A" ] == 1, 1,
-                                                    ifelse( df.ce[, "Q1A" ] == 2, 1.625,
-                                                            ifelse( df.ce[, "Q1A" ] == 3, 2.5,
-                                                                    ifelse( df.ce[, "Q1" ] == 0, 0, df.ce[, "Q1A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q1A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q1"]] # frequency item name if default names not used
+
+  df.ce[, paste0( "Q1A", "N" ) ] <- ifelse( df.ce[, item.names[["Q1A"]] ] == 0, 0.5,
+                                            ifelse( df.ce[, item.names[["Q1A"]] ] == 1, 1,
+                                                    ifelse( df.ce[, item.names[["Q1A"]] ] == 2, 1.625,
+                                                            ifelse( df.ce[, item.names[["Q1A"]] ] == 3, 2.5,
+                                                                    ifelse( df.ce[, og ] == 0, 0, df.ce[, og ] ) ) ) ) )
 
   # Q2A1, Q2A2, Q3A, Q8A
   these.1 <- c( "Q2A1", "Q2A2", "Q3A", "Q8A" )
+  these.og <- str_extract( these.1, "Q\\d" )
 
   for( i in seq_along( these.1 ) ){
 
-    df.ce[, paste0( these.1[i], "N" ) ] <- ifelse( df.ce[, these.1[i] ] == 0, 0.25,
-                                                   ifelse( df.ce[, these.1[i] ] == 1, 0.5,
-                                                           ifelse( df.ce[, these.1[i] ] == 2, 1,
-                                                                   ifelse( df.ce[, these.1[i] ] == 3, 1.5,
-                                                                           ifelse( df.ce[, str_extract( these.1[i], "Q\\d" ) ] == 0, 0, df.ce[, these.1[i] ] ) ) ) ) )
+    if( default.names ) og <- str_extract( these.1[i], "Q\\d" ) # frequency item name if default names used
+    if( !default.names ) og <- unlist( item.names[[ these.og[i] ]] )
+
+    df.ce[, paste0( these.1[i], "N" ) ] <- ifelse( df.ce[, item.names[[ these.1[i] ]] ] == 0, 0.25,
+                                                   ifelse( df.ce[, item.names[[ these.1[i] ]] ] == 1, 0.5,
+                                                           ifelse( df.ce[, item.names[[ these.1[i] ]] ] == 2, 1,
+                                                                   ifelse( df.ce[, item.names[[ these.1[i] ]] ] == 3, 1.5,
+                                                                           ifelse( df.ce[, og ] == 0, 0, df.ce[, og ] ) ) ) ) )
   }
 
 
   # Q4A
-  df.ce[, paste0( "Q4A", "N" ) ] <- ifelse( df.ce[, "Q4A" ] == 0, 0.2,
-                                            ifelse( df.ce[, "Q4A" ] == 1, 0.5,
-                                                    ifelse( df.ce[, "Q4A" ] == 2, 0.75,
-                                                            ifelse( df.ce[, "Q4A" ] == 3, 1.3,
-                                                                    ifelse( df.ce[, "Q4" ] == 0, 0, df.ce[, "Q4A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q4A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q4"]] # frequency item name if default names not used
+
+  df.ce[, paste0( "Q4A", "N" ) ] <- ifelse( df.ce[, item.names[["Q4A"]] ] == 0, 0.2,
+                                            ifelse( df.ce[, item.names[["Q4A"]] ] == 1, 0.5,
+                                                    ifelse( df.ce[, item.names[["Q4A"]] ] == 2, 0.75,
+                                                            ifelse( df.ce[, item.names[["Q4A"]] ] == 3, 1.3,
+                                                                    ifelse( df.ce[, og ] == 0, 0, df.ce[, og ] ) ) ) ) )
 
   # Q5A
-  df.ce[, paste0( "Q5A", "N" ) ] <- ifelse( df.ce[, "Q5A" ] == 0, 0.25,
-                                            ifelse( df.ce[, "Q5A" ] == 1, 0.75,
-                                                    ifelse( df.ce[, "Q5A" ] == 2, 1.2,
-                                                            ifelse( df.ce[, "Q5A" ] == 3, 2.0,
-                                                                    ifelse( df.ce[, "Q5" ] == 0, 0, df.ce[, "Q5A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q5A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q5"]] # frequency item name if default names not used
+
+  df.ce[, paste0( "Q5A", "N" ) ] <- ifelse( df.ce[, item.names[["Q5A"]] ] == 0, 0.25,
+                                            ifelse( df.ce[, item.names[["Q5A"]] ] == 1, 0.75,
+                                                    ifelse( df.ce[, item.names[["Q5A"]] ] == 2, 1.2,
+                                                            ifelse( df.ce[, item.names[["Q5A"]] ] == 3, 2.0,
+                                                                    ifelse( df.ce[, og ] == 0, 0, df.ce[, og ] ) ) ) ) )
 
   # Q6A
-  df.ce[, paste0( "Q6A", "N" ) ] <- ifelse( df.ce[, "Q6A" ] == 0, 0.25,
-                                            ifelse( df.ce[, "Q6A" ] == 1, 0.75,
-                                                    ifelse( df.ce[, "Q6A" ] == 2, 1.25,
-                                                            ifelse( df.ce[, "Q6A" ] == 3, 2.0,
-                                                                    ifelse( df.ce[, "Q6" ] == 0, 0, df.ce[, "Q6A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q6A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q6"]] # frequency item name if default names not used
+
+  df.ce[, paste0( "Q6A", "N" ) ] <- ifelse( df.ce[, item.names[["Q5A"]] ] == 0, 0.25,
+                                            ifelse( df.ce[, item.names[["Q5A"]] ] == 1, 0.75,
+                                                    ifelse( df.ce[, item.names[["Q5A"]] ] == 2, 1.25,
+                                                            ifelse( df.ce[, item.names[["Q5A"]] ] == 3, 2.0,
+                                                                    ifelse( df.ce[, og ] == 0, 0, df.ce[, og ] ) ) ) ) )
 
   # Q7A
-  df.ce[, paste0( "Q7A", "N" ) ] <- ifelse( df.ce[, "Q7A" ] == 0, 0.25,
-                                            ifelse( df.ce[, "Q7A" ] == 1, 0.75,
-                                                    ifelse( df.ce[, "Q7A" ] == 2, 1.5,
-                                                            ifelse( df.ce[, "Q7A" ] == 3, 2.25,
-                                                                    ifelse( df.ce[, "Q7" ] == 0, 0, df.ce[, "Q7A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q7A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q7"]] # frequency item name if default names not used
+
+  df.ce[, paste0( "Q7A", "N" ) ] <- ifelse( df.ce[, item.names[["Q7A"]] ] == 0, 0.25,
+                                            ifelse( df.ce[, item.names[["Q7A"]] ] == 1, 0.75,
+                                                    ifelse( df.ce[, item.names[["Q7A"]] ] == 2, 1.5,
+                                                            ifelse( df.ce[, item.names[["Q7A"]] ] == 3, 2.25,
+                                                                    ifelse( df.ce[, og ] == 0, 0, df.ce[, og ] ) ) ) ) )
 
   # Q9A
-  df.ce[, paste0( "Q9A", "N" ) ] <- ifelse( df.ce[, "Q9A" ] == 0, 0.3,
-                                            ifelse( df.ce[, "Q9A" ] == 1, 1.0,
-                                                    ifelse( df.ce[, "Q9A" ] == 2, 1.6,
-                                                            ifelse( df.ce[, "Q9A" ] == 3, 2.25,
-                                                                    ifelse( df.ce[, "Q9" ] == 0, 0, df.ce[, "Q9A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q9A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q9"]] # frequency item name if default names not used
+
+  df.ce[, paste0( "Q9A", "N" ) ] <- ifelse( df.ce[, item.names[["Q9A"]] ] == 0, 0.3,
+                                            ifelse( df.ce[, item.names[["Q9A"]] ] == 1, 1.0,
+                                                    ifelse( df.ce[, item.names[["Q9A"]] ] == 2, 1.6,
+                                                            ifelse( df.ce[, item.names[["Q9A"]] ] == 3, 2.25,
+                                                                    ifelse( df.ce[, og ] == 0, 0, df.ce[, og ] ) ) ) ) )
 
   ## --------- End Subsection --------- ##
 
@@ -198,17 +225,17 @@ fvs_scores_day <- function( df,
   ## (2.3) Pyramid cup equivalents of fruit & veg calculation ##
 
   df.ce <- df.ce %>%
-    mutate( JUICE = Q1 * Q1AN,
-            FRUITA = Q2 * Q2A1N,
-            FRUITB = Q2 * Q2A2N,
-            FRUIT = ( FRUITA + FRUITB ) / 2,
-            LSALAD = Q3 * Q3AN,
-            FRFRY = Q4 * Q4AN,
-            WHPOT = Q5 * Q5AN,
-            DRBEAN = Q6 * Q6AN,
-            OTHVEG = Q7 * Q7AN,
-            TOMSAUCE = Q8 * Q8AN,
-            VEGSOUP = Q9 * Q9AN,
+    mutate( JUICE = get( item.names[["Q1"]] ) * Q1AN,
+            FRUITA = get( item.names[["Q2"]] ) * Q2A1N,
+            FRUITB = get( item.names[["Q2"]] ) * Q2A2N,
+            FRUIT = rowSums( cbind( FRUITA, FRUITB ), na.rm = T ),
+            LSALAD = get( item.names[["Q3"]] ) * Q3AN,
+            FRFRY = get( item.names[["Q4"]] ) * Q4AN,
+            WHPOT = get( item.names[["Q5"]] ) * Q5AN,
+            DRBEAN = get( item.names[["Q6"]] ) * Q6AN,
+            OTHVEG = get( item.names[["Q7"]] ) * Q7AN,
+            TOMSAUCE = get( item.names[["Q8"]] ) * Q8AN,
+            VEGSOUP = get( item.names[["Q9"]] ) * Q9AN,
 
             # final sum
             frt.veg.ce = rowSums( cbind( JUICE, FRUIT, LSALAD, FRFRY, WHPOT, DRBEAN, OTHVEG, TOMSAUCE, VEGSOUP ),
@@ -222,72 +249,100 @@ fvs_scores_day <- function( df,
   df.ps <- df.copy
 
   # Q1A
-  df.ps[, paste0( "Q1A", "N" ) ] <- ifelse( df.ps[, "Q1A" ] == 0, 0.75,
-                                              ifelse( df.ps[, "Q1A" ] == 1, 1.33,
-                                                      ifelse( df.ps[, "Q1A" ] == 2, 2.17,
-                                                              ifelse( df.ps[, "Q1A" ] == 3, 3.33,
-                                                                      ifelse( df.ps[, "Q1" ] == 0, 0, df.ps[, "Q1A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q1A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q1"]] # frequency item name if default names not used
 
-  # Q2A1, Q2A2, Q3A, Q8A
+  df.ps[, paste0( "Q1A", "N" ) ] <- ifelse( df.ps[, item.names[["Q1A"]] ] == 0, 0.75,
+                                              ifelse( df.ps[, item.names[["Q1A"]] ] == 1, 1.33,
+                                                      ifelse( df.ps[, item.names[["Q1A"]] ] == 2, 2.17,
+                                                              ifelse( df.ps[, item.names[["Q1A"]] ] == 3, 3.33,
+                                                                      ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
+
+  # Q2A1, Q2A2
   these.2 <- c( "Q2A1", "Q2A2" )
+  these.og.2 <- str_extract( these.2, "Q\\d" )
 
   for( i in seq_along( these.2 ) ){
 
-    df.ps[, paste0( these.2[i], "N" ) ] <- ifelse( df.ps[, these.2[i] ] == 0, 0.75,
-                                 ifelse( df.ps[, these.2[i] ] == 1, 1,
-                                         ifelse( df.ps[, these.2[i] ] == 2, 2,
-                                                 ifelse( df.ps[, these.2[i] ] == 3, 2.5,
-                                                         ifelse( df.ps[, str_extract( these.2[i], "Q\\d" ) ] == 0, 0, df.ps[, these.2[i] ] ) ) ) ) )
+    if( default.names ) og <- str_extract( these.1[i], "Q\\d" ) # frequency item name if default names used
+    if( !default.names ) og <- unlist( item.names[[ these.og.2[i] ]] )
+
+    df.ps[, paste0( these.2[i], "N" ) ] <- ifelse( df.ps[, item.names[[ these.2[i] ]] ] == 0, 0.75,
+                                 ifelse( df.ps[, item.names[[ these.2[i] ]] ] == 1, 1,
+                                         ifelse( df.ps[, item.names[[ these.2[i] ]] ] == 2, 2,
+                                                 ifelse( df.ps[, item.names[[ these.2[i] ]] ] == 3, 2.5,
+                                                         ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
   }
 
   # Q3A
-  df.ps[, paste0( "Q3A", "N" ) ] <- ifelse( df.ps[, "Q3A" ] == 0, 0.5,
-                                            ifelse( df.ps[, "Q3A" ] == 1, 1,
-                                                    ifelse( df.ps[, "Q3A" ] == 2, 2,
-                                                            ifelse( df.ps[, "Q3A" ] == 3, 3,
-                                                                    ifelse( df.ps[, "Q3" ] == 0, 0, df.ps[, "Q3A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q3A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q3"]] # frequency item name if default names not used
+
+  df.ps[, paste0( "Q3A", "N" ) ] <- ifelse( df.ps[, item.names[["Q3A"]] ] == 0, 0.5,
+                                            ifelse( df.ps[, item.names[["Q3A"]] ] == 1, 1,
+                                                    ifelse( df.ps[, item.names[["Q3A"]] ] == 2, 2,
+                                                            ifelse( df.ps[, item.names[["Q3A"]] ] == 3, 3,
+                                                                    ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   # Q4A
-  df.ps[, paste0( "Q4A", "N" ) ] <- ifelse( df.ps[, "Q4A" ] == 0, 1.25,
-                                         ifelse( df.ps[, "Q4A" ] == 1, 2.3,
-                                                 ifelse( df.ps[, "Q4A" ] == 2, 3.1,
-                                                         ifelse( df.ps[, "Q4A" ] == 3, 4.8,
-                                                                 ifelse( df.ps[, "Q4" ] == 0, 0, df.ps[, "Q4A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q4A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q4"]] # frequency item name if default names not used
+
+  df.ps[, paste0( "Q4A", "N" ) ] <- ifelse( df.ps[, item.names[["Q4A"]] ] == 0, 1.25,
+                                         ifelse( df.ps[, item.names[["Q4A"]] ] == 1, 2.3,
+                                                 ifelse( df.ps[, item.names[["Q4A"]] ] == 2, 3.1,
+                                                         ifelse( df.ps[, item.names[["Q4A"]] ] == 3, 4.8,
+                                                                 ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   # Q5A
-  df.ps[, paste0( "Q5A", "N" ) ] <- ifelse( df.ps[, "Q5A" ] == 0, 0.8,
-                                         ifelse( df.ps[, "Q5A" ] == 1, 1.5,
-                                                 ifelse( df.ps[, "Q5A" ] == 2, 2.4,
-                                                         ifelse( df.ps[, "Q5A" ] == 3, 3.5,
-                                                                 ifelse( df.ps[, "Q5" ] == 0, 0, df.ps[, "Q5A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q5A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q5"]] # frequency item name if default names not used
+
+  df.ps[, paste0( "Q5A", "N" ) ] <- ifelse( df.ps[, item.names[["Q5A"]] ] == 0, 0.8,
+                                         ifelse( df.ps[, item.names[["Q5A"]] ] == 1, 1.5,
+                                                 ifelse( df.ps[, item.names[["Q5A"]] ] == 2, 2.4,
+                                                         ifelse( df.ps[, item.names[["Q5A"]] ] == 3, 3.5,
+                                                                 ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   # Q6A
-  df.ps[, paste0( "Q6A", "N" ) ] <- ifelse( df.ps[, "Q6A" ] == 0, 0.75,
-                                         ifelse( df.ps[, "Q6A" ] == 1, 1.5,
-                                                 ifelse( df.ps[, "Q6A" ] == 2, 2.5,
-                                                         ifelse( df.ps[, "Q6A" ] == 3, 3.5,
-                                                                 ifelse( df.ps[, "Q6" ] == 0, 0, df.ps[, "Q6A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q6A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q6"]] # frequency item name if default names not used
+
+  df.ps[, paste0( "Q6A", "N" ) ] <- ifelse( df.ps[, item.names[["Q6A"]] ] == 0, 0.75,
+                                         ifelse( df.ps[, item.names[["Q6A"]] ] == 1, 1.5,
+                                                 ifelse( df.ps[, item.names[["Q6A"]] ] == 2, 2.5,
+                                                         ifelse( df.ps[, item.names[["Q6A"]] ] == 3, 3.5,
+                                                                 ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   # Q7A
-  df.ps[, paste0( "Q7A", "N" ) ] <- ifelse( df.ps[, "Q7A" ] == 0, 0.75,
-                                         ifelse( df.ps[, "Q7A" ] == 1, 1.5,
-                                                 ifelse( df.ps[, "Q7A" ] == 2, 3,
-                                                         ifelse( df.ps[, "Q7A" ] == 3, 4.5,
-                                                                 ifelse( df.ps[, "Q7" ] == 0, 0, df.ps[, "Q7A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q7A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q7"]] # frequency item name if default names not used
+
+  df.ps[, paste0( "Q7A", "N" ) ] <- ifelse( df.ps[, item.names[["Q7A"]] ] == 0, 0.75,
+                                         ifelse( df.ps[, item.names[["Q7A"]] ] == 1, 1.5,
+                                                 ifelse( df.ps[, item.names[["Q7A"]] ] == 2, 3,
+                                                         ifelse( df.ps[, item.names[["Q7A"]] ] == 3, 4.5,
+                                                                 ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   # Q8A
-  df.ps[, paste0( "Q8A", "N" ) ] <- ifelse( df.ps[, "Q8A" ] == 0, 0.36,
-                                            ifelse( df.ps[, "Q8A" ] == 1, 0.72,
-                                                    ifelse( df.ps[, "Q8A" ] == 2, 1.45,
-                                                            ifelse( df.ps[, "Q8A" ] == 3, 1.7,
-                                                                    ifelse( df.ps[, "Q8" ] == 0, 0, df.ps[, "Q8A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q8A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q8"]] # frequency item name if default names not used
+
+  df.ps[, paste0( "Q8A", "N" ) ] <- ifelse( df.ps[, item.names[["Q8A"]] ] == 0, 0.36,
+                                            ifelse( df.ps[, item.names[["Q8A"]] ] == 1, 0.72,
+                                                    ifelse( df.ps[, item.names[["Q8A"]] ] == 2, 1.45,
+                                                            ifelse( df.ps[, item.names[["Q8A"]] ] == 3, 1.7,
+                                                                    ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   # Q9A
-  df.ps[, paste0( "Q9A", "N" ) ] <- ifelse( df.ps[, "Q9A" ] == 0, 0.75,
-                                         ifelse( df.ps[, "Q9A" ] == 1, 1.36,
-                                                 ifelse( df.ps[, "Q9A" ] == 2, 2.27,
-                                                         ifelse( df.ps[, "Q9A" ] == 3, 3.2,
-                                                                 ifelse( df.ps[, "Q9" ] == 0, 0, df.ps[, "Q9A" ] ) ) ) ) )
+  if( default.names ) og <- str_extract( "Q9A", "Q\\d" ) # frequency item name if default names used
+  if( !default.names ) og <- item.names[["Q9"]] # frequency item name if default names not used
+
+  df.ps[, paste0( "Q9A", "N" ) ] <- ifelse( df.ps[, item.names[["Q8A"]] ] == 0, 0.75,
+                                         ifelse( df.ps[, item.names[["Q8A"]] ] == 1, 1.36,
+                                                 ifelse( df.ps[, item.names[["Q8A"]] ] == 2, 2.27,
+                                                         ifelse( df.ps[, item.names[["Q8A"]] ] == 3, 3.2,
+                                                                 ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   ## --------- End Subsection --------- ##
 
@@ -295,23 +350,25 @@ fvs_scores_day <- function( df,
   ## (2.5) Pyramid servings of fruit & veg calculation ##
 
   df.ps <- df.ps %>%
-    mutate( JUICE = Q1 * Q1AN,
-            FRUITA = Q2 * Q2A1N,
-            FRUITB = Q2 * Q2A2N,
-            FRUIT = ( FRUITA + FRUITB ) / 2,
-            LSALAD = Q3 * Q3AN,
-            FRFRY = Q4 * Q4AN,
-            WHPOT = Q5 * Q5AN,
-            DRBEAN = Q6 * Q6AN,
-            OTHVEG = Q7 * Q7AN,
-            TOMSAUCE = Q8 * Q8AN,
-            VEGSOUP = Q9 * Q9AN,
+    mutate( JUICE = get( item.names[["Q1"]] ) * Q1AN,
+            FRUITA = get( item.names[["Q2"]] ) * Q2A1N,
+            FRUITB = get( item.names[["Q2"]] ) * Q2A2N,
+            FRUIT = rowSums( cbind( FRUITA, FRUITB ), na.rm = T ), # this ensures averages and missing are accounted for
+            LSALAD = get( item.names[["Q3"]] ) * Q3AN,
+            FRFRY = get( item.names[["Q4"]] ) * Q4AN,
+            WHPOT = get( item.names[["Q5"]] ) * Q5AN,
+            DRBEAN = get( item.names[["Q6"]] ) * Q6AN,
+            OTHVEG = get( item.names[["Q7"]] ) * Q7AN,
+            TOMSAUCE = get( item.names[["Q8"]] ) * Q8AN,
+            VEGSOUP = get( item.names[["Q9"]] ) * Q9AN,
 
             # final sum
             frt.veg.ps = rowSums( cbind( JUICE, FRUIT, LSALAD, FRFRY, WHPOT, DRBEAN, OTHVEG, TOMSAUCE, VEGSOUP ),
-                               na.rm = T ) ) # note that any NAs in any of the columns are being set to ZERO before summing
+                                  na.rm = T ) ) # note that any NAs in any of the columns are being set to ZERO before summing
 
   # ---------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
 
 
   ### (3.0) Return Final Dataset  ###
