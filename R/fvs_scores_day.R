@@ -329,7 +329,7 @@ fvs_scores_day <- function( df,
 
   ## (3.2) Print summary stats for the appended columns ##
 
-  print( summary( d.out[ ,c( "frt.veg.ce", "frt.veg.ps" )] ) )
+  print( summary( d.out[ ,c( "frt.veg.ce", "frt.veg.ps" ) ] ) )
 
   ## --------- End Subsection --------- ##
 

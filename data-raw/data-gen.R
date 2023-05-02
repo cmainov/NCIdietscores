@@ -267,11 +267,6 @@ fv.data <- cbind(
 ) %>%
   select( order( colnames( . ) ) ) # arrange columns alphabetically by column name
 
-# sex variable
-fv.data$SEX <- sample( 1:2, size = 45, replace = TRUE )
-
-# age variable
-fv.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
 
 ## --------- End Subsection --------- ##
 
