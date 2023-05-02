@@ -7,4 +7,7 @@ utils::globalVariables( c("CEREAL", "SKIMMILK", "EGGS",
                           "fruit", "FVCAFruit", "potatoes", "FVCAFrFry", "white.potatoes",
                           "FVCAOthPot", "beans", "FVCADrBean", "salad", "FVCASalad", "vegetables",
                           "FVCAOthVeg", "raw.pred.fv7.ce", "raw.pred.fv6.ce", "f6",
-                          "f12", "f16", "lo.fat.mrg", "fat.real", "tot.fat", "." ))
+                          "f12", "f16", "lo.fat.mrg", "fat.real", "tot.fat", ".",
+                          "Q1AN", "Q2A1N", "Q2A2N", "FRUITA", "FRUITB", "Q3AN", "Q4AN", "Q5AN",
+                          "Q6AN", "Q7AN", "Q8AN", "Q9AN", "JUICE", "LSALAD", "FRFRY", "WHPOT",
+                          "DRBEAN", "OTHVEG", "TOMSAUCE", "VEGSOUP", "setNames" ) )

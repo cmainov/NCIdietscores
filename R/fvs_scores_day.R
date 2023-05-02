@@ -211,6 +211,7 @@ fvs_scores_day <- function( df,
   if( default.names )  c.nms <- c( paste0( "Q", c(1:10) ) )
   if( !default.names ) {
 
+    c.nms <- vector()
     for( i in seq_along( paste0( "Q", 1:10 ))){
 
       c.nms[i] <- unlist( item.names[[ paste0( "Q", i ) ]] )
