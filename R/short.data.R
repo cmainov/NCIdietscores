@@ -1,4 +1,4 @@
-#' Test data for examples in the qfs_scores function.
+#' Test data for examples in the `qfs_scores` function.
 #'
 #' @format `short.data`
 #' \describe{

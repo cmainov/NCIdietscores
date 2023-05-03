@@ -1,8 +1,8 @@
-#' Test Data for fvs_scores_day
+#' Test Data for `fvs_scores_day`
 #'
-#' Test data for examples in the fvs_scores_day function.
+#' Test data for examples in the `fvs_scores_day` function.
 #'
-#' @format `fv.data`
+#' @format `fv.data.day`
 #' \describe{
 #' A data frame with 45 rows and 20 columns:
 #'   \item{Q1}{Fruit juice frequency of consumption}
@@ -18,7 +18,7 @@
 #'   \item{Q5A}{Other potatoes portion size}
 #'   \item{Q6}{Beansfrequency of consumption}
 #'   \item{Q6A}{Beans portion size}
-#'   \item{Q7}{Other vegetanles frequency of consumption}
+#'   \item{Q7}{Other vegetables frequency of consumption}
 #'   \item{Q7A}{Other vegetables portion size}
 #'   \item{Q8}{Tomato sauce frequency of consumption}
 #'   \item{Q8A}{Tomato sauce portion size}
@@ -27,4 +27,4 @@
 #'   \item{Q10}{Mixtures with vegetables frequency of consumption}
 #' }
 #' @source <https://epi.grants.cancer.gov/diet/screeners/fruitveg/scoring/allday.html>
-"fv.data"
+"fv.data.day"

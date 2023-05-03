@@ -1,6 +1,6 @@
-#' Test Data for mfs_scores
+#' Test Data for `mfs_scores`
 #'
-#' Test data for examples in the mfs_scores function.
+#' Test data for examples in the `mfs_scores` function.
 #'
 #' @format `diet.data`
 #' \describe{
