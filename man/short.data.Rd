@@ -3,7 +3,7 @@
 \docType{data}
 \name{short.data}
 \alias{short.data}
-\title{Test data for examples in the qfs_scores function.}
+\title{Test data for examples in the `qfs_scores` function.}
 \format{
 `short.data`
 \describe{
@@ -36,6 +36,6 @@ A data frame with 45 rows and 19 columns:
 short.data
 }
 \description{
-Test data for examples in the qfs_scores function.
+Test data for examples in the `qfs_scores` function.
 }
 \keyword{datasets}

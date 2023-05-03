@@ -1,5 +1,5 @@
-require( rvest )
-require( tidyverse )
+library( rvest )
+library( tidyverse )
 
 # below creates /data-raw package and lists it in the .Rbuildignore (run before creating this script)
 # usethis::use_data_raw( "data" )

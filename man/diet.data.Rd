@@ -3,7 +3,7 @@
 \docType{data}
 \name{diet.data}
 \alias{diet.data}
-\title{Test Data for mfs_scores}
+\title{Test Data for `mfs_scores`}
 \format{
 `diet.data`
 \describe{
@@ -36,6 +36,6 @@ A data frame with 45 rows and 19 columns:
 diet.data
 }
 \description{
-Test data for examples in the mfs_scores function.
+Test data for examples in the `mfs_scores` function.
 }
 \keyword{datasets}

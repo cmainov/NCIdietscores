@@ -2,7 +2,7 @@
 % Please edit documentation in R/fvs_scores_day.R
 \name{fvs_scores_day}
 \alias{fvs_scores_day}
-\title{Scores for the Fruit & Vegetable Intake Screeners in the Eating at America's Table Study (EATS)}
+\title{Scores for the Fruit & Vegetable Intake Day Screener in the Eating at America's Table Study (EATS)}
 \usage{
 fvs_scores_day( df,
 default.names = TRUE,
@@ -29,17 +29,17 @@ Object of class \code{data.frame} containing the original user-supplied data wit
 MyPyramid cup equivalents and MyPyramid servings of fruit & vegetable intake. Column names and descriptions
 are as follows:
 
-`frt.veg.ce`: Estimated MyPyramid cup equivalents of fruit & vegetable intake
-`frt.veg.ps`: Estimated MyPyramid servings of fruit & vegetable intake
+`frt.veg.ce`: Estimated daily average MyPyramid cup equivalents of fruits & vegetables
+`frt.veg.ps`: Estimated daily average MyPyramid servings of fruits & vegetables
 }
 \description{
 Calculate MyPyramid cup equivalents and MyPyramid servings of fruit & vegetable intake
-on data collected with the National Cancer Institute's Fruit & Vegetable Intake Screeners in the
+on data collected with the National Cancer Institute's Fruit & Vegetable Intake All-Day Screener in the
 EATS.
 }
 \details{
 Implements the scoring procedures for data obtained from the National Cancer Institute (NCI)
-Fruit & Vegetable Intake Screeners from the EATS. MyPyramid cup equivalents and MyPyramid
+Fruit & Vegetable Intake All-Day Screener from the EATS. MyPyramid cup equivalents and MyPyramid
 servings of fruit & vegetable intake. For a detailed description of the screener, please refer
 to the NCI's documentation (see below).
 
@@ -53,15 +53,15 @@ library( NCIdietscores )
 
 # using default diet item names
 
-fvs_scores_day( fv.data )
+fvs_scores_day( fv.data.day )
 
 # user-specified diet item names but using default names in `item.names`
 
-fvs_scores_day( fv.data, default.names = FALSE )
+fvs_scores_day( fv.data.day, default.names = FALSE )
 
 # user specified names
 
-d.user <- setNames( fv.data,
+d.user <- setNames( fv.data.day,
                     c( "juice", "veg.mix", "juice.size", "fruit",
                        "fruit.size.a", "fruit.size.b", "salad", "salad.size", "frfy", "frfy.size",
                        "oth.pot", "oth.pot.size", "beans", "beans.size", "oth.veg", "oth.veg.size",
@@ -107,6 +107,14 @@ fvs_scores_day( df = d.user,
                 item.names = cls.list )
 
 
+# Set "M" and "E" entries to missing before using function
+
+fv.data.day.me <- fv.data.day
+fv.data.day.me[ fv.data.day.me == "M" ] <- NA
+fv.data.day.me[ fv.data.day.me == "E" ] <- NA
+
+fvs_scores_day( fv.data.day.me )
+
 
 
 ## more errors: ##
@@ -114,28 +122,28 @@ fvs_scores_day( df = d.user,
 # incorrect data types
 \dontrun{
 
-  fvs_scores_day( df = list( fv.data ) )
+  fvs_scores_day( df = list( fv.data.day ) )
 
 }
 
 # incorrect formatting of data frequencies
 \dontrun{
-  fv.data.format <- fv.data
+  fv.data.day.format <- fv.data.day
 
   nms <- paste0( "Q", 1:10 )
 
-  fv.data.format[nms][ fv.data.format[nms] == 0 ] <- "Never"
-  fv.data.format[nms][ fv.data.format[nms] == 1 ] <- "1-3 times last month"
-  fv.data.format[nms][ fv.data.format[nms] == 3 ] <- "1-2 times per week"
-  fv.data.format[nms][ fv.data.format[nms] == 2 ] <- "3-4 times per week"
-  fv.data.format[nms][ fv.data.format[nms] == 4 ] <- "5-6 times per week"
-  fv.data.format[nms][ fv.data.format[nms] == 5 ] <- "1 time per day"
-  fv.data.format[nms][ fv.data.format[nms] == 6 ] <- "2 times per day"
-  fv.data.format[nms][ fv.data.format[nms] == 7 ] <- "3 times per day"
-  fv.data.format[nms][ fv.data.format[nms] == 8 ] <- "4 times per day"
-  fv.data.format[nms][ fv.data.format[nms] == 9 ] <- "5 or more times per day"
+  fv.data.day.format[nms][ fv.data.day.format[nms] == 0 ] <- "Never"
+  fv.data.day.format[nms][ fv.data.day.format[nms] == 1 ] <- "1-3 times last month"
+  fv.data.day.format[nms][ fv.data.day.format[nms] == 3 ] <- "1-2 times per week"
+  fv.data.day.format[nms][ fv.data.day.format[nms] == 2 ] <- "3-4 times per week"
+  fv.data.day.format[nms][ fv.data.day.format[nms] == 4 ] <- "5-6 times per week"
+  fv.data.day.format[nms][ fv.data.day.format[nms] == 5 ] <- "1 time per day"
+  fv.data.day.format[nms][ fv.data.day.format[nms] == 6 ] <- "2 times per day"
+  fv.data.day.format[nms][ fv.data.day.format[nms] == 7 ] <- "3 times per day"
+  fv.data.day.format[nms][ fv.data.day.format[nms] == 8 ] <- "4 times per day"
+  fv.data.day.format[nms][ fv.data.day.format[nms] == 9 ] <- "5 or more times per day"
 
-  fvs_scores_day( df = fv.data.format )
+  fvs_scores_day( df = fv.data.day.format )
 }
 
 }
