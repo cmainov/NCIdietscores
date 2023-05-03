@@ -114,6 +114,14 @@
 #'                 item.names = cls.list )
 #'
 #'
+#' # Set "M" and "E" entries to missing before using function
+#'
+#' fv.data.me <- fv.data
+#' fv.data.me[ fv.data.me == "M" ] <- NA
+#' fv.data.me[ fv.data.me == "E" ] <- NA
+#'
+#' fvs_scores_day( fv.data.me )
+#'
 #'
 #'
 #' ## more errors: ##
