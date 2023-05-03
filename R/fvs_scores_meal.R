@@ -1,6 +1,6 @@
-###------------------------------------------------------------------------
-###   SCORING FOR FRUIT & VEGETABLE SCREENER USED IN EATS (BY-MEAL) SCREENER)
-###------------------------------------------------------------------------
+###-------------------------------------------------------------------------
+###   SCORING FOR FRUIT & VEGETABLE SCREENER USED IN EATS (BY-MEAL SCREENER)
+###-------------------------------------------------------------------------
 
 #' @title Scores for the Fruit & Vegetable Intake By-Meal Screener in the Eating at America's Table Study (EATS)
 #'

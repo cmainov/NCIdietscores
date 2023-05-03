@@ -229,41 +229,87 @@ short.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
 ## --------- End Subsection --------- ##
 
 
-## (1.5) Fruit & Vegetable Screener Data ##
+## (1.5) Fruit & Vegetable Day Screener Data ##
 
+# initialize matrix of NAs to store data (first dataset will be for primary questions on the survey (i.e. Q1:10))
+fv.data.day.q <- matrix( NA, nrow = 45, ncol = 10 )
 
 # set seed for reproducibility
 set.seed = 87
-
-# initialize matrix of NAs to store data (first dataset will be for primary questions on the survey (i.e. Q1:10))
-fv.data.q <- matrix( NA, nrow = 45, ncol = 10 )
 
 # loop through the number of columns and generate a discrete random variable of length 45 bounded below at 0 and above at 9
 for( i in 1:10 ){
 
-  fv.data.q[ , i ] <- sample( c(0:9, "M", "E"), size = 45, replace = TRUE ) # "M" and "E" are for missing and error, respectively (see NCI SAS code for this screener)
+  fv.data.day.q[ , i ] <- sample( c(0:9, "M", "E"), size = 45, replace = TRUE ) # "M" and "E" are for missing and error, respectively (see NCI SAS code for this screener)
 
 }
+
+
+# initialize matrix of NAs to store data (second dataset will be for sub questions on the survey (i.e. Q1A, Q2A...))
+fv.data.day.a <- matrix( NA, nrow = 45, ncol = 10 )
 
 # set seed for reproducibility
 set.seed = 87
 
-# initialize matrix of NAs to store data (second dataset will be for sub questions on the survey (i.e. Q1A, Q2A...))
-fv.data.a <- matrix( NA, nrow = 45, ncol = 10 )
-
 # loop through the number of columns and generate a discrete random variable of length 45 bounded below at 0 and above at 3
 for( i in 1:10 ){
 
-  fv.data.a[ , i ] <- sample( c(0:3, "M", "E"), size = 45, replace = TRUE ) # "M" and "E" are for missing and error, respectively (see NCI SAS code for this screener)
+  fv.data.day.a[ , i ] <- sample( c(0:3, "M", "E"), size = 45, replace = TRUE ) # "M" and "E" are for missing and error, respectively (see NCI SAS code for this screener)
 
 }
 
 # column bind the two matrices into a single dataset
-fv.data <- cbind(
-  setNames( data.frame( fv.data.q ),
+fv.data.day <- cbind(
+  setNames( data.frame( fv.data.day.q ),
                  c( paste0( "Q", c(1:10) ) ) ),
-       setNames( data.frame( fv.data.a ),
+       setNames( data.frame( fv.data.day.a ),
           c( paste0( "Q", c(1,3:9), "A" ), "Q2A1", "Q2A2" ) )
+) %>%
+  select( order( colnames( . ) ) ) # arrange columns alphabetically by column name
+
+
+## --------- End Subsection --------- ##
+
+
+## (1.6) Fruit & Vegetable By-Meal Screener Data ##
+
+
+# initialize matrix of NAs to store data (first dataset will be for primary questions on the survey (i.e. Q1:10))
+fv.data.meal.q <- matrix( NA, nrow = 45, ncol = 14 )
+
+# set seed for reproducibility
+set.seed = 81
+
+# loop through the number of columns and generate a discrete random variable of length 45 bounded below at 0 and above at 9
+for( i in 1:14 ){
+
+  fv.data.meal.q[ , i ] <- sample( c(0:9, "M", "E"), size = 45, replace = TRUE ) # "M" and "E" are for missing and error, respectively (see NCI SAS code for this screener)
+
+}
+
+
+
+# initialize matrix of NAs to store data (second dataset will be for sub questions on the survey (i.e. Q1A, Q2A...))
+fv.data.meal.a <- matrix( NA, nrow = 45, ncol = 16 )
+
+# set seed for reproducibility
+set.seed = 81
+
+# loop through the number of columns and generate a discrete random variable of length 45 bounded below at 0 and above at 3
+for( i in 1:16 ){
+
+  fv.data.meal.a[ , i ] <- sample( c(0:3, "M", "E"), size = 45, replace = TRUE ) # "M" and "E" are for missing and error, respectively (see NCI SAS code for this screener)
+
+}
+
+# column bind the two matrices into a single dataset
+fv.data.meal <- cbind(
+  setNames( data.frame( fv.data.meal.q ),
+            c( paste0( "Q", c(1:14) ) ) ),
+  setNames( data.frame( fv.data.meal.a ),
+            c( paste0( "Q", c(1,2,3,4,5,7,9,11:13), "A" ),
+               paste0( "Q", c(6,8,10), "A1" ),
+               paste0( "Q", c(6,8,10), "A2" ) ) )
 ) %>%
   select( order( colnames( . ) ) ) # arrange columns alphabetically by column name
 
@@ -290,7 +336,7 @@ usethis::use_data( tbl.1, tbl.2,
 
 ## (1.7) Save example data for export ##
 
-usethis::use_data( diet.data, short.data, fv.data,
+usethis::use_data( diet.data, short.data, fv.data.day, fv.data.meal,
                    overwrite = TRUE ) # this creates the `/data` folder and stores the individual published datasets in that directory
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------

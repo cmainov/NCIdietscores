@@ -60,15 +60,15 @@
 #'
 #' # using default diet item names
 #'
-#' fvs_scores_day( fv.data )
+#' fvs_scores_day( fv.data.day )
 #'
 #' # user-specified diet item names but using default names in `item.names`
 #'
-#' fvs_scores_day( fv.data, default.names = FALSE )
+#' fvs_scores_day( fv.data.day, default.names = FALSE )
 #'
 #' # user specified names
 #'
-#' d.user <- setNames( fv.data,
+#' d.user <- setNames( fv.data.day,
 #'                     c( "juice", "veg.mix", "juice.size", "fruit",
 #'                        "fruit.size.a", "fruit.size.b", "salad", "salad.size", "frfy", "frfy.size",
 #'                        "oth.pot", "oth.pot.size", "beans", "beans.size", "oth.veg", "oth.veg.size",
@@ -116,11 +116,11 @@
 #'
 #' # Set "M" and "E" entries to missing before using function
 #'
-#' fv.data.me <- fv.data
-#' fv.data.me[ fv.data.me == "M" ] <- NA
-#' fv.data.me[ fv.data.me == "E" ] <- NA
+#' fv.data.day.me <- fv.data.day
+#' fv.data.day.me[ fv.data.day.me == "M" ] <- NA
+#' fv.data.day.me[ fv.data.day.me == "E" ] <- NA
 #'
-#' fvs_scores_day( fv.data.me )
+#' fvs_scores_day( fv.data.day.me )
 #'
 #'
 #'
@@ -129,28 +129,28 @@
 #' # incorrect data types
 #' \dontrun{
 #'
-#'   fvs_scores_day( df = list( fv.data ) )
+#'   fvs_scores_day( df = list( fv.data.day ) )
 #'
 #' }
 #'
 #' # incorrect formatting of data frequencies
 #' \dontrun{
-#'   fv.data.format <- fv.data
+#'   fv.data.day.format <- fv.data.day
 #'
 #'   nms <- paste0( "Q", 1:10 )
 #'
-#'   fv.data.format[nms][ fv.data.format[nms] == 0 ] <- "Never"
-#'   fv.data.format[nms][ fv.data.format[nms] == 1 ] <- "1-3 times last month"
-#'   fv.data.format[nms][ fv.data.format[nms] == 3 ] <- "1-2 times per week"
-#'   fv.data.format[nms][ fv.data.format[nms] == 2 ] <- "3-4 times per week"
-#'   fv.data.format[nms][ fv.data.format[nms] == 4 ] <- "5-6 times per week"
-#'   fv.data.format[nms][ fv.data.format[nms] == 5 ] <- "1 time per day"
-#'   fv.data.format[nms][ fv.data.format[nms] == 6 ] <- "2 times per day"
-#'   fv.data.format[nms][ fv.data.format[nms] == 7 ] <- "3 times per day"
-#'   fv.data.format[nms][ fv.data.format[nms] == 8 ] <- "4 times per day"
-#'   fv.data.format[nms][ fv.data.format[nms] == 9 ] <- "5 or more times per day"
+#'   fv.data.day.format[nms][ fv.data.day.format[nms] == 0 ] <- "Never"
+#'   fv.data.day.format[nms][ fv.data.day.format[nms] == 1 ] <- "1-3 times last month"
+#'   fv.data.day.format[nms][ fv.data.day.format[nms] == 3 ] <- "1-2 times per week"
+#'   fv.data.day.format[nms][ fv.data.day.format[nms] == 2 ] <- "3-4 times per week"
+#'   fv.data.day.format[nms][ fv.data.day.format[nms] == 4 ] <- "5-6 times per week"
+#'   fv.data.day.format[nms][ fv.data.day.format[nms] == 5 ] <- "1 time per day"
+#'   fv.data.day.format[nms][ fv.data.day.format[nms] == 6 ] <- "2 times per day"
+#'   fv.data.day.format[nms][ fv.data.day.format[nms] == 7 ] <- "3 times per day"
+#'   fv.data.day.format[nms][ fv.data.day.format[nms] == 8 ] <- "4 times per day"
+#'   fv.data.day.format[nms][ fv.data.day.format[nms] == 9 ] <- "5 or more times per day"
 #'
-#'   fvs_scores_day( df = fv.data.format )
+#'   fvs_scores_day( df = fv.data.day.format )
 #' }
 #'
 #' @export
