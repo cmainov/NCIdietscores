@@ -183,7 +183,7 @@ fvs_scores_day <- function( df,
   if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) >= 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
 
   # diet column names checks
-  if ( !default.names & is.null( item.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
+  if ( !default.names & is.null( item.names ) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
   if ( ( !default.names ) & length( item.names ) < 20 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( ( !default.names ) & length( item.names ) < 20 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( sum( c( paste0( "Q", 1:10 ), "Q2A1", "Q2A2" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )

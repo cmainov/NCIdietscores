@@ -34,15 +34,20 @@
 #' @usage fvs_scores_meal( df,
 #' default.names = TRUE,
 #' item.names = list( Q1 = "Q1", Q1A = "Q1A",
-#'                    Q2 = "Q2", Q2A1 = "Q2A1",
-#'                    Q2A2 = "Q2A2", Q3 = "Q3",
-#'                    Q3A = "Q3A", Q4 = "Q4",
-#'                    Q4A = "Q4A", Q5 = "Q5",
-#'                    Q5A = "Q5A", Q6 = "Q6",
-#'                    Q6A = "Q6A", Q7 = "Q7",
+#'                    Q2 = "Q2", Q2A = "Q2A",
+#'                    Q3 = "Q3", Q3A = "Q3A",
+#'                    Q4 = "Q4", Q4A = "Q4A",
+#'                    Q5 = "Q5", Q5 = "Q5A",
+#'                    Q6 = "Q6", Q6A1 = "Q6A1",
+#'                    Q6A2 = "Q6A2", Q7 = "Q7",
 #'                    Q7A = "Q7A", Q8 = "Q8",
-#'                    Q8A = "Q8A", Q9 = "Q9",
-#'                    Q9A = "Q9A", Q10 = "Q10" ) )
+#'                    Q8A1 = "Q8A1", Q8A2 = "Q8A2",
+#'                    Q9 = "Q9", Q9A = "Q9A",
+#'                    Q10 = "Q10", Q10A1 = "Q10A1",
+#'                    Q10A2 = "Q10A2", Q11 = "Q11",
+#'                    Q11A = "Q11A", Q12 = "Q12",
+#'                    Q12A = "Q12A", Q13 = "Q13",
+#'                    Q13A = "Q13A", Q14 = "Q14" ) )
 #'
 #' @param df A \code{data.frame} or \code{tibble} containing the columns (dietary items) for computing the scores.
 #' @param default.names A logical. Defaulted to \code{TRUE} and establishes whether default survey item names (see NCI SAS code linked above) are used. If user-specified names are used, set to \code{FALSE} and specify the column names in \code{item.names}.
@@ -161,7 +166,7 @@ fvs_scores_meal <- function( df,
                                                Q2 = "Q2", Q2A = "Q2A",
                                                Q3 = "Q3", Q3A = "Q3A",
                                                Q4 = "Q4", Q4A = "Q4A",
-                                               Q5 = "Q5", Q5 = "Q5A",
+                                               Q5 = "Q5", Q5A = "Q5A",
                                                Q6 = "Q6", Q6A1 = "Q6A1",
                                                Q6A2 = "Q6A2", Q7 = "Q7",
                                                Q7A = "Q7A", Q8 = "Q8",
@@ -183,20 +188,21 @@ fvs_scores_meal <- function( df,
 
   ## (1.1) Argument types and entries  ##
 
+  # names of the diet columns
+  def.names <- c( paste0( "Q", 1:14 ), paste0( "Q", c(1,2,3,4,5,7,9,11:13), "A" ),
+                  paste0( "Q", c(6,8,10), "A1" ),
+                  paste0( "Q", c(6,8,10), "A2" ) ) # default names
+
   # class checks
   if ( !inherits( item.names, "list" ) ) stop( "Error: `item.names` must be a list" )
   if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) >= 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
 
   # diet column names checks
-  if ( !default.names & is.null( item.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
-  if ( ( !default.names ) & length( item.names ) < 27 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
-  if ( ( !default.names ) & length( item.names ) < 27 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
-  if ( sum( c( paste0( "Q", 1:10 ), "Q2A1", "Q2A2" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
+  if ( !default.names & is.null( item.names ) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
+  if ( ( !default.names ) & length( item.names ) < 30 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
+  if ( ( !default.names ) & length( item.names ) < 30 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
+  if ( sum( def.names %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
 
-  # levels of the diet columns
-  def.names <- c( paste0( "Q", 1:14 ), paste0( "Q", c(1,5,7,9,11:13), "A" ),
-                  paste0( "Q", c(6,8,10), "A1" ),
-                  paste0( "Q", c(6,8,10), "A2" )) # default names
 
   if( default.names ) v <- c( def.names )
   if ( !default.names ) v <- c( unlist( item.names ) )
