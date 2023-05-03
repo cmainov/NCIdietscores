@@ -1,16 +1,16 @@
 ###------------------------------------------------------------------------
-###   SCORING FOR FRUIT & VEGETABLE SCREENER USED IN EATS (ALL-DAY SCREENER)
+###   SCORING FOR FRUIT & VEGETABLE SCREENER USED IN EATS (BY-MEAL) SCREENER)
 ###------------------------------------------------------------------------
 
-#' @title Scores for the Fruit & Vegetable Intake Day Screener in the Eating at America's Table Study (EATS)
+#' @title Scores for the Fruit & Vegetable Intake By-Meal Screener in the Eating at America's Table Study (EATS)
 #'
 #' @description Calculate MyPyramid cup equivalents and MyPyramid servings of fruit & vegetable intake
-#' on data collected with the National Cancer Institute's Fruit & Vegetable Intake All-Day Screener in the
+#' on data collected with the National Cancer Institute's Fruit & Vegetable Intake By-Meal Screener in the
 #' EATS.
 #'
 #' @details
 #' Implements the scoring procedures for data obtained from the National Cancer Institute (NCI)
-#' Fruit & Vegetable Intake All-Day Screener from the EATS. MyPyramid cup equivalents and MyPyramid
+#' Fruit & Vegetable Intake By-Meal Screener from the EATS. MyPyramid cup equivalents and MyPyramid
 #' servings of fruit & vegetable intake. For a detailed description of the screener, please refer
 #' to the NCI's documentation (see below).
 #'
@@ -26,12 +26,12 @@
 #' @seealso
 #' \itemize{
 #' \item \href{https://epi.grants.cancer.gov/diet/screeners/fruitveg/}{Screener Documentation}
-#' \item \href{https://epi.grants.cancer.gov/diet/screeners/fruitveg/scoring/}{Scoring Procedures}
-#' \item \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/eats_all-day.pdf}{The Screener}
-#' \item \href{https://epi.grants.cancer.gov/diet/screeners/sas-program-eats-allday.zip}{Original SAS Code from the NCI}
+#' \item \href{https://epi.grants.cancer.gov/diet/screeners/fruitveg/scoring/bymeal.html}{Scoring Procedures}
+#' \item \href{https://epi.grants.cancer.gov/diet/shortreg/instruments/eats_by-meal.pdf}{The Screener}
+#' \item \href{https://epi.grants.cancer.gov/diet/screeners/sas-program-eats-bymeal.zip}{Original SAS Code from the NCI}
 #' }
 #'
-#' @usage fvs_scores_day( df,
+#' @usage fvs_scores_meal( df,
 #' default.names = TRUE,
 #' item.names = list( Q1 = "Q1", Q1A = "Q1A",
 #'                    Q2 = "Q2", Q2A1 = "Q2A1",
@@ -60,11 +60,11 @@
 #'
 #' # using default diet item names
 #'
-#' fvs_scores_day( fv.data )
+#' fvs_scores_meal( fv.data )
 #'
 #' # user-specified diet item names but using default names in `item.names`
 #'
-#' fvs_scores_day( fv.data, default.names = FALSE )
+#' fvs_scores_meal( fv.data, default.names = FALSE )
 #'
 #' # user specified names
 #'
@@ -74,15 +74,15 @@
 #'                        "oth.pot", "oth.pot.size", "beans", "beans.size", "oth.veg", "oth.veg.size",
 #'                        "tom", "tom.size", "veg.soup", "veg.soup.size" ) )
 #'
-#' # run `fvs_scores_day` without specifying column names, throws error
+#' # run `fvs_scores_meal` without specifying column names, throws error
 #' \dontrun{
 #'
-#'   fvs_scores_day( df = d.user, default.names = FALSE )
+#'   fvs_scores_meal( df = d.user, default.names = FALSE )
 #'
 #' }
 #'
 #'
-#' # run `fvs_scores_day`  specifying column names in incorrect format, error thrown
+#' # run `fvs_scores_meal`  specifying column names in incorrect format, error thrown
 #'
 #' \dontrun{
 #'   cls.list <- list( "juice", "veg.mix", "juice.size", "fruit",
@@ -90,13 +90,13 @@
 #'                     "oth.pot", "oth.pot.size", "beans", "beans.size", "oth.veg", "oth.veg.size",
 #'                     "tom", "tom.size", "veg.soup", "veg.soup.size" )
 #'
-#'   fvs_scores_day( df = d.user,
+#'   fvs_scores_meal( df = d.user,
 #'                   default.names = FALSE,
 #'                   item.names = cls.list )
 #' }
 #'
 #'
-#' # run `fvs_scores_day`  specifying column names, no error
+#' # run `fvs_scores_meal`  specifying column names, no error
 #'
 #' cls.list <- list( Q1 = "juice", Q1A = "juice.size",
 #'                   Q2 = "fruit", Q2A1 = "fruit.size.a",
@@ -109,7 +109,7 @@
 #'                   Q8A = "tom.size", Q9 = "veg.soup",
 #'                   Q9A = "veg.soup.size", Q10 = "veg.mix" )
 #'
-#' fvs_scores_day( df = d.user,
+#' fvs_scores_meal( df = d.user,
 #'                 default.names = FALSE,
 #'                 item.names = cls.list )
 #'
@@ -120,7 +120,7 @@
 #' fv.data.me[ fv.data.me == "M" ] <- NA
 #' fv.data.me[ fv.data.me == "E" ] <- NA
 #'
-#' fvs_scores_day( fv.data.me )
+#' fvs_scores_meal( fv.data.me )
 #'
 #'
 #'
@@ -129,7 +129,7 @@
 #' # incorrect data types
 #' \dontrun{
 #'
-#'   fvs_scores_day( df = list( fv.data ) )
+#'   fvs_scores_meal( df = list( fv.data ) )
 #'
 #' }
 #'
@@ -144,29 +144,34 @@
 #'   fv.data.format[nms][ fv.data.format[nms] == 3 ] <- "1-2 times per week"
 #'   fv.data.format[nms][ fv.data.format[nms] == 2 ] <- "3-4 times per week"
 #'   fv.data.format[nms][ fv.data.format[nms] == 4 ] <- "5-6 times per week"
-#'   fv.data.format[nms][ fv.data.format[nms] == 5 ] <- "1 time per day"
-#'   fv.data.format[nms][ fv.data.format[nms] == 6 ] <- "2 times per day"
-#'   fv.data.format[nms][ fv.data.format[nms] == 7 ] <- "3 times per day"
-#'   fv.data.format[nms][ fv.data.format[nms] == 8 ] <- "4 times per day"
-#'   fv.data.format[nms][ fv.data.format[nms] == 9 ] <- "5 or more times per day"
+#'   fv.data.format[nms][ fv.data.format[nms] == 5 ] <- "1 time per meal"
+#'   fv.data.format[nms][ fv.data.format[nms] == 6 ] <- "2 times per meal"
+#'   fv.data.format[nms][ fv.data.format[nms] == 7 ] <- "3 times per meal"
+#'   fv.data.format[nms][ fv.data.format[nms] == 8 ] <- "4 times per meal"
+#'   fv.data.format[nms][ fv.data.format[nms] == 9 ] <- "5 or more times per meal"
 #'
-#'   fvs_scores_day( df = fv.data.format )
+#'   fvs_scores_meal( df = fv.data.format )
 #' }
 #'
 #' @export
 
-fvs_scores_day <- function( df,
-                        default.names = TRUE,
-                        item.names = list( Q1 = "Q1", Q1A = "Q1A",
-                                           Q2 = "Q2", Q2A1 = "Q2A1",
-                                           Q2A2 = "Q2A2", Q3 = "Q3",
-                                           Q3A = "Q3A", Q4 = "Q4",
-                                           Q4A = "Q4A", Q5 = "Q5",
-                                           Q5A = "Q5A", Q6 = "Q6",
-                                           Q6A = "Q6A", Q7 = "Q7",
-                                           Q7A = "Q7A", Q8 = "Q8",
-                                           Q8A = "Q8A", Q9 = "Q9",
-                                           Q9A = "Q9A", Q10 = "Q10" ) ) {
+fvs_scores_meal <- function( df,
+                            default.names = TRUE,
+                            item.names = list( Q1 = "Q1", Q1A = "Q1A",
+                                               Q2 = "Q2", Q2A = "Q2A",
+                                               Q3 = "Q3", Q3A = "Q3A",
+                                               Q4 = "Q4", Q4A = "Q4A",
+                                               Q5 = "Q5", Q5 = "Q5A",
+                                               Q6 = "Q6", Q6A1 = "Q6A1",
+                                               Q6A2 = "Q6A2", Q7 = "Q7",
+                                               Q7A = "Q7A", Q8 = "Q8",
+                                               Q8A1 = "Q8A1", Q8A2 = "Q8A2",
+                                               Q9 = "Q9", Q9A = "Q9A",
+                                               Q10 = "Q10", Q10A1 = "Q10A1",
+                                               Q10A2 = "Q10A2", Q11 = "Q11",
+                                               Q11A = "Q11A", Q12 = "Q12",
+                                               Q12A = "Q12A", Q13 = "Q13",
+                                               Q13A = "Q13A", Q14 = "Q14" ) ) {
 
   # copy dataset
   df.copy <- df
@@ -184,12 +189,14 @@ fvs_scores_day <- function( df,
 
   # diet column names checks
   if ( !default.names & is.null( item.names) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
-  if ( ( !default.names ) & length( item.names ) < 20 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
-  if ( ( !default.names ) & length( item.names ) < 20 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
+  if ( ( !default.names ) & length( item.names ) < 27 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
+  if ( ( !default.names ) & length( item.names ) < 27 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( sum( c( paste0( "Q", 1:10 ), "Q2A1", "Q2A2" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
 
   # levels of the diet columns
-  def.names <- c( paste0( "Q", 1:10 ), paste0( "Q", c(1,3:9), "A" ), "Q2A1", "Q2A2" ) # default names
+  def.names <- c( paste0( "Q", 1:14 ), paste0( "Q", c(1,5,7,9,11:13), "A" ),
+                  paste0( "Q", c(6,8,10), "A1" ),
+                  paste0( "Q", c(6,8,10), "A2" )) # default names
 
   if( default.names ) v <- c( def.names )
   if ( !default.names ) v <- c( unlist( item.names ) )
@@ -216,11 +223,11 @@ fvs_scores_day <- function( df,
   ## (2.1) Frequency response conversions ##
 
   # condition: assign an object with the dietary column names for subsequent loop
-  if( default.names )  c.nms <- c( paste0( "Q", c(1:10) ) )
+  if( default.names )  c.nms <- c( paste0( "Q", c(1:13) ) )
   if( !default.names ) {
 
     c.nms <- vector()
-    for( i in seq_along( paste0( "Q", 1:10 ) ) ){
+    for( i in seq_along( paste0( "Q", 1:13 ) ) ){
 
       c.nms[i] <- unlist( item.names[[ paste0( "Q", i ) ]] )
 
@@ -304,10 +311,10 @@ fvs_scores_day <- function( df,
   if( default.names ) og <- str_extract( "Q6A", "Q\\d" ) # frequency item name if default names used
   if( !default.names ) og <- item.names[["Q6"]] # frequency item name if default names not used
 
-  df.ce[, paste0( "Q6A", "N" ) ] <- ifelse( df.ce[, item.names[["Q6A"]] ] == 0, 0.25,
-                                            ifelse( df.ce[, item.names[["Q6A"]] ] == 1, 0.75,
-                                                    ifelse( df.ce[, item.names[["Q6A"]] ] == 2, 1.25,
-                                                            ifelse( df.ce[, item.names[["Q6A"]] ] == 3, 2.0,
+  df.ce[, paste0( "Q6A", "N" ) ] <- ifelse( df.ce[, item.names[["Q5A"]] ] == 0, 0.25,
+                                            ifelse( df.ce[, item.names[["Q5A"]] ] == 1, 0.75,
+                                                    ifelse( df.ce[, item.names[["Q5A"]] ] == 2, 1.25,
+                                                            ifelse( df.ce[, item.names[["Q5A"]] ] == 3, 2.0,
                                                                     ifelse( df.ce[, og ] == 0, 0, df.ce[, og ] ) ) ) ) )
 
   # Q7A
@@ -350,7 +357,7 @@ fvs_scores_day <- function( df,
 
             # final sum
             frt.veg.ce = rowSums( cbind( JUICE, FRUIT, LSALAD, FRFRY, WHPOT, DRBEAN, OTHVEG, TOMSAUCE, VEGSOUP ),
-                               na.rm = T ) ) # note that any NAs in any of the columns are being set to ZERO before summing
+                                  na.rm = T ) ) # note that any NAs in any of the columns are being set to ZERO before summing
 
   ## --------- End Subsection --------- ##
 
@@ -364,10 +371,10 @@ fvs_scores_day <- function( df,
   if( !default.names ) og <- item.names[["Q1"]] # frequency item name if default names not used
 
   df.ps[, paste0( "Q1A", "N" ) ] <- ifelse( df.ps[, item.names[["Q1A"]] ] == 0, 0.75,
-                                              ifelse( df.ps[, item.names[["Q1A"]] ] == 1, 1.33,
-                                                      ifelse( df.ps[, item.names[["Q1A"]] ] == 2, 2.17,
-                                                              ifelse( df.ps[, item.names[["Q1A"]] ] == 3, 3.33,
-                                                                      ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
+                                            ifelse( df.ps[, item.names[["Q1A"]] ] == 1, 1.33,
+                                                    ifelse( df.ps[, item.names[["Q1A"]] ] == 2, 2.17,
+                                                            ifelse( df.ps[, item.names[["Q1A"]] ] == 3, 3.33,
+                                                                    ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   # Q2A1, Q2A2
   these.2 <- c( "Q2A1", "Q2A2" )
@@ -379,10 +386,10 @@ fvs_scores_day <- function( df,
     if( !default.names ) og <- unlist( item.names[[ these.og.2[i] ]] )
 
     df.ps[, paste0( these.2[i], "N" ) ] <- ifelse( df.ps[, item.names[[ these.2[i] ]] ] == 0, 0.75,
-                                 ifelse( df.ps[, item.names[[ these.2[i] ]] ] == 1, 1,
-                                         ifelse( df.ps[, item.names[[ these.2[i] ]] ] == 2, 2,
-                                                 ifelse( df.ps[, item.names[[ these.2[i] ]] ] == 3, 2.5,
-                                                         ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
+                                                   ifelse( df.ps[, item.names[[ these.2[i] ]] ] == 1, 1,
+                                                           ifelse( df.ps[, item.names[[ these.2[i] ]] ] == 2, 2,
+                                                                   ifelse( df.ps[, item.names[[ these.2[i] ]] ] == 3, 2.5,
+                                                                           ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
   }
 
   # Q3A
@@ -400,40 +407,40 @@ fvs_scores_day <- function( df,
   if( !default.names ) og <- item.names[["Q4"]] # frequency item name if default names not used
 
   df.ps[, paste0( "Q4A", "N" ) ] <- ifelse( df.ps[, item.names[["Q4A"]] ] == 0, 1.25,
-                                         ifelse( df.ps[, item.names[["Q4A"]] ] == 1, 2.3,
-                                                 ifelse( df.ps[, item.names[["Q4A"]] ] == 2, 3.1,
-                                                         ifelse( df.ps[, item.names[["Q4A"]] ] == 3, 4.8,
-                                                                 ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
+                                            ifelse( df.ps[, item.names[["Q4A"]] ] == 1, 2.3,
+                                                    ifelse( df.ps[, item.names[["Q4A"]] ] == 2, 3.1,
+                                                            ifelse( df.ps[, item.names[["Q4A"]] ] == 3, 4.8,
+                                                                    ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   # Q5A
   if( default.names ) og <- str_extract( "Q5A", "Q\\d" ) # frequency item name if default names used
   if( !default.names ) og <- item.names[["Q5"]] # frequency item name if default names not used
 
   df.ps[, paste0( "Q5A", "N" ) ] <- ifelse( df.ps[, item.names[["Q5A"]] ] == 0, 0.8,
-                                         ifelse( df.ps[, item.names[["Q5A"]] ] == 1, 1.5,
-                                                 ifelse( df.ps[, item.names[["Q5A"]] ] == 2, 2.4,
-                                                         ifelse( df.ps[, item.names[["Q5A"]] ] == 3, 3.5,
-                                                                 ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
+                                            ifelse( df.ps[, item.names[["Q5A"]] ] == 1, 1.5,
+                                                    ifelse( df.ps[, item.names[["Q5A"]] ] == 2, 2.4,
+                                                            ifelse( df.ps[, item.names[["Q5A"]] ] == 3, 3.5,
+                                                                    ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   # Q6A
   if( default.names ) og <- str_extract( "Q6A", "Q\\d" ) # frequency item name if default names used
   if( !default.names ) og <- item.names[["Q6"]] # frequency item name if default names not used
 
   df.ps[, paste0( "Q6A", "N" ) ] <- ifelse( df.ps[, item.names[["Q6A"]] ] == 0, 0.75,
-                                         ifelse( df.ps[, item.names[["Q6A"]] ] == 1, 1.5,
-                                                 ifelse( df.ps[, item.names[["Q6A"]] ] == 2, 2.5,
-                                                         ifelse( df.ps[, item.names[["Q6A"]] ] == 3, 3.5,
-                                                                 ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
+                                            ifelse( df.ps[, item.names[["Q6A"]] ] == 1, 1.5,
+                                                    ifelse( df.ps[, item.names[["Q6A"]] ] == 2, 2.5,
+                                                            ifelse( df.ps[, item.names[["Q6A"]] ] == 3, 3.5,
+                                                                    ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   # Q7A
   if( default.names ) og <- str_extract( "Q7A", "Q\\d" ) # frequency item name if default names used
   if( !default.names ) og <- item.names[["Q7"]] # frequency item name if default names not used
 
   df.ps[, paste0( "Q7A", "N" ) ] <- ifelse( df.ps[, item.names[["Q7A"]] ] == 0, 0.75,
-                                         ifelse( df.ps[, item.names[["Q7A"]] ] == 1, 1.5,
-                                                 ifelse( df.ps[, item.names[["Q7A"]] ] == 2, 3,
-                                                         ifelse( df.ps[, item.names[["Q7A"]] ] == 3, 4.5,
-                                                                 ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
+                                            ifelse( df.ps[, item.names[["Q7A"]] ] == 1, 1.5,
+                                                    ifelse( df.ps[, item.names[["Q7A"]] ] == 2, 3,
+                                                            ifelse( df.ps[, item.names[["Q7A"]] ] == 3, 4.5,
+                                                                    ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   # Q8A
   if( default.names ) og <- str_extract( "Q8A", "Q\\d" ) # frequency item name if default names used
@@ -450,10 +457,10 @@ fvs_scores_day <- function( df,
   if( !default.names ) og <- item.names[["Q9"]] # frequency item name if default names not used
 
   df.ps[, paste0( "Q9A", "N" ) ] <- ifelse( df.ps[, item.names[["Q8A"]] ] == 0, 0.75,
-                                         ifelse( df.ps[, item.names[["Q8A"]] ] == 1, 1.36,
-                                                 ifelse( df.ps[, item.names[["Q8A"]] ] == 2, 2.27,
-                                                         ifelse( df.ps[, item.names[["Q8A"]] ] == 3, 3.2,
-                                                                 ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
+                                            ifelse( df.ps[, item.names[["Q8A"]] ] == 1, 1.36,
+                                                    ifelse( df.ps[, item.names[["Q8A"]] ] == 2, 2.27,
+                                                            ifelse( df.ps[, item.names[["Q8A"]] ] == 3, 3.2,
+                                                                    ifelse( df.ps[, og ] == 0, 0, df.ps[, og ] ) ) ) ) )
 
   ## --------- End Subsection --------- ##
 
@@ -488,9 +495,9 @@ fvs_scores_day <- function( df,
   ## (3.1) Columns to return in final dataset ##
 
   d.out <- setNames( bind_cols( data.frame( df ),
-                  data.frame( df.ce[ , c( "frt.veg.ce" ) ] ),
-                  data.frame( df.ps[ , c( "frt.veg.ps" ) ] ) ) %>% data.frame(),
-                  c( colnames( df ), "frt.veg.ce", "frt.veg.ps" ) )
+                                data.frame( df.ce[ , c( "frt.veg.ce" ) ] ),
+                                data.frame( df.ps[ , c( "frt.veg.ps" ) ] ) ) %>% data.frame(),
+                     c( colnames( df ), "frt.veg.ce", "frt.veg.ps" ) )
 
   ## --------- End Subsection --------- ##
 
