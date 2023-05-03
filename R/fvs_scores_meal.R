@@ -65,19 +65,21 @@
 #'
 #' # using default diet item names
 #'
-#' fvs_scores_meal( fv.data )
+#' fvs_scores_meal( fv.data.meal )
 #'
 #' # user-specified diet item names but using default names in `item.names`
 #'
-#' fvs_scores_meal( fv.data, default.names = FALSE )
+#' fvs_scores_meal( fv.data.meal, default.names = FALSE )
 #'
 #' # user specified names
 #'
-#' d.user <- setNames( fv.data,
-#'                     c( "juice", "veg.mix", "juice.size", "fruit",
-#'                        "fruit.size.a", "fruit.size.b", "salad", "salad.size", "frfy", "frfy.size",
-#'                        "oth.pot", "oth.pot.size", "beans", "beans.size", "oth.veg", "oth.veg.size",
-#'                        "tom", "tom.size", "veg.soup", "veg.soup.size" ) )
+#' d.user <- setNames( fv.data.meal,
+#'                     c( "juice", "fruit.pm", "fruit.pm.size.a", "fruit.pm.size.b",
+#'                        "veg.pm", "veg.pm.size", "tom", "tom.size", "veg.soup", "veg.soup.size",
+#'                        "veg.mix", "juice.size", "salad", "salad.size", "frfy", "frfy.size",
+#'                        "oth.pot", "oth.pot.size", "beans", "beans.size", "fruit.am",
+#'                        "fruit.am.size.a", "fruit.am.size.b", "veg.am", "veg.am.size",
+#'                        "fruit.nn", "fruit.nn.size.a", "fruit.n.size.b", "veg.nn", "veg.nn.size" ) )
 #'
 #' # run `fvs_scores_meal` without specifying column names, throws error
 #' \dontrun{
@@ -90,42 +92,49 @@
 #' # run `fvs_scores_meal`  specifying column names in incorrect format, error thrown
 #'
 #' \dontrun{
-#'   cls.list <- list( "juice", "veg.mix", "juice.size", "fruit",
-#'                     "fruit.size.a", "fruit.size.b", "salad", "salad.size", "frfy", "frfy.size",
-#'                     "oth.pot", "oth.pot.size", "beans", "beans.size", "oth.veg", "oth.veg.size",
-#'                     "tom", "tom.size", "veg.soup", "veg.soup.size" )
+#'   cls.list <- list( "juice", "fruit.pm", "fruit.pm.size.a", "fruit.pm.size.b",
+#'                     "veg.pm", "veg.pm.size", "tom", "tom.size", "veg.soup", "veg.soup.size",
+#'                     "veg.mix", "juice.size", "salad", "salad.size", "frfy", "frfy.size",
+#'                     "oth.pot", "oth.pot.size", "beans", "beans.size", "fruit.am",
+#'                     "fruit.am.size.a", "fruit.am.size.b", "veg.am", "veg.am.size",
+#'                     "fruit.nn", "fruit.nn.size.a", "fruit.n.size.b", "veg.nn", "veg.nn.size" )
 #'
 #'   fvs_scores_meal( df = d.user,
-#'                   default.names = FALSE,
-#'                   item.names = cls.list )
+#'                    default.names = FALSE,
+#'                    item.names = cls.list )
 #' }
 #'
 #'
 #' # run `fvs_scores_meal`  specifying column names, no error
 #'
 #' cls.list <- list( Q1 = "juice", Q1A = "juice.size",
-#'                   Q2 = "fruit", Q2A1 = "fruit.size.a",
-#'                   Q2A2 = "fruit.size.b", Q3 = "salad",
-#'                   Q3A = "salad.size", Q4 = "frfy",
-#'                   Q4A = "frfy.size", Q5 = "oth.pot",
-#'                   Q5A = "oth.pot.size", Q6 = "beans",
-#'                   Q6A = "beans.size", Q7 = "oth.veg",
-#'                   Q7A = "oth.veg.size", Q8 = "tom",
-#'                   Q8A = "tom.size", Q9 = "veg.soup",
-#'                   Q9A = "veg.soup.size", Q10 = "veg.mix" )
+#'                   Q2 = "salad", Q2A = "salad.size",
+#'                   Q3 = "frfy", Q3A = "frfy.size",
+#'                   Q4 = "oth.pot", Q4A = "oth.pot.size",
+#'                   Q5 = "beans", Q5A = "beans.size",
+#'                   Q6 = "fruit.am", Q6A1 = "fruit.am.size.a",
+#'                   Q6A2 = "fruit.am.size.b", Q7 = "veg.am",
+#'                   Q7A = "veg.am.size", Q8 = "fruit.nn",
+#'                   Q8A1 = "fruit.nn.size.a", Q8A2 = "fruit.n.size.b",
+#'                   Q9 = "veg.nn", Q9A = "veg.nn.size",
+#'                   Q10 = "fruit.pm", Q10A1 = "fruit.pm.size.a",
+#'                   Q10A2 = "fruit.pm.size.b", Q11 = "veg.pm",
+#'                   Q11A = "veg.pm.size", Q12 = "tom",
+#'                   Q12A = "tom.size", Q13 = "veg.soup",
+#'                   Q13A = "veg.soup.size", Q14 = "veg.mix" )
 #'
 #' fvs_scores_meal( df = d.user,
-#'                 default.names = FALSE,
-#'                 item.names = cls.list )
+#'                  default.names = FALSE,
+#'                  item.names = cls.list )
 #'
 #'
 #' # Set "M" and "E" entries to missing before using function
 #'
-#' fv.data.me <- fv.data
-#' fv.data.me[ fv.data.me == "M" ] <- NA
-#' fv.data.me[ fv.data.me == "E" ] <- NA
+#' fv.data.meal.me <- fv.data.meal
+#' fv.data.meal.me[ fv.data.meal.me == "M" ] <- NA
+#' fv.data.meal.me[ fv.data.meal.me == "E" ] <- NA
 #'
-#' fvs_scores_meal( fv.data.me )
+#' fvs_scores_meal( fv.data.meal.me )
 #'
 #'
 #'
@@ -134,30 +143,29 @@
 #' # incorrect data types
 #' \dontrun{
 #'
-#'   fvs_scores_meal( df = list( fv.data ) )
+#'   fvs_scores_meal( df = list( fv.data.meal ) )
 #'
 #' }
 #'
 #' # incorrect formatting of data frequencies
 #' \dontrun{
-#'   fv.data.format <- fv.data
+#'   fv.data.meal.format <- fv.data.meal
 #'
-#'   nms <- paste0( "Q", 1:10 )
+#'   nms <- paste0( "Q", 1:14 )
 #'
-#'   fv.data.format[nms][ fv.data.format[nms] == 0 ] <- "Never"
-#'   fv.data.format[nms][ fv.data.format[nms] == 1 ] <- "1-3 times last month"
-#'   fv.data.format[nms][ fv.data.format[nms] == 3 ] <- "1-2 times per week"
-#'   fv.data.format[nms][ fv.data.format[nms] == 2 ] <- "3-4 times per week"
-#'   fv.data.format[nms][ fv.data.format[nms] == 4 ] <- "5-6 times per week"
-#'   fv.data.format[nms][ fv.data.format[nms] == 5 ] <- "1 time per meal"
-#'   fv.data.format[nms][ fv.data.format[nms] == 6 ] <- "2 times per meal"
-#'   fv.data.format[nms][ fv.data.format[nms] == 7 ] <- "3 times per meal"
-#'   fv.data.format[nms][ fv.data.format[nms] == 8 ] <- "4 times per meal"
-#'   fv.data.format[nms][ fv.data.format[nms] == 9 ] <- "5 or more times per meal"
+#'   fv.data.meal.format[nms][ fv.data.meal.format[nms] == 0 ] <- "Never"
+#'   fv.data.meal.format[nms][ fv.data.meal.format[nms] == 1 ] <- "1-3 times last month"
+#'   fv.data.meal.format[nms][ fv.data.meal.format[nms] == 3 ] <- "1-2 times per week"
+#'   fv.data.meal.format[nms][ fv.data.meal.format[nms] == 2 ] <- "3-4 times per week"
+#'   fv.data.meal.format[nms][ fv.data.meal.format[nms] == 4 ] <- "5-6 times per week"
+#'   fv.data.meal.format[nms][ fv.data.meal.format[nms] == 5 ] <- "1 time per meal"
+#'   fv.data.meal.format[nms][ fv.data.meal.format[nms] == 6 ] <- "2 times per meal"
+#'   fv.data.meal.format[nms][ fv.data.meal.format[nms] == 7 ] <- "3 times per meal"
+#'   fv.data.meal.format[nms][ fv.data.meal.format[nms] == 8 ] <- "4 times per meal"
+#'   fv.data.meal.format[nms][ fv.data.meal.format[nms] == 9 ] <- "5 or more times per meal"
 #'
-#'   fvs_scores_meal( df = fv.data.format )
+#'   fvs_scores_meal( df = fv.data.meal.format )
 #' }
-#'
 #' @export
 
 fvs_scores_meal <- function( df,
