@@ -3,7 +3,7 @@
 export(fvs_scores_day)
 export(fvs_scores_meal)
 export(mfs_scores)
-export(qfs_scores)
+export(pef_scores)
 import(dplyr)
 import(rlang)
 import(stringr)

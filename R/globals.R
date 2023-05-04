@@ -10,4 +10,7 @@ utils::globalVariables( c("CEREAL", "SKIMMILK", "EGGS",
                           "f12", "f16", "lo.fat.mrg", "fat.real", "tot.fat", ".",
                           "Q1AN", "Q2A1N", "Q2A2N", "FRUITA", "FRUITB", "Q3AN", "Q4AN", "Q5AN",
                           "Q6AN", "Q7AN", "Q8AN", "Q9AN", "JUICE", "LSALAD", "FRFRY", "WHPOT",
-                          "DRBEAN", "OTHVEG", "TOMSAUCE", "VEGSOUP", "setNames" ) )
+                          "DRBEAN", "OTHVEG", "TOMSAUCE", "VEGSOUP", "setNames",
+                          "Q2AN", "Q12AN", "Q13AN", "Q6A1N", "Q6A2N", "FRTAMA", "FRTAMB", "Q8A1N", "Q8A2N",
+                          "FRTNNA", "FRTNNB", "Q10A1N", "Q10A2N", "FRTPMA", "FRTPMB", "FRUITAM", "FRUITNN",
+                          "FRUITPM", "Q11AN", "OVEGAM", "OVEGNN", "OVEGPM" ) )

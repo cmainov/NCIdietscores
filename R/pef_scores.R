@@ -6,6 +6,8 @@
 #'
 #' @description Calculate age & sex-adjusted % Energy from fat,
 #' on data collected with the National Cancer Institute's Percentage Energy From Fat Screener.
+#' For an example of how the data should be structured prior to feeding it to the function, see
+#' \code{data( pef.data )} and \code{help( data( pef.data ) )}.
 #'
 #' @details
 #' Implements scoring procedures for data obtained from the National Cancer Institute (NCI)
@@ -26,7 +28,7 @@
 #' \item \href{https://epi.grants.cancer.gov/diet/screeners/files.html#fat}{Original SAS Code from the NCI}
 #' }
 #'
-#' @usage qfs_scores( df, default.names = TRUE,
+#' @usage pef_scores( df, default.names = TRUE,
 #' item.names = list( CEREAL = "CEREAL", MILK.SKIM = "SKIMMILK",
 #'                    EGGS = "EGGS", SAUSAGE = "SAUSAGE",
 #'                    MARG.BUTTER = "MARGBR", CITRUS.JUICE = "CITJUICE",
@@ -56,15 +58,15 @@
 #'
 #' # using default diet item names
 #'
-#' qfs_scores( short.data )
+#' pef_scores( pef.data )
 #'
 #' # user-specified diet item names but using default names in `item.names`
 #'
-#' qfs_scores( short.data, default.names = FALSE )
+#' pef_scores( pef.data, default.names = FALSE )
 #'
 #' # user specified names
 #'
-#' d.user <- setNames( short.data,
+#' d.user <- setNames( pef.data,
 #'                     c( "cold.cereals", "milk",
 #'                        "eggs", "bacon",
 #'                        "butter", "cit.juice",
@@ -75,15 +77,15 @@
 #'                        "marg.on.rice", "red.marg",
 #'                        "fat.subj", "SEX", "AGE" ) )
 #'
-#' # run `qfs_scores` without specifying column names, throws error
+#' # run `pef_scores` without specifying column names, throws error
 #' \dontrun{
 #'
-#'   qfs_scores( df = d.user, default.names = FALSE )
+#'   pef_scores( df = d.user, default.names = FALSE )
 #'
 #' }
 #'
 #'
-#' # run `qfs_scores`  specifying column names in incorrect format, error thrown
+#' # run `pef_scores`  specifying column names in incorrect format, error thrown
 #'
 #' \dontrun{
 #'   cls.list <- list( "cold.cereals", "milk",
@@ -96,13 +98,13 @@
 #'                     "marg.on.rice", "red.marg",
 #'                     "fat.subj" )
 #'
-#'   qfs_scores( df = d.user,
+#'   pef_scores( df = d.user,
 #'               default.names = FALSE,
 #'               item.names = cls.list )
 #' }
 #'
 #'
-#' # run `qfs_scores`  specifying column names, no error
+#' # run `pef_scores`  specifying column names, no error
 #'
 #' cls.list <- list( CEREAL = "cold.cereals", MILK.SKIM = "milk",
 #'                   EGGS = "eggs", SAUSAGE = "bacon",
@@ -114,14 +116,14 @@
 #'                   MARGRICE = "marg.on.rice", RED.FAT.MARG = "red.marg",
 #'                   FAT.SUBJECTIVE = "fat.subj" )
 #'
-#' qfs_scores( df = d.user,
+#' pef_scores( df = d.user,
 #'             default.names = FALSE,
 #'             item.names = cls.list )
 #'
 #'
 #' # specify own names for sex and age columns
 #'
-#' d.user.age.sex <- short.data
+#' d.user.age.sex <- pef.data
 #'
 #' colnames( d.user.age.sex )[ colnames( d.user.age.sex ) == "SEX" ] <- "subject.sex"
 #' colnames( d.user.age.sex )[ colnames( d.user.age.sex ) == "AGE" ] <- "subject.age"
@@ -129,9 +131,9 @@
 #' colnames( d.user )[ colnames( d.user ) == "AGE" ] <- "subject.age"
 #'
 #'
-#' qfs_scores( df = d.user.age.sex, sex.col = "subject.sex", age.col = "subject.age" )
+#' pef_scores( df = d.user.age.sex, sex.col = "subject.sex", age.col = "subject.age" )
 #'
-#' qfs_scores( df = d.user,
+#' pef_scores( df = d.user,
 #'             default.names = FALSE,
 #'             item.names = cls.list,
 #'             sex.col = "subject.sex",
@@ -143,33 +145,33 @@
 #' # incorrect data types
 #' \dontrun{
 #'
-#'   qfs_scores( df = list( short.data ) )
-#'   qfs_scores( df = short.data, age.col = 3 )
-#'   qfs_scores( df = short.data, sex.col = 7 )
+#'   pef_scores( df = list( pef.data ) )
+#'   pef_scores( df = pef.data, age.col = 3 )
+#'   pef_scores( df = pef.data, sex.col = 7 )
 #'
 #' }
 #'
 #' # incorrect formatting of data frequencies
 #' \dontrun{
-#'   short.data.format <- short.data
+#'   pef.data.format <- pef.data
 #'
-#'   short.data.format[1:16][ short.data.format[1:16] == 1 ] <- "Never"
-#'   short.data.format[1:16][ short.data.format[1:16] == 2 ] <- "Less than once per month"
-#'   short.data.format[1:16][ short.data.format[1:16] == 3 ] <- "1-3 times per month"
-#'   short.data.format[1:16][ short.data.format[1:16] == 4 ] <- "1-2 times per week"
-#'   short.data.format[1:16][ short.data.format[1:16] == 5 ] <- "3-4 times per week"
-#'   short.data.format[1:16][ short.data.format[1:16] == 6 ] <- "5-6 times per week"
-#'   short.data.format[1:16][ short.data.format[1:16] == 7 ] <- "1 times per day"
-#'   short.data.format[1:16][ short.data.format[1:16] == 8 ] <- "2 or more times per day"
-#'   short.data.format[1:16][ short.data.format[1:16] == 9 ] <- "4 or more times per day"
+#'   pef.data.format[1:16][ pef.data.format[1:16] == 1 ] <- "Never"
+#'   pef.data.format[1:16][ pef.data.format[1:16] == 2 ] <- "Less than once per month"
+#'   pef.data.format[1:16][ pef.data.format[1:16] == 3 ] <- "1-3 times per month"
+#'   pef.data.format[1:16][ pef.data.format[1:16] == 4 ] <- "1-2 times per week"
+#'   pef.data.format[1:16][ pef.data.format[1:16] == 5 ] <- "3-4 times per week"
+#'   pef.data.format[1:16][ pef.data.format[1:16] == 6 ] <- "5-6 times per week"
+#'   pef.data.format[1:16][ pef.data.format[1:16] == 7 ] <- "1 times per day"
+#'   pef.data.format[1:16][ pef.data.format[1:16] == 8 ] <- "2 or more times per day"
+#'   pef.data.format[1:16][ pef.data.format[1:16] == 9 ] <- "4 or more times per day"
 #'
-#'   qfs_scores( df = short.data.format )
+#'   pef_scores( df = pef.data.format )
 #' }
 #'
 #' @export
 
 
-qfs_scores <- function( df,
+pef_scores <- function( df,
                         default.names = TRUE,
                         item.names = list( CEREAL = "CEREAL", MILK.SKIM = "SKIMMILK",
                                            EGGS = "EGGS", SAUSAGE = "SAUSAGE",
@@ -259,7 +261,8 @@ qfs_scores <- function( df,
                                                     na.rm = T ) ), na.rm = T ) != 0 ){
 
     stop( "Error: non-digit levels of the diet frequency column. Levels for these columns should be numeric. See data dictionary.")
-  }
+
+    }
 
   ## --------- End Subsection --------- ##
 

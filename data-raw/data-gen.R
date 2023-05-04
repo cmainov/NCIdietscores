@@ -166,47 +166,47 @@ fvcupadj <- tibble::tribble(
 set.seed = 23
 
 # initialize matrix of NAs to store data
-diet.data <- matrix( NA, nrow = 45, ncol = 16 )
+mfs.data <- matrix( NA, nrow = 45, ncol = 16 )
 
 # loop through the number of columns and generate a discrete random variable of length 45 bounded below at 1 and above at 9
 for( i in 1:16 ){
 
-  diet.data[ , i ] <- sample( 1:9, size = 45, replace = TRUE )
+  mfs.data[ , i ] <- sample( 1:9, size = 45, replace = TRUE )
 
 }
 
 # coerce to dataframe and set column names according to survey item
-diet.data <- setNames( data.frame( diet.data ), paste0( "HQ", 1:16 ) )
+mfs.data <- setNames( data.frame( mfs.data ), paste0( "HQ", 1:16 ) )
 
 # milk type variable
-diet.data$HQ2A <- sample( 1:5, size = 45, replace = TRUE )
+mfs.data$HQ2A <- sample( 1:5, size = 45, replace = TRUE )
 
 # sex variable
-diet.data$SEX <- sample( 1:2, size = 45, replace = TRUE )
+mfs.data$SEX <- sample( 1:2, size = 45, replace = TRUE )
 
 # age variable
-diet.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
+mfs.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
 
 ## --------- End Subsection --------- ##
 
 
-## (1.7) Generate test data for qfs_scores ##
+## (1.7) Generate test data for pef_scores ##
 
 # set seed for reproducibility
 set.seed = 23
 
 # initialize matrix of NAs to store data
-short.data <- matrix( NA, nrow = 45, ncol = 15 )
+pef.data <- matrix( NA, nrow = 45, ncol = 15 )
 
 # loop through the number of columns and generate a discrete random variable of length 45 bounded below at 1 and above at 9
 for( i in 1:15 ){
 
-  short.data[ , i ] <- sample( 1:8, size = 45, replace = TRUE )
+  pef.data[ , i ] <- sample( 1:8, size = 45, replace = TRUE )
 
 }
 
 # coerce to dataframe and set column names according to survey item
-short.data <- setNames( data.frame( short.data ),
+pef.data <- setNames( data.frame( pef.data ),
                         c( "CEREAL", "SKIMMILK",
                            "EGGS", "SAUSAGE",
                            "MARGBR", "CITJUICE",
@@ -217,14 +217,14 @@ short.data <- setNames( data.frame( short.data ),
                            "MARGRICE" ) )
 
 # Fat intake questions
-short.data$LOFATMRG <- sample( 1:6, size = 45, replace = TRUE )
-short.data$ALLFAT <- sample( 1:3, size = 45, replace = TRUE )
+pef.data$LOFATMRG <- sample( 1:6, size = 45, replace = TRUE )
+pef.data$ALLFAT <- sample( 1:3, size = 45, replace = TRUE )
 
 # sex variable
-short.data$SEX <- sample( 1:2, size = 45, replace = TRUE )
+pef.data$SEX <- sample( 1:2, size = 45, replace = TRUE )
 
 # age variable
-short.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
+pef.data$AGE <- sample( 18:99, size = 45, replace = TRUE )
 
 ## --------- End Subsection --------- ##
 
@@ -336,7 +336,7 @@ usethis::use_data( tbl.1, tbl.2,
 
 ## (1.7) Save example data for export ##
 
-usethis::use_data( diet.data, short.data, fv.data.day, fv.data.meal,
+usethis::use_data( mfs.data, pef.data, fv.data.day, fv.data.meal,
                    overwrite = TRUE ) # this creates the `/data` folder and stores the individual published datasets in that directory
 
 # ---------------------------------------------------------------------------------------------------------------------------------------------------------

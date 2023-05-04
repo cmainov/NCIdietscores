@@ -6,6 +6,8 @@
 #'
 #' @description Calculate age & sex-adjusted % Energy from fat, fiber, and fruit and vegetable MyPyramid equivalents
 #' on data collected with the National Cancer Institute's Multifactor Screener from the OPEN Study.
+#' For an example of how the data should be structured prior to feeding it to the function, see
+#' \code{data( mfs.data )} and \code{help( data( mfs.data ) )}.
 #'
 #' @details
 #' Implements the scoring procedures for data obtained from the National Cancer Institute (NCI)
@@ -71,15 +73,15 @@
 #'
 #' # using default diet item names
 #'
-#' mfs_scores( diet.data )
+#' mfs_scores( mfs.data )
 #'
 #' # user-specified diet item names but using default names in `item.names`
 #'
-#' mfs_scores( diet.data, default.names = FALSE )
+#' mfs_scores( mfs.data, default.names = FALSE )
 #'
 #' # user specified names
 #'
-#' d.user <- setNames( diet.data,
+#' d.user <- setNames( mfs.data,
 #'                     c( "cold.cereals", "milk", "bacon.sausage", "hot.dogs",
 #'                        "bread", "juice", "fruit", "regular.fat", "salad", "potatoes",
 #'                        "white.potatoes", "beans", "vegetables", "pasta", "nuts", "chips",
@@ -131,7 +133,7 @@
 #'
 #' # specify own names for sex and age columns
 #'
-#' d.user.age.sex <- diet.data
+#' d.user.age.sex <- mfs.data
 #'
 #' colnames( d.user.age.sex )[ colnames( d.user.age.sex ) == "SEX" ] <- "subject.sex"
 #' colnames( d.user.age.sex )[ colnames( d.user.age.sex ) == "AGE" ] <- "subject.age"
@@ -153,27 +155,27 @@
 #' # incorrect data types
 #' \dontrun{
 #'
-#'   mfs_scores( df = list( diet.data ) )
-#'   mfs_scores( df = diet.data, age.col = 3 )
-#'   mfs_scores( df = diet.data, sex.col = 7 )
+#'   mfs_scores( df = list( mfs.data ) )
+#'   mfs_scores( df = mfs.data, age.col = 3 )
+#'   mfs_scores( df = mfs.data, sex.col = 7 )
 #'
 #' }
 #'
 #' # incorrect formatting of data frequencies
 #' \dontrun{
-#' diet.data.format <- diet.data
+#' mfs.data.format <- mfs.data
 #'
-#' diet.data.format[1:16][ diet.data.format[1:16] == 1 ] <- "Never"
-#' diet.data.format[1:16][ diet.data.format[1:16] == 3 ] <- "1-2 times per week"
-#' diet.data.format[1:16][ diet.data.format[1:16] == 2 ] <- "1-3 times last month"
-#' diet.data.format[1:16][ diet.data.format[1:16] == 4 ] <- "3-4 times per week"
-#' diet.data.format[1:16][ diet.data.format[1:16] == 5 ] <- "5-6 times per week"
-#' diet.data.format[1:16][ diet.data.format[1:16] == 6 ] <- "1 time per day"
-#' diet.data.format[1:16][ diet.data.format[1:16] == 7 ] <- "2 times per day"
-#' diet.data.format[1:16][ diet.data.format[1:16] == 8 ] <- "3 times per day"
-#' diet.data.format[1:16][ diet.data.format[1:16] == 9 ] <- "4 or more times per day"
+#' mfs.data.format[1:16][ mfs.data.format[1:16] == 1 ] <- "Never"
+#' mfs.data.format[1:16][ mfs.data.format[1:16] == 3 ] <- "1-2 times per week"
+#' mfs.data.format[1:16][ mfs.data.format[1:16] == 2 ] <- "1-3 times last month"
+#' mfs.data.format[1:16][ mfs.data.format[1:16] == 4 ] <- "3-4 times per week"
+#' mfs.data.format[1:16][ mfs.data.format[1:16] == 5 ] <- "5-6 times per week"
+#' mfs.data.format[1:16][ mfs.data.format[1:16] == 6 ] <- "1 time per day"
+#' mfs.data.format[1:16][ mfs.data.format[1:16] == 7 ] <- "2 times per day"
+#' mfs.data.format[1:16][ mfs.data.format[1:16] == 8 ] <- "3 times per day"
+#' mfs.data.format[1:16][ mfs.data.format[1:16] == 9 ] <- "4 or more times per day"
 #'
-#' mfs_scores( df = diet.data.format )
+#' mfs_scores( df = mfs.data.format )
 #' }
 #'
 #' @export

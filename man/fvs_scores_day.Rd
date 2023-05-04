@@ -35,7 +35,8 @@ are as follows:
 \description{
 Calculate MyPyramid cup equivalents and MyPyramid servings of fruit & vegetable intake
 on data collected with the National Cancer Institute's Fruit & Vegetable Intake All-Day Screener in the
-EATS.
+EATS. For an example of how the data should be structured prior to feeding it to the function, see
+\code{data( fv.data.day )} and \code{help( data( fv.data.day ) )}.
 }
 \details{
 Implements the scoring procedures for data obtained from the National Cancer Institute (NCI)

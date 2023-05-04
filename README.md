@@ -51,7 +51,7 @@ ___
 ```
 library( NCIdietscores )
 
-NCIdietscores::diet.data # toy data example for `mfs_scores`
+NCIdietscores::mfs.data # toy data example for `mfs_scores`
 NCIdietscores::test.data # toy data example for `pef_scores`
 ```
 
@@ -62,10 +62,10 @@ ___
 ### Example Run
 ___
 
-Using the toy package data, we can run `mfs_scores` on `diet.data`
+Using the toy package data, we can run `mfs_scores` on `mfs.data`
 
 ```{r}
-mfs_scores( NCIdietscores::diet.data )
+mfs_scores( NCIdietscores::mfs.data )
 
 #    pred.fiber       pred.pcf      pred.fv7.ce    
 #  Min.   :2.471   Min.   :15.99   Min.   : 1.792  

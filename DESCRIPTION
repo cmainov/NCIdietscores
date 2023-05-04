@@ -1,11 +1,12 @@
 Package: NCIdietscores
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Title: Generates diet scores from National Cancer Institute (NCI) dietary screeners
+Version: 1.0.0
+Author: Christian Maino Vieytes
+Maintainer: Christian Maino Vieytes <cam17@illinois.edu>
+Description: Computes diet scores from National Cancer Institute (NCI) dietary screeners
+    including the Multifactor Screener from the OPEN Study, the Percentage Energy From Fat Screener,
+    and the Fruit & Vegetable Intake Day and Meal Screeners from the Eating at America's Table Study (EATS).
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true

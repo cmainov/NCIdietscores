@@ -6,7 +6,8 @@
 #'
 #' @description Calculate MyPyramid cup equivalents and MyPyramid servings of fruit & vegetable intake
 #' on data collected with the National Cancer Institute's Fruit & Vegetable Intake By-Meal Screener in the
-#' EATS.
+#' EATS. For an example of how the data should be structured prior to feeding it to the function, see
+#' \code{data( fv.data.meal )} and \code{help( data( fv.data.meal ) )}.
 #'
 #' @details
 #' Implements the scoring procedures for data obtained from the National Cancer Institute (NCI)
@@ -201,8 +202,6 @@ fvs_scores_meal <- function( df,
                   paste0( "Q", c(6,8,10), "A1" ),
                   paste0( "Q", c(6,8,10), "A2" ) ) # default names
 
-  # diet column levels checks
-  df.copy <- adjust_levels_10( df.copy, item.names = item.names )
 
   # class checks
   if ( !inherits( item.names, "list" ) ) stop( "Error: `item.names` must be a list" )
