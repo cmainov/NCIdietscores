@@ -178,6 +178,12 @@ fvs_scores_day <- function( df,
 
   ## (1.1) Argument types and entries  ##
 
+  # levels of the diet columns
+  def.names <- c( paste0( "Q", 1:10 ), paste0( "Q", c(1,3:9), "A" ), "Q2A1", "Q2A2" ) # default names
+
+  # diet column levels checks
+  df.copy <- adjust_levels_10( df.copy, item.names = item.names )
+
   # class checks
   if ( !inherits( item.names, "list" ) ) stop( "Error: `item.names` must be a list" )
   if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) >= 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
@@ -186,10 +192,8 @@ fvs_scores_day <- function( df,
   if ( !default.names & is.null( item.names ) ) stop( "Error: user-specified list of column names empty when checking `default.names = T`." )
   if ( ( !default.names ) & length( item.names ) < 20 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
   if ( ( !default.names ) & length( item.names ) < 20 ) stop( "Error: user-specified list of column names is less than the sufficient length." )
-  if ( sum( c( paste0( "Q", 1:10 ), "Q2A1", "Q2A2" ) %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
+  if ( sum( def.names %notin% names( item.names ) )  > 0 ) stop( "Error: list of user-specified column names not in proper format. See default values for `item.names` in the documentation for an example." )
 
-  # levels of the diet columns
-  def.names <- c( paste0( "Q", 1:10 ), paste0( "Q", c(1,3:9), "A" ), "Q2A1", "Q2A2" ) # default names
 
   if( default.names ) v <- c( def.names )
   if ( !default.names ) v <- c( unlist( item.names ) )

@@ -201,6 +201,9 @@ fvs_scores_meal <- function( df,
                   paste0( "Q", c(6,8,10), "A1" ),
                   paste0( "Q", c(6,8,10), "A2" ) ) # default names
 
+  # diet column levels checks
+  df.copy <- adjust_levels_10( df.copy, item.names = item.names )
+
   # class checks
   if ( !inherits( item.names, "list" ) ) stop( "Error: `item.names` must be a list" )
   if ( sum( class( df ) %notin% c( "data.frame", "tbl", "tbl_df" ) ) >= 1 ) stop( "Error: `df` must be an object of class `data.frame` or `tibble`." )
